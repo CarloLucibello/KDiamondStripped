@@ -7,6 +7,9 @@
 #include "gamestate.h"
 #include "gameparams.h"
 
+#include <utility>
+using namespace std;
+
 
 
 
@@ -37,7 +40,7 @@ public:
     void getMoves();
 
     QList<Job> m_jobQueue;
-    QList<QPoint> m_availableMoves;
+    QList<pair<QPoint,QPoint>> m_availableMoves;
     QList<QPoint> m_swappingDiamonds;
     Board* m_board;
     GameState* m_gameState;
@@ -47,6 +50,12 @@ public:
 //DEBUG FUNCTIONS
     void printBoard(){
         m_board->print();
+    }
+
+    void printMoves(){
+        for(auto& m : m_availableMoves){
+            cout << m.first.x() << "  " << m.first.y() << " --> " << m.second.x() << "  " << m.second.y() <<  endl;
+        }
     }
 
 

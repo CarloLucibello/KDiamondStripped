@@ -11,6 +11,10 @@ int main(){
     game->setLevel(0);  //from 0 to 4
     game->startNewGame();
     game->printBoard();
+    cout << endl;
+    game->getMoves();
+    game->printMoves();
+    cout << game->m_availableMoves.size() << endl;
     delete game;
 
     return 0;
