@@ -20,7 +20,6 @@ class GameStatePrivate{
         Mode m_mode;
         State m_state;
         int m_points;
-        int m_cascade;
 };
 
 class GameState{
@@ -35,7 +34,6 @@ class GameState{
         void setMode(Mode mode);
         void addPoints(int removedDiamonds);
         void removePoints(int points);
-        void resetCascadeCounter();
         void startNewGame();
 //    private:
         GameStatePrivate* p;

@@ -36,8 +36,6 @@ Board::Board(GameParams * gameParams)
 
 Diamond* Board::spawnDiamond(Color color){
 	Diamond* diamond = new Diamond(color);
-//	connect(diamond, SIGNAL(clicked()), SLOT(slotClicked()));
-//	connect(diamond, SIGNAL(dragged(QPoint)), SLOT(slotDragged(QPoint)));
 	return diamond;
 }
 
@@ -105,10 +103,10 @@ void Board::clearSelection(){
 	m_activeSelectors.clear();
 }
 
+//mi sembra uno spreco fare delete
 void Board::removeDiamond(const QPoint& point){
 	Diamond* diamond = this->diamond(point);
-	if (!diamond)
-		return; //diamond has already been removed
+	delete diamond;//diamond has already been removed
 	rDiamond(point) = 0;
 }
 

@@ -46,7 +46,7 @@ public:
 
 //DEBUG FUNCTONS
     void print() const{
-        for(int y = m_size - 1; y >= 0; y--){
+        for(int y = 0; y < m_size; y++){
             for(int x = 0; x < m_size; x++){
                 cout << int(diamond({x, y})->color()) << " ";
             }

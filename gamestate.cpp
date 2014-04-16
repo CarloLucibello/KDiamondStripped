@@ -7,7 +7,6 @@ GameStatePrivate::GameStatePrivate()
 	//these should be the same values as in GameState::startNewGame
 	: m_mode(Mode::UntimedGame)
 	, m_points(0)
-	, m_cascade(0)
     , m_state(State::Finished) {}
 
 GameStatePrivate::~GameStatePrivate(){}
@@ -45,22 +44,17 @@ void GameState::setState(State state){
 	p->m_state = state;
 }
 
-
-void GameState::addPoints(int removedDiamonds){
-	p->m_points += ++p->m_cascade;
+void GameState::addPoints(int points){
+	p->m_points += points;
 }
 
 void GameState::removePoints(int points){
 	p->m_points = qMax(0, p->m_points - points);
 }
 
-void GameState::resetCascadeCounter(){
-	p->m_cascade = 0;
-}
 
 void GameState::startNewGame(){
 	p->m_points = 0;
-	p->m_cascade = 0;
     p->m_state = State::Playing;
 }
 

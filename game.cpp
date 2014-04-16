@@ -1,12 +1,12 @@
 #include "game.h"
 
+#include <cassert>
+using namespace std;
+
 Game::Game()
     : m_board(0)
 	, m_gameState(new GameState)
-	, m_gameParams(new GameParams)
-{
-	m_jobQueue << Job::UpdateAvailableMovesJob;
-}
+	, m_gameParams(new GameParams) {}
 
 Game::~Game(){
     delete m_board;
@@ -41,43 +41,43 @@ void Game::getMoves(){
 			curColor = C(x, y);
 			if (curColor == C(x + 1, y)){
 				if (curColor == C(x - 2, y))
-					m_availableMoves.append(QPoint(x - 2, y));
+					m_availableMoves.append({QPoint(x - 2, y), QPoint(x - 1, y)});
 				if (curColor == C(x - 1, y - 1))
-					m_availableMoves.append(QPoint(x - 1, y - 1));
+					m_availableMoves.append({QPoint(x - 1, y - 1), QPoint(x - 1, y)});
 				if (curColor == C(x - 1, y + 1))
-					m_availableMoves.append(QPoint(x - 1, y + 1));
+					m_availableMoves.append({QPoint(x - 1, y + 1), QPoint(x - 1, y)});
 				if (curColor == C(x + 3, y))
-					m_availableMoves.append(QPoint(x + 3, y));
+					m_availableMoves.append({QPoint(x + 3, y), QPoint(x + 2, y)});
 				if (curColor == C(x + 2, y - 1))
-					m_availableMoves.append(QPoint(x + 2, y - 1));
+					m_availableMoves.append({QPoint(x + 2, y - 1), QPoint(x + 2, y)});
 				if (curColor == C(x + 2, y + 1))
-					m_availableMoves.append(QPoint(x + 2, y + 1));
+					m_availableMoves.append({QPoint(x + 2, y + 1), QPoint(x + 2, y)});
 			}
 			if (curColor == C(x + 2, y)){
 				if (curColor == C(x + 1, y - 1))
-					m_availableMoves.append(QPoint(x + 1, y - 1));
+					m_availableMoves.append({QPoint(x + 1, y - 1), QPoint(x + 1, y)});
 				if (curColor == C(x + 1, y + 1))
-					m_availableMoves.append(QPoint(x + 1, y + 1));
+					m_availableMoves.append({QPoint(x + 1, y + 1), QPoint(x + 1, y)});
 			}
 			if (curColor == C(x, y + 1)){
 				if (curColor == C(x, y - 2))
-					m_availableMoves.append(QPoint(x, y - 2));
+					m_availableMoves.append({QPoint(x, y - 2), QPoint(x, y - 1)});
 				if (curColor == C(x - 1, y - 1))
-					m_availableMoves.append(QPoint(x - 1, y - 1));
+					m_availableMoves.append({QPoint(x - 1, y - 1), QPoint(x, y - 1)});
 				if (curColor == C(x + 1, y - 1))
-					m_availableMoves.append(QPoint(x + 1, y - 1));
+					m_availableMoves.append({QPoint(x + 1, y - 1), QPoint(x, y - 1)});
 				if (curColor == C(x, y + 3))
-					m_availableMoves.append(QPoint(x + 3, y));
+					m_availableMoves.append({QPoint(x + 3, y), QPoint(x, y + 2)});
 				if (curColor == C(x - 1, y + 2))
-					m_availableMoves.append(QPoint(x - 1, y + 2));
+					m_availableMoves.append({QPoint(x - 1, y + 2), QPoint(x, y + 2)});
 				if (curColor == C(x + 1, y + 2))
-					m_availableMoves.append(QPoint(x + 1, y + 2));
+					m_availableMoves.append({QPoint(x + 1, y + 2), QPoint(x, y + 2)});
 			}
 			if (curColor == C(x, y + 2)){
 				if (curColor == C(x - 1, y + 1))
-					m_availableMoves.append(QPoint(x - 1, y + 1));
+					m_availableMoves.append({QPoint(x - 1, y + 1), QPoint(x, y + 1)});
 				if (curColor == C(x + 1, y + 1))
-					m_availableMoves.append(QPoint(x + 1, y + 1));
+					m_availableMoves.append({QPoint(x + 1, y + 1), QPoint(x, y + 1)});
 			}
 		}
 	}
@@ -96,15 +96,17 @@ void Game::clickDiamond(const QPoint& point){
 	if (!isSelected && m_board->selections().count() == 2)
 		return;
 	//select only adjacent diamonds (i.e. if a distant diamond is selected, deselect the first one)
-	foreach(const QPoint& point2, m_board->selections()){ //TODO: foreach è c++ standard o è QT?
+	foreach(const QPoint& point2, m_board->selections()){
 		const int diff = qAbs(point2.x() - point.x()) + qAbs(point2.y() - point.y());
 		if (diff > 1)
 			m_board->setSelection(point2, false);
 	}
 	//toggle selection state
 	m_board->setSelection(point, !isSelected);
-	if (m_board->selections().count() == 2)
+	if (m_board->selections().count() == 2){
 		m_jobQueue << Job::SwapDiamondsJob;
+		executeJobs();
+    }
 }
 
 void Game::dragDiamond(const QPoint& point, const QPoint& direction){
@@ -130,25 +132,19 @@ bool Game::executeFirstJob(){
 	const Job job = m_jobQueue.takeFirst();
 	switch (job){
 		case Job::SwapDiamondsJob: {
-			if (m_board->selections().count() != 2)
-				break; //this can be the case if, during a cascade, two diamonds are selected (inserts SwapDiamondsJob) and then deselected
-			//ensure that the selected diamonds are neighbors (this is not necessarily the case as diamonds can move to fill gaps)
+			assert(m_board->selections().count() == 2);
 			const QList<QPoint> points = m_board->selections();
-			m_board->clearSelection();
-			const int dx = qAbs(points[0].x() - points[1].x());
-			const int dy = qAbs(points[0].y() - points[1].y());
-			if (dx + dy != 1)
-				break;
-			//start a new cascade
-			m_gameState->resetCascadeCounter();
-			//copy selection info into another storage (to allow the user to select the next two diamonds while the cascade runs)
 			m_swappingDiamonds = points;
+            m_board->swapDiamonds(points[0], points[1]);
 			m_jobQueue << Job::RemoveRowsJob; //We already insert this here to avoid another conditional statement.
+            break;
 		} //fall through
+
 		case Job::RevokeSwapDiamondsJob:
 			//invoke movement
 			m_board->swapDiamonds(m_swappingDiamonds[0], m_swappingDiamonds[1]);
 			break;
+
 		case Job::RemoveRowsJob: {
 			//find diamond rows and delete these diamonds
 			const QList<QPoint> diamondsToRemove = findCompletedRows();
@@ -161,32 +157,35 @@ bool Game::executeFirstJob(){
 			}
 			else{
 				//all moves may now be out-dated - flush the moves list
-				if (!m_availableMoves.isEmpty())
-				{
+				if (!m_availableMoves.isEmpty()){
 					m_availableMoves.clear();
-			//ATTENZIONE		emit numberMoves(-1);
 				}
 				//it is now safe to delete the position of the swapping diamonds
 				m_swappingDiamonds.clear();
-				//report to Game
-				m_gameState->addPoints(diamondsToRemove.count());
+//				//report to Game
+				m_gameState->addPoints(diamondsToRemove.size());
 				//invoke remove animation, then fill gaps immediately after the animation
 				foreach (const QPoint& diamondPos, diamondsToRemove)
 					m_board->removeDiamond(diamondPos);
 				m_jobQueue.prepend(Job::FillGapsJob);
+				cout << "DELETED ROW" << endl;
 			}
 			break;
 		}
+
 		case Job::FillGapsJob:
 			//fill gaps
 			m_board->fillGaps();
 			m_jobQueue.prepend(Job::RemoveRowsJob); //allow cascades (i.e. clear rows that have been formed by falling diamonds)
 			break;
+
 		case Job::UpdateAvailableMovesJob:
 			if (m_gameState->state() != State::Finished)
 				getMoves();
 			break;
+
 		case Job::EndGameJob:
+            m_gameState->setState(State::Finished);
 			break;
 	}
 
@@ -262,5 +261,8 @@ QList<QPoint> Game::findCompletedRows(){
 	return diamonds;
 }
 
+const QList<pair<QPoint,QPoint>>& Game::availMoves() const{
+    return m_availableMoves;
+}
 
 
