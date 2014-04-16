@@ -2,7 +2,7 @@
 #define PLAYER_H
 
 #include "game.h"
-#include "../cppUtils/rng.h"
+#include "rng.h"
 using namespace cpputils;
 
 class Player{
