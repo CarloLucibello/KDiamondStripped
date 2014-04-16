@@ -67,7 +67,7 @@ void Game::getMoves(){
 				if (curColor == C(x + 1, y - 1))
 					m_availableMoves.append({QPoint(x + 1, y - 1), QPoint(x, y - 1)});
 				if (curColor == C(x, y + 3))
-					m_availableMoves.append({QPoint(x + 3, y), QPoint(x, y + 2)});
+					m_availableMoves.append({QPoint(x, y + 3), QPoint(x, y + 2)});
 				if (curColor == C(x - 1, y + 2))
 					m_availableMoves.append({QPoint(x - 1, y + 2), QPoint(x, y + 2)});
 				if (curColor == C(x + 1, y + 2))
@@ -264,5 +264,4 @@ QList<QPoint> Game::findCompletedRows(){
 const QList<pair<QPoint,QPoint>>& Game::availMoves() const{
     return m_availableMoves;
 }
-
 
