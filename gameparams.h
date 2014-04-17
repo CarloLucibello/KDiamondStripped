@@ -15,7 +15,7 @@ public:
     void setLevel(const int level);    // from 0 to 4
 
 private:
-    const vector<int> boardSizes = {5, 12, 10, 8, 8, 8 }; //il primo 'e per test
+    const vector<int> boardSizes = {4, 12, 10, 8, 8, 8 }; //il primo 'e per test
     const vector<int> boardColorCounts = {4, 5, 5, 5, 6, 7};
     const vector<int> numMoves = {30, 30, 20, 10, 10, 10};
     int m_colorCount;

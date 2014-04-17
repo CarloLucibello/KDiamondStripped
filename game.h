@@ -27,7 +27,7 @@ class Game{
 public:
     Game();
     ~Game();
-    void startNewGame();
+    void startNewGame(UInt8 seed);
     void setMode(const Mode& mode);
     void setLevel(const int& level);
     void clickDiamond(const QPoint& point);

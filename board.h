@@ -3,6 +3,7 @@
 
 #include "diamond.h"
 #include "gameparams.h"
+#include "rand.h"
 
 #include <QVector>
 
@@ -12,8 +13,10 @@ using namespace std;
 
 class Board {
 public:
-    Board(GameParams* gameParams);
+    LinCongRNG rng;
 
+    Board(GameParams* gameParams, UInt8 seed = -1);
+            
     int gridSize() const;
     Diamond* diamond(const QPoint& point) const;
 

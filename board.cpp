@@ -1,10 +1,11 @@
 #include "board.h"
 
-Board::Board(GameParams * gameParams)
+Board::Board(GameParams * gameParams, UInt8 seed)
 	: m_size(gameParams->boardSize())
 	, m_colorCount(gameParams->colorCount())
 	, m_diamonds(m_size * m_size, 0)
 {
+    rng.setSeed(seed);
 	for (QPoint point; point.x() < m_size; ++point.rx())
 		for (point.ry() = 0; point.y() < m_size; ++point.ry()){
 			//displacement vectors needed for the following alsynagorithm
@@ -13,7 +14,10 @@ Board::Board(GameParams * gameParams)
 			//roll the dice to get a color, but ensure that there are not three of a color in a row from the start
 			Color color;
 			while (true){
-				color = Color(qrand() % m_colorCount + 1); // +1 because numbering of enum KDiamond::Color starts at 1
+				
+                color = Color(1+rng.unifInt(m_colorCount));//+1 because numbering of enum KDiamond::Color starts at 1
+                
+                //color = Color(qrand() % m_colorCount + 1); // +1 because numbering of enum KDiamond::Color starts at 1
 				//condition: no triplet in y axis (attention: only the diamonds above us are defined already)
 				if (point.y() >= 2){ //no triplet possible for i = 0, 1
 					const Color otherColor1 = diamond(point + dispY1)->color();
