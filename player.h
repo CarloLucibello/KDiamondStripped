@@ -26,9 +26,6 @@ public:
         cout << "MOVED :  " << m.first.x() << "  " << m.first.y() << " --> " << m.second.x() << "  " << m.second.y() <<  endl;
     }
 
-
-
-
 };
 
 #endif // PLAYER_H

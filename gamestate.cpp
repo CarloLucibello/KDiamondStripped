@@ -48,14 +48,24 @@ void GameState::addPoints(int points){
 	p->m_points += points;
 }
 
+
+void GameState::updateMovesLeft(int n){
+	p->m_movesLeft -= n;
+}
+
+int GameState::movesLeft(){
+	return p->m_movesLeft;
+}
+
 void GameState::removePoints(int points){
 	p->m_points = qMax(0, p->m_points - points);
 }
 
 
-void GameState::startNewGame(){
+void GameState::startNewGame(const GameParams * gameParams){
 	p->m_points = 0;
     p->m_state = State::Playing;
+    p->m_movesLeft = gameParams->moves();
 }
 
 

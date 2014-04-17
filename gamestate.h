@@ -1,6 +1,7 @@
 #ifndef GAMESTATE_H
 #define GAMESTATE_H
 
+#include "gameparams.h"
 
 enum class Mode{
     NormalGame,
@@ -20,6 +21,7 @@ class GameStatePrivate{
         Mode m_mode;
         State m_state;
         int m_points;
+        int m_movesLeft;
 };
 
 class GameState{
@@ -32,9 +34,11 @@ class GameState{
 
         void setState(State state);
         void setMode(Mode mode);
+        void updateMovesLeft(int n = 1);
+        int movesLeft();
         void addPoints(int removedDiamonds);
         void removePoints(int points);
-        void startNewGame();
+        void startNewGame(const GameParams * gameParams);
 //    private:
         GameStatePrivate* p;
 };

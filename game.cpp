@@ -15,7 +15,7 @@ Game::~Game(){
 }
 
 void Game::startNewGame(){
-    m_gameState->startNewGame();
+    m_gameState->startNewGame(m_gameParams);
 
     delete m_board; //si potrebbe riciclare la board per rendere la cosa più efficiente
     m_board = new Board(m_gameParams);
@@ -150,18 +150,28 @@ bool Game::executeFirstJob(){
 			const QList<QPoint> diamondsToRemove = findCompletedRows();
 			if (diamondsToRemove.isEmpty()){
 				//no diamond rows were formed by the last move -> revoke movement (unless we are in a cascade)
-				if (!m_swappingDiamonds.isEmpty())
+				if (!m_swappingDiamonds.isEmpty()){
 					m_jobQueue.prepend(Job::RevokeSwapDiamondsJob);
-				else
-					m_jobQueue << Job::UpdateAvailableMovesJob;
+				}
+				else {
+                    if(m_gameState->movesLeft() <= 0){
+                        m_jobQueue << Job::EndGameJob;
+                    } else {
+                        m_jobQueue << Job::UpdateAvailableMovesJob;
+                    }
+                }
 			}
 			else{
 				//all moves may now be out-dated - flush the moves list
 				if (!m_availableMoves.isEmpty()){
 					m_availableMoves.clear();
 				}
-				//it is now safe to delete the position of the swapping diamonds
-				m_swappingDiamonds.clear();
+				//Controllo se sto swappando e dato che lo swap ha avuto successo
+				// incremento il numero di mosse
+				if(!m_swappingDiamonds.isEmpty()){
+                    m_gameState->updateMovesLeft();
+                    m_swappingDiamonds.clear();
+				}
 //				//report to Game
 				m_gameState->addPoints(diamondsToRemove.size());
 				//invoke remove animation, then fill gaps immediately after the animation
