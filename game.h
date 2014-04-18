@@ -35,6 +35,8 @@ public:
     void numberMoves(int moves);
     void executeJobs();
     bool executeFirstJob();
+    bool isFinished() const;
+    bool isWon() const;
 //  private:
     QList<QPoint> findCompletedRows();
     void getMoves();
@@ -46,6 +48,7 @@ public:
     Board* m_board;
     GameState* m_gameState;
     GameParams* m_gameParams;
+    bool m_goalAchieved;
 
 
 

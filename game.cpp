@@ -6,7 +6,8 @@ using namespace std;
 Game::Game()
     : m_board(0)
 	, m_gameState(new GameState)
-	, m_gameParams(new GameParams) {}
+	, m_gameParams(new GameParams)
+	, m_goalAchieved(false) {}
 
 Game::~Game(){
     delete m_board;
@@ -16,6 +17,7 @@ Game::~Game(){
 
 void Game::startNewGame(int seed){
     m_gameState->startNewGame(m_gameParams);
+    m_goalAchieved = false;
 
     delete m_board; //si potrebbe riciclare la board per rendere la cosa più efficiente
     m_board = new Board(m_gameParams, seed);
@@ -154,7 +156,7 @@ bool Game::executeFirstJob(){
 					m_jobQueue.prepend(Job::RevokeSwapDiamondsJob);
 				}
 				else {
-                    if(m_gameState->movesLeft() <= 0){
+                    if(m_gameState->movesLeft() == 0){
                         m_jobQueue << Job::EndGameJob;
                     } else {
                         m_jobQueue << Job::UpdateAvailableMovesJob;
@@ -196,6 +198,7 @@ bool Game::executeFirstJob(){
 
 		case Job::EndGameJob:
             m_gameState->setState(State::Finished);
+            m_goalAchieved = m_gameState->points() >= m_gameParams->points();
 			break;
 	}
 
@@ -275,3 +278,10 @@ const QList<pair<QPoint,QPoint>>& Game::availMoves() const{
     return m_availableMoves;
 }
 
+bool Game::isFinished() const{
+    return State::Finished == m_gameState->state();
+}
+
+bool Game::isWon() const {
+    return m_goalAchieved;
+}
