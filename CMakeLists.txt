@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 
 set(kdiamond_SRCS
 	main.cpp
-	player.cpp
+	benchmarksuite.cpp
 	gamestate.cpp
 	gameparams.cpp
 	game.cpp

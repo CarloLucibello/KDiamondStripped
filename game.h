@@ -27,14 +27,14 @@ class Game{
 public:
     Game();
     ~Game();
-    void startNewGame(int seed);
-    void setMode(const Mode& mode);
-    void setLevel(const int& level);
+    void startNewGame(int seed = -1);
+    void setMode(const Mode mode);
+    void setLevel(const int level);
     void clickDiamond(const QPoint& point);
     void dragDiamond(const QPoint& point, const QPoint& direction);
-    void numberMoves(int moves);
     void executeJobs();
     bool executeFirstJob();
+    int points() const;
     bool isFinished() const;
     bool isWon() const;
 //  private:
@@ -48,8 +48,6 @@ public:
     Board* m_board;
     GameState* m_gameState;
     GameParams* m_gameParams;
-    bool m_goalAchieved;
-
 
 
 //DEBUG FUNCTIONS
@@ -61,6 +59,14 @@ public:
         for(auto& m : m_availableMoves){
             cout << m.first.x() << "  " << m.first.y() << " --> " << m.second.x() << "  " << m.second.y() <<  endl;
         }
+    }
+
+    void printState(){
+        m_gameState->print();
+    }
+
+    void printParams(){
+        m_gameParams->print();
     }
 
 

@@ -18,11 +18,10 @@ public:
 
     void playRandomMove(){
         const auto& moves = m_game->availMoves();
-
         auto m = moves[rng.unifInt(moves.size())];
-
         m_game->clickDiamond(m.first);
         m_game->clickDiamond(m.second);
+//        cout << "MOVING : " << m.first.x() << " " << m.first.y() << " --> " <<m.second.x() << " " << m.second.y() << endl;
     }
 
 };

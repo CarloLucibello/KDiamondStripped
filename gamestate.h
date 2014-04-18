@@ -2,6 +2,8 @@
 #define GAMESTATE_H
 
 #include "gameparams.h"
+#include <iostream>
+using namespace std;
 
 enum class Mode{
     NormalGame,
@@ -41,6 +43,13 @@ class GameState{
         void startNewGame(const GameParams * gameParams);
 //    private:
         GameStatePrivate* p;
+
+        void print(){
+            cout << "**STATE******" << endl;
+            cout << "state \t" << int(p->m_state) <<  endl;
+            cout << "points \t" << p->m_points <<  endl;
+            cout << "movesLeft \t" << p->m_movesLeft <<  endl;
+        }
 };
 
 #endif // GAMESTATE_H

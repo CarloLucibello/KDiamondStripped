@@ -2,6 +2,7 @@
 #define GAMEPARAMS_H
 
 #include <vector>
+#include <iostream>
 using namespace std;
 
 /** La classe che contiene i parametri che definiscono il livello */
@@ -27,6 +28,16 @@ private:
     int m_level;
     int m_moves;
     int m_points;
+
+public:
+    void print(){
+        cout << "**PARAMS******" << endl;
+        cout << "level \t" << m_level <<  endl;
+        cout << "colors \t" << m_colorCount <<  endl;
+        cout << "size \t" << m_size <<  endl;
+        cout << "points \t" << m_points <<  endl;
+        cout << "moves \t" << m_moves <<  endl;
+    }
 };
 
 #endif // GAMEPARAMS_H

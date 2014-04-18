@@ -6,8 +6,7 @@ using namespace std;
 Game::Game()
     : m_board(0)
 	, m_gameState(new GameState)
-	, m_gameParams(new GameParams)
-	, m_goalAchieved(false) {}
+	, m_gameParams(new GameParams){}
 
 Game::~Game(){
     delete m_board;
@@ -17,18 +16,20 @@ Game::~Game(){
 
 void Game::startNewGame(int seed){
     m_gameState->startNewGame(m_gameParams);
-    m_goalAchieved = false;
 
     delete m_board; //si potrebbe riciclare la board per rendere la cosa più efficiente
     m_board = new Board(m_gameParams, seed);
+
+    m_jobQueue << Job::UpdateAvailableMovesJob;
+    executeJobs();
 }
 
 
-void Game::setMode(const Mode& mode){
+void Game::setMode(const Mode mode){
     m_gameState->setMode(mode);
 }
 
-void Game::setLevel(const int& level){
+void Game::setLevel(const int level){
     m_gameParams->setLevel(level);
 }
 
@@ -134,6 +135,7 @@ bool Game::executeFirstJob(){
 	const Job job = m_jobQueue.takeFirst();
 	switch (job){
 		case Job::SwapDiamondsJob: {
+		//cout <<"Job::SwapDiamondsJob" << endl;
 			assert(m_board->selections().count() == 2);
 			const QList<QPoint> points = m_board->selections();
 			m_swappingDiamonds = points;
@@ -143,6 +145,7 @@ bool Game::executeFirstJob(){
 		} //fall through
 
 		case Job::RevokeSwapDiamondsJob:
+		//cout<<"Job::RevokeSwapDiamondsJob" << endl;
 			//invoke movement
 			m_board->swapDiamonds(m_swappingDiamonds[0], m_swappingDiamonds[1]);
 			break;
@@ -163,42 +166,47 @@ bool Game::executeFirstJob(){
                     }
                 }
 			}
-			else{
+			else{ //C'è qualcosa da rimuovere
+
 				//all moves may now be out-dated - flush the moves list
 				if (!m_availableMoves.isEmpty()){
 					m_availableMoves.clear();
 				}
 				//Controllo se sto swappando e dato che lo swap ha avuto successo
-				// incremento il numero di mosse
+				// incremento il numero di mosse ed elimino la selezione
 				if(!m_swappingDiamonds.isEmpty()){
                     m_gameState->updateMovesLeft();
                     m_swappingDiamonds.clear();
+                    m_board->clearSelection();
 				}
+				//
 //				//report to Game
 				m_gameState->addPoints(diamondsToRemove.size());
 				//invoke remove animation, then fill gaps immediately after the animation
 				foreach (const QPoint& diamondPos, diamondsToRemove)
 					m_board->removeDiamond(diamondPos);
 				m_jobQueue.prepend(Job::FillGapsJob);
-				cout << "DELETED ROW" << endl;
+				//cout << "DELETED ROW" << endl;
 			}
 			break;
 		}
 
 		case Job::FillGapsJob:
+		//cout << "Job::FillGapsJob:" << endl;
 			//fill gaps
 			m_board->fillGaps();
 			m_jobQueue.prepend(Job::RemoveRowsJob); //allow cascades (i.e. clear rows that have been formed by falling diamonds)
 			break;
 
 		case Job::UpdateAvailableMovesJob:
+		//cout <<"Job::UpdateAvailableMovesJob:" << endl;
 			if (m_gameState->state() != State::Finished)
 				getMoves();
 			break;
 
 		case Job::EndGameJob:
+		//cout <<"Job::EndGameJob" << endl;
             m_gameState->setState(State::Finished);
-            m_goalAchieved = m_gameState->points() >= m_gameParams->points();
 			break;
 	}
 
@@ -283,5 +291,9 @@ bool Game::isFinished() const{
 }
 
 bool Game::isWon() const {
-    return m_goalAchieved;
+    return m_gameState->points() >= m_gameParams->points();
+}
+
+int Game::points() const {
+    return m_gameState->points();
 }

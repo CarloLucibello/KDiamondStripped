@@ -1,8 +1,9 @@
 #include <iostream>
 using namespace std;
 
-#include "player.h"
+#include "benchmarksuite.h"
 #include "game.h"
+
 
 
 int main(int argc, char *argv[]){
@@ -12,41 +13,16 @@ int main(int argc, char *argv[]){
         return 1;
     }
 
-    int seed_player = atoll(argv[1]);
-    int seed_board = atoll(argv[2]);
-
-
-    Game* game = new Game;
+    Game * game = new Game();
     game->setMode(Mode::UntimedGame);
-    game->setLevel(0);  //from 0 to 4
-    game->startNewGame(seed_board);
 
+    BenchmarkSuite bench(game);
 
-    Player* player = new Player(game,seed_player);
+    auto res = bench.testLevel(0, 10);
+    cout << res.probWin << endl;
+    cout << res.aveMoves << endl;
+    cout << res.avePoints << endl;
 
-    cout << "***BOARD*****" << endl;
-    game->printBoard();
-    cout << endl;
-    game->getMoves();
-    cout << "***MOVES*****" << endl;
-    game->printMoves();
-    cout << endl;
-
-    player->playRandomMove();
-
-    cout << "***BOARD*****" << endl;
-    game->printBoard();
-    cout << endl;
-
-    game->getMoves();
-    cout << "***MOVES*****" << endl;
-    game->printMoves();
-    cout << endl;
-
-
-
-
-    delete game;
 
     return 0;
 }
