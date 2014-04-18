@@ -12,7 +12,9 @@ BenchmarkResults BenchmarkSuite::testLevel(int level, int niter){
     for(int i = 0; i < niter; i++){
 
         m_game->startNewGame(); //random seed
+        cout << "PARTITA   " << i << endl;
         m_game->printBoard();
+
 
         int step = 0;
         while(!m_game->isFinished()){
