@@ -1,6 +1,6 @@
 #include "board.h"
 
-Board::Board(GameParams * gameParams, UInt8 seed)
+Board::Board(GameParams * gameParams, int seed)
 	: m_size(gameParams->boardSize())
 	, m_colorCount(gameParams->colorCount())
 	, m_diamonds(m_size * m_size, 0)
@@ -14,9 +14,8 @@ Board::Board(GameParams * gameParams, UInt8 seed)
 			//roll the dice to get a color, but ensure that there are not three of a color in a row from the start
 			Color color;
 			while (true){
-				
+
                 color = Color(1+rng.unifInt(m_colorCount));//+1 because numbering of enum KDiamond::Color starts at 1
-                
                 //color = Color(qrand() % m_colorCount + 1); // +1 because numbering of enum KDiamond::Color starts at 1
 				//condition: no triplet in y axis (attention: only the diamonds above us are defined already)
 				if (point.y() >= 2){ //no triplet possible for i = 0, 1
@@ -157,7 +156,7 @@ void Board::fillGaps(){
 			if (diamond)
 				continue; //inside of diamond stack - no gaps to fill
 			--yt;
-			diamond = spawnDiamond(Color(qrand() % m_colorCount + 1));
+			diamond = spawnDiamond(Color(rng.unifInt(m_colorCount) + 1));
 		}
 	}
 }

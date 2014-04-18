@@ -15,8 +15,8 @@ class Board {
 public:
     LinCongRNG rng;
 
-    Board(GameParams* gameParams, UInt8 seed = -1);
-            
+    Board(GameParams* gameParams, int seed = -1);
+
     int gridSize() const;
     Diamond* diamond(const QPoint& point) const;
 

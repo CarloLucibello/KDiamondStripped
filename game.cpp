@@ -14,7 +14,7 @@ Game::~Game(){
 	delete m_gameParams;
 }
 
-void Game::startNewGame(UInt8 seed){
+void Game::startNewGame(int seed){
     m_gameState->startNewGame(m_gameParams);
 
     delete m_board; //si potrebbe riciclare la board per rendere la cosa più efficiente

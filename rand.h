@@ -1,7 +1,7 @@
+#ifndef _RAND_H
+#define _RAND_H
 
 #include <fstream>
-
-
 
 class LinCongRNG {
 public:
@@ -56,7 +56,7 @@ private:
     static constexpr double dmod = 9223372036854775807.;
 };
 
-
+#endif// _RAND_H
 
 
 
