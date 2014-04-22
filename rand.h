@@ -28,7 +28,7 @@ public:
 
     void setSeed(int seed){
         if(seed <= 0){
-            seed = randomSeed();
+            state = randomSeed();
         } else {
             state = seed;
         }

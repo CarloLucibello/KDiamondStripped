@@ -3,6 +3,7 @@
 
 #include "game.h"
 #include "player.h"
+#include "observable.h"
 
 class BenchmarkResults{
 public:
@@ -10,15 +11,15 @@ public:
     int niter;
 
     //OSSERVABILI
-    double probWin;  //probabilità di superare il livello
-    double aveMoves;  //numero medio di passi che ci voglio a raggiungere l'obiettivo punteggio
-    double avePoints;  //puteggio medio ottenuto nel numero di mosse concesso
+    Observable probWin;  //probabilità di superare il livello
+    Observable aveMoves;  //numero medio di passi che ci voglio a raggiungere l'obiettivo punteggio
+    Observable avePoints;  //puteggio medio ottenuto nel numero di mosse concesso
 };
 
 class BenchmarkSuite{
 public:
     BenchmarkSuite(Game* game);
-    BenchmarkResults testLevel(int level, int niter = 100);
+    BenchmarkResults testLevel(int level, int niter = 1000);
 
 private:
     Game* m_game;

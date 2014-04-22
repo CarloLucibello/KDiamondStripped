@@ -12,8 +12,8 @@ BenchmarkResults BenchmarkSuite::testLevel(int level, int niter){
     for(int i = 0; i < niter; i++){
 
         m_game->startNewGame(); //random seed
-        cout << "PARTITA   " << i << endl;
-        m_game->printBoard();
+//        cout << "PARTITA   " << i << endl;
+//        m_game->printBoard();
 
 
         int step = 0;
@@ -28,9 +28,6 @@ BenchmarkResults BenchmarkSuite::testLevel(int level, int niter){
         res.aveMoves += step;
         res.avePoints += m_game->points();
     }
-    res.probWin /= niter;
-    res.aveMoves /= niter;
-    res.avePoints /= niter;
 
     return res;
 }
