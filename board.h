@@ -14,8 +14,9 @@ using namespace std;
 class Board {
 public:
     LinCongRNG rng;
-
-    Board(GameParams* gameParams, int seed = -1);
+    Board();
+    void setParams(const GameParams* gameParams);
+    void startNewGame(int seed = -1);
 
     int gridSize() const;
     Diamond* diamond(const QPoint& point) const;

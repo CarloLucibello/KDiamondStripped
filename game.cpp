@@ -4,9 +4,9 @@
 using namespace std;
 
 Game::Game()
-    : m_board(0)
-	, m_gameState(new GameState)
-	, m_gameParams(new GameParams){}
+	: m_gameState(new GameState)
+	, m_gameParams(new GameParams)
+	, m_board(new Board){}
 
 Game::~Game(){
     delete m_board;
@@ -16,9 +16,8 @@ Game::~Game(){
 
 void Game::startNewGame(int seed){
     m_gameState->startNewGame(m_gameParams);
-
-    delete m_board; //si potrebbe riciclare la board per rendere la cosa più efficiente
-    m_board = new Board(m_gameParams, seed);
+    m_board->setParams(m_gameParams);
+    m_board->startNewGame(seed);
 
     m_jobQueue << Job::UpdateAvailableMovesJob;
     executeJobs();

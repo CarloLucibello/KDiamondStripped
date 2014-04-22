@@ -1,39 +1,44 @@
 #include "board.h"
 
-Board::Board(GameParams * gameParams, int seed)
-	: m_size(gameParams->boardSize())
-	, m_colorCount(gameParams->colorCount())
-	, m_diamonds(m_size * m_size, 0)
-{
+Board::Board(){}
+
+void Board::setParams(const GameParams * gameParams){
+	m_size = gameParams->boardSize();
+	m_colorCount = gameParams->colorCount();
+	m_diamonds.fill(0, m_size * m_size);
+}
+
+void Board::startNewGame(int seed){
     rng.setSeed(seed);
-	for (QPoint point; point.x() < m_size; ++point.rx())
-		for (point.ry() = 0; point.y() < m_size; ++point.ry()){
-			//displacement vectors needed for the following alsynagorithm
-			const QPoint dispY1(0, -1), dispY2(0, -2);
-			const QPoint dispX1(-1, 0), dispX2(-2, 0);
-			//roll the dice to get a color, but ensure that there are not three of a color in a row from the start
-			Color color;
-			while (true){
+    for (QPoint point; point.x() < m_size; ++point.rx()){
+        for (point.ry() = 0; point.y() < m_size; ++point.ry()){
+            //displacement vectors needed for the following alsynagorithm
+            const QPoint dispY1(0, -1), dispY2(0, -2);
+            const QPoint dispX1(-1, 0), dispX2(-2, 0);
+            //roll the dice to get a color, but ensure that there are not three of a color in a row from the start
+            Color color;
+            while (true){
 
                 color = Color(1+rng.unifInt(m_colorCount));//+1 because numbering of enum KDiamond::Color starts at 1
-				//condition: no triplet in y axis (attention: only the diamonds above us are defined already)
-				if (point.y() >= 2){ //no triplet possible for i = 0, 1
-					const Color otherColor1 = diamond(point + dispY1)->color();
-					const Color otherColor2 = diamond(point + dispY2)->color();
-					if (otherColor1 == color && otherColor2 == color)
-						continue; //roll the dice again
-				}
-				//same condition on x axis
-				if (point.x() >= 2){
-					const Color otherColor1 = diamond(point + dispX1)->color();
-					const Color otherColor2 = diamond(point + dispX2)->color();
-					if (otherColor1 == color && otherColor2 == color)
-						continue;
-				}
-				break;
-			}
-			rDiamond(point) = spawnDiamond(color);
-		}
+                //condition: no triplet in y axis (attention: only the diamonds above us are defined already)
+                if (point.y() >= 2){ //no triplet possible for i = 0, 1
+                    const Color otherColor1 = diamond(point + dispY1)->color();
+                    const Color otherColor2 = diamond(point + dispY2)->color();
+                    if (otherColor1 == color && otherColor2 == color)
+                        continue; //roll the dice again
+                }
+                //same condition on x axis
+                if (point.x() >= 2){
+                    const Color otherColor1 = diamond(point + dispX1)->color();
+                    const Color otherColor2 = diamond(point + dispX2)->color();
+                    if (otherColor1 == color && otherColor2 == color)
+                        continue;
+                }
+                break;
+            }
+            rDiamond(point) = spawnDiamond(color);
+        }
+    }
 }
 
 Diamond* Board::spawnDiamond(Color color){
@@ -136,7 +141,7 @@ void Board::fillGaps(){
 			//search for the lowest possible position
 			for (yt = y; yt < m_size - 1; ++yt){
 				if (diamond(QPoint(x, yt + 1)))
-					break; //xt now holds the lowest possible position
+					break; //yt now holds the lowest possible position
 			}
 			rDiamond(QPoint(x, yt)) = diamond(QPoint(x, y));
 			rDiamond(QPoint(x, y)) = 0;
