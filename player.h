@@ -102,7 +102,9 @@ public:
         
         LinCongRNG rng1;
         rng1.setSeed(-1);
-        double r=double(rng1.unifInt())/ 0xFFFFFFFFFFFFFFFFULL;
+        //double r=double(rng1.unifInt())/ 0xFFFFFFFFFFFFFFFFULL;
+        
+        double r=double(rng1.unifInt())/ 9223372036854775807;
         cout << "r= " << r << endl;
         int mossa_scelta;
         if (r<=qi)
