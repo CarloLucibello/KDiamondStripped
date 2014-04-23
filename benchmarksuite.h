@@ -18,6 +18,7 @@ public:
 
 class BenchmarkSuite{
 public:
+    void Singlegame(Game* game, double qi, int numero_mosse=5, LinCongRNG::UInt8 seed_player=-1, LinCongRNG::UInt8 seed_board=-1);
     BenchmarkSuite(Game* game);
     BenchmarkResults testLevel(int level, int niter = 1000);
 

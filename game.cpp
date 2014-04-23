@@ -83,6 +83,18 @@ void Game::getMoves(){
 			}
 		}
 	}
+    
+    //rimuovo ripetizioni nelle mosse
+    
+    for (int m1=0; m1<m_availableMoves.size(); ++m1 ){
+        for (int m2=m1+1; m2<m_availableMoves.size(); ++m2){
+            if (m_availableMoves[m2]==m_availableMoves[m1])
+                m_availableMoves.removeAt(m2);
+        }
+    }
+
+    
+    
 #undef C
 	if (m_availableMoves.isEmpty()){
 		m_board->clearSelection();
