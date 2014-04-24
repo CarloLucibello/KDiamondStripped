@@ -23,7 +23,7 @@ public:
 
     double unifReal(){
         update();
-        return double(state) / dmod;
+        return state / dmod; //dmod è un double
     }
 
     void setSeed(int seed){

@@ -11,12 +11,21 @@
 #include <iostream>  //DEBUG
 using namespace std;
 
+enum class CellMask {
+    BLANK,  //normal cell
+    WALL
+};
+
 class Board {
 public:
     LinCongRNG rng;
     Board();
     void setParams(const GameParams* gameParams);
     void startNewGame(int seed = -1);
+
+    void setMask(int level);
+    CellMask mask(const QPoint& point) const;
+    CellMask& rMask(const QPoint& point);
 
     int gridSize() const;
     Diamond* diamond(const QPoint& point) const;
@@ -46,13 +55,28 @@ public:
     int m_colorCount;
     QList<QPoint> m_selections;
     QVector<Diamond*> m_diamonds;
-    QList<Diamond*> m_activeSelectors, m_inactiveSelectors;
+    QList<Diamond*> m_activeSelectors;
+    QList<Diamond*>  m_inactiveSelectors;
+    QVector<CellMask> m_mask;
 
 //DEBUG FUNCTONS
     void print() const{
-        for(int y = 0; y < m_size; y++){
-            for(int x = 0; x < m_size; x++){
-                cout << int(diamond({x, y})->color()) << " ";
+        for(QPoint point; point.y() < m_size; point.ry()++){
+            for(point.rx() = 0; point.x() < m_size; point.rx()++){
+                if(hasDiamond(point)){
+                    cout << int(diamond(point)->color()) << " ";
+                } else {
+                    cout << "- ";
+                }
+            }
+            cout << endl;
+        }
+    }
+
+    void printMask() const{
+        for(QPoint point; point.y() < m_size; point.ry()++){
+            for(point.rx() = 0; point.x() < m_size; point.rx()++){
+                cout << int(mask(point)) << " ";
             }
             cout << endl;
         }

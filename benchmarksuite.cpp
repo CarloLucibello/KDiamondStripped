@@ -32,36 +32,36 @@ BenchmarkResults BenchmarkSuite::testLevel(int level, int niter){
     return res;
 }
 
-void BenchmarkSuite::Singlegame(Game* game, double qi, int numero_mosse, LinCongRNG::UInt8 seed_player, LinCongRNG::UInt8 seed_board){
-    
+void BenchmarkSuite::singleGame(Game* game, double qi, int numero_mosse, int seed_player, int seed_board){
+
     Player* player = new Player(game, seed_player);
-    
+
     game->setLevel(0);  //from 0 to 4
     game->startNewGame(seed_board);
-    
+
     cout << "***BOARD*****" << endl;
     game->printBoard();
     cout << endl;
 
-    
+
     for (int i=0; i<numero_mosse; ++i){
         game->getMoves();
-        
+
         cout << "numero di mosse possibili: " << game->availMoves().size() << endl;
         //cout << "***MOVES*****" << endl;
         //game->printMoves();
         cout << endl;
-        
-        player->playRandomMove_smarter(qi);
-        
+
+        player->playSmartRandomMove(qi);
+
         cout << endl;
-        
+
         cout << "***BOARD*****" << endl;
         game->printBoard();
         cout << endl;
 
     }
-    
+
 }
 
 

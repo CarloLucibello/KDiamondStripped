@@ -18,7 +18,6 @@ void Game::startNewGame(int seed){
     m_gameState->startNewGame(m_gameParams);
     m_board->setParams(m_gameParams);
     m_board->startNewGame(seed);
-
     m_jobQueue << Job::UpdateAvailableMovesJob;
     executeJobs();
 }
@@ -41,41 +40,55 @@ void Game::getMoves(){
 	for (int x = 0; x < gridSize; ++x){
 		for (int y = 0; y < gridSize; ++y){
 			curColor = C(x, y);
+			if(curColor == Color::Selection) continue;
+
 			if (curColor == C(x + 1, y)){
-				if (curColor == C(x - 2, y))
-					m_availableMoves.append({QPoint(x - 2, y), QPoint(x - 1, y)});
-				if (curColor == C(x - 1, y - 1))
-					m_availableMoves.append({QPoint(x - 1, y - 1), QPoint(x - 1, y)});
-				if (curColor == C(x - 1, y + 1))
-					m_availableMoves.append({QPoint(x - 1, y + 1), QPoint(x - 1, y)});
-				if (curColor == C(x + 3, y))
-					m_availableMoves.append({QPoint(x + 3, y), QPoint(x + 2, y)});
-				if (curColor == C(x + 2, y - 1))
-					m_availableMoves.append({QPoint(x + 2, y - 1), QPoint(x + 2, y)});
-				if (curColor == C(x + 2, y + 1))
-					m_availableMoves.append({QPoint(x + 2, y + 1), QPoint(x + 2, y)});
+                if(C(x - 1, y) != Color::Selection){ //controlla che il diamante si possa posizionare
+                    if (curColor == C(x - 2, y))
+                        m_availableMoves.append({QPoint(x - 2, y), QPoint(x - 1, y)});
+                    if (curColor == C(x - 1, y - 1))
+                        m_availableMoves.append({QPoint(x - 1, y - 1), QPoint(x - 1, y)});
+                    if (curColor == C(x - 1, y + 1))
+                        m_availableMoves.append({QPoint(x - 1, y + 1), QPoint(x - 1, y)});
+                }
+
+                if(C(x + 2, y) != Color::Selection){
+                    if (curColor == C(x + 3, y))
+                        m_availableMoves.append({QPoint(x + 3, y), QPoint(x + 2, y)});
+                    if (curColor == C(x + 2, y - 1))
+                        m_availableMoves.append({QPoint(x + 2, y - 1), QPoint(x + 2, y)});
+                    if (curColor == C(x + 2, y + 1))
+                        m_availableMoves.append({QPoint(x + 2, y + 1), QPoint(x + 2, y)});
+                }
 			}
-			if (curColor == C(x + 2, y)){
+
+			if (curColor == C(x + 2, y) && C(x + 1, y) != Color::Selection){
 				if (curColor == C(x + 1, y - 1))
 					m_availableMoves.append({QPoint(x + 1, y - 1), QPoint(x + 1, y)});
 				if (curColor == C(x + 1, y + 1))
 					m_availableMoves.append({QPoint(x + 1, y + 1), QPoint(x + 1, y)});
 			}
+
 			if (curColor == C(x, y + 1)){
-				if (curColor == C(x, y - 2))
-					m_availableMoves.append({QPoint(x, y - 2), QPoint(x, y - 1)});
-				if (curColor == C(x - 1, y - 1))
-					m_availableMoves.append({QPoint(x - 1, y - 1), QPoint(x, y - 1)});
-				if (curColor == C(x + 1, y - 1))
-					m_availableMoves.append({QPoint(x + 1, y - 1), QPoint(x, y - 1)});
-				if (curColor == C(x, y + 3))
-					m_availableMoves.append({QPoint(x, y + 3), QPoint(x, y + 2)});
-				if (curColor == C(x - 1, y + 2))
-					m_availableMoves.append({QPoint(x - 1, y + 2), QPoint(x, y + 2)});
-				if (curColor == C(x + 1, y + 2))
-					m_availableMoves.append({QPoint(x + 1, y + 2), QPoint(x, y + 2)});
+                if(C(x, y - 1) != Color::Selection){
+                    if (curColor == C(x, y - 2))
+                        m_availableMoves.append({QPoint(x, y - 2), QPoint(x, y - 1)});
+                    if (curColor == C(x - 1, y - 1))
+                        m_availableMoves.append({QPoint(x - 1, y - 1), QPoint(x, y - 1)});
+                    if (curColor == C(x + 1, y - 1))
+                        m_availableMoves.append({QPoint(x + 1, y - 1), QPoint(x, y - 1)});
+                }
+                if(C(x, y + 2) != Color::Selection){
+                    if (curColor == C(x, y + 3))
+                        m_availableMoves.append({QPoint(x, y + 3), QPoint(x, y + 2)});
+                    if (curColor == C(x - 1, y + 2))
+                        m_availableMoves.append({QPoint(x - 1, y + 2), QPoint(x, y + 2)});
+                    if (curColor == C(x + 1, y + 2))
+                        m_availableMoves.append({QPoint(x + 1, y + 2), QPoint(x, y + 2)});
+                }
 			}
-			if (curColor == C(x, y + 2)){
+
+			if (curColor == C(x, y + 2) && C(x, y + 1) != Color::Selection){
 				if (curColor == C(x - 1, y + 1))
 					m_availableMoves.append({QPoint(x - 1, y + 1), QPoint(x, y + 1)});
 				if (curColor == C(x + 1, y + 1))
@@ -83,22 +96,10 @@ void Game::getMoves(){
 			}
 		}
 	}
-    
-    //rimuovo ripetizioni nelle mosse
-    
-    for (int m1=0; m1<m_availableMoves.size(); ++m1 ){
-        for (int m2=m1+1; m2<m_availableMoves.size(); ++m2){
-            if (m_availableMoves[m2]==m_availableMoves[m1])
-                m_availableMoves.removeAt(m2);
-        }
-    }
-
-    
-    
 #undef C
 	if (m_availableMoves.isEmpty()){
 		m_board->clearSelection();
-		m_gameState->setState(State::Finished);
+		m_gameState->setState(State::Finished); //TODO, forse va agginto un EndGameJob
 	}
 }
 
@@ -146,7 +147,7 @@ bool Game::executeFirstJob(){
 	const Job job = m_jobQueue.takeFirst();
 	switch (job){
 		case Job::SwapDiamondsJob: {
-		//cout <<"Job::SwapDiamondsJob" << endl;
+//		cout <<"Job::SwapDiamondsJob" << endl;
 			assert(m_board->selections().count() == 2);
 			const QList<QPoint> points = m_board->selections();
 			m_swappingDiamonds = points;
@@ -156,14 +157,17 @@ bool Game::executeFirstJob(){
 		} //fall through
 
 		case Job::RevokeSwapDiamondsJob:
-		//cout<<"Job::RevokeSwapDiamondsJob" << endl;
+//		cout<<"Job::RevokeSwapDiamondsJob" << endl;
 			//invoke movement
 			m_board->swapDiamonds(m_swappingDiamonds[0], m_swappingDiamonds[1]);
 			break;
 
 		case Job::RemoveRowsJob: {
+//				cout<<"Job::RemoveRowJob" << endl;
 			//find diamond rows and delete these diamonds
 			const QList<QPoint> diamondsToRemove = findCompletedRows();
+//							cout<<"Job::RemoveRowJob1" << endl;
+
 			if (diamondsToRemove.isEmpty()){
 				//no diamond rows were formed by the last move -> revoke movement (unless we are in a cascade)
 				if (!m_swappingDiamonds.isEmpty()){
@@ -203,20 +207,20 @@ bool Game::executeFirstJob(){
 		}
 
 		case Job::FillGapsJob:
-		//cout << "Job::FillGapsJob:" << endl;
+//		cout << "Job::FillGapsJob:" << endl;
 			//fill gaps
 			m_board->fillGaps();
 			m_jobQueue.prepend(Job::RemoveRowsJob); //allow cascades (i.e. clear rows that have been formed by falling diamonds)
 			break;
 
 		case Job::UpdateAvailableMovesJob:
-		//cout <<"Job::UpdateAvailableMovesJob:" << endl;
+//		cout <<"Job::UpdateAvailableMovesJob:" << endl;
 			if (m_gameState->state() != State::Finished)
 				getMoves();
 			break;
 
 		case Job::EndGameJob:
-		//cout <<"Job::EndGameJob" << endl;
+//		cout <<"Job::EndGameJob" << endl;
             m_gameState->setState(State::Finished);
 			break;
 	}
@@ -232,16 +236,18 @@ void Game::executeJobs(){
 }
 
 QList<QPoint> Game::findCompletedRows(){
-	//The tactic of this function is brute-force. For now, I do not have a better idea: A friend of mine advised me to look in the environment of moved diamonds, but this is not easy since the re-filling after a deletion can lead to rows that are far away from the original movement. Therefore, we simply search through all diamonds looking for combinations in the horizonal and vertical direction.
+	//The tactic of this function is brute-force. For now, I do not have a better idea
 	Color currentColor;
 	QList<QPoint> diamonds;
 	int x, y, xh, yh; //counters
 	const int gridSize = m_board->gridSize();
-#define C(X, Y) m_board->diamond(QPoint(X, Y))->color()
+#define C(X, Y) (m_board->hasDiamond(QPoint(X, Y))? m_board->diamond(QPoint(X, Y))->color() : Color::Selection)
 	//searching in horizontal direction
 	for (y = 0; y < gridSize; ++y){
 		for (x = 0; x < gridSize - 2; ++x){ //counter stops at gridSize - 2 to ensure availability of indices x + 1, x + 2
 			currentColor = C(x, y);
+			if(currentColor == Color::Selection)
+                continue;
 			if (currentColor != C(x + 1, y))
 				continue;
 			if (currentColor != C(x + 2, y))
@@ -269,6 +275,8 @@ QList<QPoint> Game::findCompletedRows(){
 	for (x = 0; x < gridSize; ++x){
 		for (y = 0; y < gridSize - 2; ++y){
 			currentColor = C(x, y);
+            if(currentColor == Color::Selection)
+                continue;
 			if (currentColor != C(x, y + 1))
 				continue;
 			if (currentColor != C(x, y + 2))

@@ -52,13 +52,17 @@ public:
 
 //DEBUG FUNCTIONS
     void printBoard(){
+        cout << "### BOARD ####" << endl;
         m_board->print();
+        cout << endl;
     }
 
     void printMoves(){
+        cout << "### MOVES ####" << endl;
         for(auto& m : m_availableMoves){
             cout << m.first.x() << "  " << m.first.y() << " --> " << m.second.x() << "  " << m.second.y() <<  endl;
         }
+        cout << endl;
     }
 
     void printState(){
@@ -68,7 +72,6 @@ public:
     void printParams(){
         m_gameParams->print();
     }
-
 
 };
 
