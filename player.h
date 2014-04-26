@@ -43,7 +43,6 @@ public:
         //devo cercare soltanto lungo il verso conconde allo spostamento.
 
         for (int i = 0; i < moves.size(); ++i){
-
             auto m = moves[i];
 
             QPoint point(m.first.x(), m.first.y());
@@ -110,9 +109,7 @@ public:
             if (count[i] > count[argmax]) argmax = i;
 
         //estraggo un numero random tra 0 e 1 e scelgo se fare la mossa più intelligente in base al qi del giocatore
-
         double r = rng.unifReal();
-        cout << "r= " << r << endl;
         int mossa_scelta = r < qi ? argmax : rng.unifInt(moves.size());
         playMove(mossa_scelta);
     }

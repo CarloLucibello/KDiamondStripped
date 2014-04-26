@@ -19,11 +19,11 @@ public:
 
 private:
     const vector<int> boardSizes = {9, 12, 10, 8, 8, 8 }; //il primo 'e per test
-    const vector<int> boardColorCounts = {5, 5, 5, 5, 6, 7};
+    const vector<int> numColors = {5, 5, 5, 5, 6, 7};
     const vector<int> numMoves = {10, 30, 20, 10, 10, 10};
-    const vector<int> pointsToReach = {80, 30, 20, 10, 10, 10};
+    const vector<int> pointsToReach = {70, 30, 20, 10, 10, 10};
 
-    int m_colorCount;
+    int m_colors;
     int m_size;
     int m_level;
     int m_moves;
@@ -33,7 +33,7 @@ public:
     void print(){
         cout << "**PARAMS******" << endl;
         cout << "level \t" << m_level <<  endl;
-        cout << "colors \t" << m_colorCount <<  endl;
+        cout << "colors \t" << m_colors <<  endl;
         cout << "size \t" << m_size <<  endl;
         cout << "points \t" << m_points <<  endl;
         cout << "moves \t" << m_moves <<  endl;

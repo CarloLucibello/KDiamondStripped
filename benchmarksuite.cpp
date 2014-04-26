@@ -10,8 +10,7 @@ BenchmarkResults BenchmarkSuite::testLevel(int level, int niter){
     m_game->setLevel(level);
 //        m_game->printParams();
     for(int i = 0; i < niter; i++){
-
-        m_game->startNewGame(); //random seed
+        m_game->startNewGame();
 //        cout << "PARTITA   " << i << endl;
 //        m_game->printBoard();
 
@@ -32,33 +31,21 @@ BenchmarkResults BenchmarkSuite::testLevel(int level, int niter){
     return res;
 }
 
-void BenchmarkSuite::singleGame(Game* game, double qi, int numero_mosse, int seed_player, int seed_board){
-
-    Player* player = new Player(game, seed_player);
-
-    game->setLevel(0);  //from 0 to 4
-    game->startNewGame(seed_board);
-
-    cout << "***BOARD*****" << endl;
-    game->printBoard();
-    cout << endl;
-
+void BenchmarkSuite::singleGame(double qi, int numero_mosse, int seedPlayer){
+    Player* player = new Player(m_game, seedPlayer);
+    m_game->setLevel(0);  //from 0 to 4
+    m_game->startNewGame();
+    m_game->printBoard();
 
     for (int i=0; i<numero_mosse; ++i){
-        game->getMoves();
-
-        cout << "numero di mosse possibili: " << game->availMoves().size() << endl;
-        //cout << "***MOVES*****" << endl;
-        //game->printMoves();
+        cout << "numero di mosse possibili: " << m_game->availMoves().size() << endl;
         cout << endl;
+        //game->printMoves();
 
         player->playSmartRandomMove(qi);
-
         cout << endl;
 
-        cout << "***BOARD*****" << endl;
-        game->printBoard();
-        cout << endl;
+        m_game->printBoard();
 
     }
 

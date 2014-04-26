@@ -26,13 +26,13 @@ int GameParams::boardSize() const {
 
 
 int GameParams::colorCount() const {
-    return m_colorCount;
+    return m_colors;
 }
 
 void GameParams::setLevel(const int level){
     m_level = level;
     m_size = boardSizes[level];
-    m_colorCount = boardColorCounts[level];
+    m_colors = numColors[level];
     m_moves = numMoves[level];
     m_points = pointsToReach[level];
 }

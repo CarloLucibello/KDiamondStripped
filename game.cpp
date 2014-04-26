@@ -3,10 +3,10 @@
 #include <cassert>
 using namespace std;
 
-Game::Game()
+Game::Game(int seed)
 	: m_gameState(new GameState)
 	, m_gameParams(new GameParams)
-	, m_board(new Board){}
+	, m_board(new Board(seed)){}
 
 Game::~Game(){
     delete m_board;
@@ -14,15 +14,15 @@ Game::~Game(){
 	delete m_gameParams;
 }
 
-void Game::startNewGame(int seed){
+void Game::startNewGame(){
     m_gameState->startNewGame(m_gameParams);
     m_board->setParams(m_gameParams);
-    m_board->startNewGame(seed);
+    m_board->startNewGame();
     m_jobQueue << Job::UpdateAvailableMovesJob;
     executeJobs();
 }
 
-
+//Funzione attualmente inutile
 void Game::setMode(const Mode mode){
     m_gameState->setMode(mode);
 }
