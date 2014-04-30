@@ -30,7 +30,6 @@ int main(int argc, char *argv[]){
     BenchmarkSuite bench(game);
 
     //questo è per fare una singola partita col giocatore intelligente
-
     bench.singleGame(qi, seedPlayer);
 
 

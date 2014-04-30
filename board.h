@@ -33,6 +33,7 @@ public:
         return Color(1 + m_rng.unifInt(m_numColors));
     }
 
+
 private:
     LinCongRNG m_rng;
     int m_numColors;
@@ -46,7 +47,6 @@ public:
 
 //private:
     double m_bias;
-
 };
 
 class Board {
