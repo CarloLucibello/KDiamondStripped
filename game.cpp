@@ -3,10 +3,10 @@
 #include <cassert>
 using namespace std;
 
-Game::Game()
+Game::Game(int seed)
 	: m_gameState(new GameState)
 	, m_gameParams(new GameParams)
-	, m_board(new Board){}
+	, m_board(new Board(seed)){}
 
 Game::~Game(){
     delete m_board;
@@ -14,15 +14,15 @@ Game::~Game(){
 	delete m_gameParams;
 }
 
-void Game::startNewGame(int seed){
+void Game::startNewGame(){
     m_gameState->startNewGame(m_gameParams);
     m_board->setParams(m_gameParams);
-    m_board->startNewGame(seed);
+    m_board->startNewGame();
     m_jobQueue << Job::UpdateAvailableMovesJob;
     executeJobs();
 }
 
-
+//Funzione attualmente inutile
 void Game::setMode(const Mode mode){
     m_gameState->setMode(mode);
 }
@@ -147,7 +147,7 @@ bool Game::executeFirstJob(){
 	const Job job = m_jobQueue.takeFirst();
 	switch (job){
 		case Job::SwapDiamondsJob: {
-//		cout <<"Job::SwapDiamondsJob" << endl;
+		cout <<"Job::SwapDiamondsJob" << endl;
 			assert(m_board->selections().count() == 2);
 			const QList<QPoint> points = m_board->selections();
 			m_swappingDiamonds = points;
@@ -167,7 +167,7 @@ bool Game::executeFirstJob(){
 			//find diamond rows and delete these diamonds
 			const QList<QPoint> diamondsToRemove = findCompletedRows();
 //							cout<<"Job::RemoveRowJob1" << endl;
-
+//            cout<<"Diamons to remove " << diamondsToRemove.size() << endl;
 			if (diamondsToRemove.isEmpty()){
 				//no diamond rows were formed by the last move -> revoke movement (unless we are in a cascade)
 				if (!m_swappingDiamonds.isEmpty()){
@@ -201,7 +201,7 @@ bool Game::executeFirstJob(){
 				foreach (const QPoint& diamondPos, diamondsToRemove)
 					m_board->removeDiamond(diamondPos);
 				m_jobQueue.prepend(Job::FillGapsJob);
-				//cout << "DELETED ROW" << endl;
+//				printBoard();
 			}
 			break;
 		}
@@ -211,6 +211,7 @@ bool Game::executeFirstJob(){
 			//fill gaps
 			m_board->fillGaps();
 			m_jobQueue.prepend(Job::RemoveRowsJob); //allow cascades (i.e. clear rows that have been formed by falling diamonds)
+//			printBoard();
 			break;
 
 		case Job::UpdateAvailableMovesJob:

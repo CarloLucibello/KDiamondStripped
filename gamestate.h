@@ -45,9 +45,8 @@ class GameState{
         GameStatePrivate* p;
 
         void print(){
-            cout << "**STATE******" << endl;
             cout << "state \t" << int(p->m_state) <<  endl;
-            cout << "points \t" << p->m_points <<  endl;
+            cout << "points \t" << points() <<  endl;
             cout << "movesLeft \t" << p->m_movesLeft <<  endl;
         }
 };

@@ -26,13 +26,24 @@ int GameParams::boardSize() const {
 
 
 int GameParams::colorCount() const {
-    return m_colorCount;
+    return m_colors;
 }
 
-void GameParams::setLevel(const int level){
+bool GameParams::isDiamGenBiased() const {
+    return m_isDiamGenBiased;
+}
+
+
+double GameParams::biasDiamGen() const{
+    return m_biasDiamGen;
+}
+
+void GameParams::setLevel(int level){
     m_level = level;
     m_size = boardSizes[level];
-    m_colorCount = boardColorCounts[level];
+    m_colors = numColors[level];
     m_moves = numMoves[level];
     m_points = pointsToReach[level];
+    m_isDiamGenBiased = isDiamondGeneratorBiased[level];
+    m_biasDiamGen = biasDiamondGenerator[level];
 }

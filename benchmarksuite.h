@@ -18,12 +18,13 @@ public:
 
 class BenchmarkSuite{
 public:
-    void singleGame(Game* game, double qi, int numero_mosse = 5, int seed_player = -1, int seed_board = -1);
     BenchmarkSuite(Game* game);
     BenchmarkResults testLevel(int level, int niter = 1000);
+    void singleGame(double qi, int seedPlayer = -1, bool verbose = true);
+
 
 private:
-    Game* m_game;
+    Game * m_game;
 };
 
 #endif // BENCHMARKSUITE_H

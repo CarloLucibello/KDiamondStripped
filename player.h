@@ -16,20 +16,24 @@ public:
         rng.setSeed(seed);
     };
 
-    void playRandomMove(){
+    void playRandomMove(bool verbose = false){
         const auto& moves = m_game->availMoves();
-        playMove(rng.unifInt(moves.size()));
+        playMove(rng.unifInt(moves.size()), verbose);
     }
 
-    void playMove(int i){
+    void playMove(int i, bool verbose){
         const auto& moves = m_game->availMoves();
         auto m = moves[i % moves.size()];
+        if(verbose){
+            cout << "MOVING : " << m.first.x() << " " << m.first.y() << " --> " << m.second.x() << " " << m.second.y() << endl;
+            cout << endl;
+        }
         m_game->clickDiamond(m.first);
         m_game->clickDiamond(m.second);
-        cout << "MOVING : " << m.first.x() << " " << m.first.y() << " --> " << m.second.x() << " " << m.second.y() << endl;
-    }
 
-    void playSmartRandomMove(double qi){
+   }
+
+    void playSmartRandomMove(double qi, bool verbose = false){
         const auto& moves = m_game->availMoves();
 
         vector<int> count;
@@ -43,7 +47,6 @@ public:
         //devo cercare soltanto lungo il verso conconde allo spostamento.
 
         for (int i = 0; i < moves.size(); ++i){
-
             auto m = moves[i];
 
             QPoint point(m.first.x(), m.first.y());
@@ -110,11 +113,9 @@ public:
             if (count[i] > count[argmax]) argmax = i;
 
         //estraggo un numero random tra 0 e 1 e scelgo se fare la mossa più intelligente in base al qi del giocatore
-
         double r = rng.unifReal();
-        cout << "r= " << r << endl;
         int mossa_scelta = r < qi ? argmax : rng.unifInt(moves.size());
-        playMove(mossa_scelta);
+        playMove(mossa_scelta, verbose);
     }
 
 

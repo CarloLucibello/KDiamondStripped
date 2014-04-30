@@ -25,9 +25,9 @@ enum class Job {
 
 class Game{
 public:
-    Game();
+    Game(int seed);
     ~Game();
-    void startNewGame(int seed = -1);
+    void startNewGame();
     void setMode(const Mode mode);
     void setLevel(const int level);
     void clickDiamond(const QPoint& point);
@@ -66,11 +66,15 @@ public:
     }
 
     void printState(){
+        cout << "### STATE ####" << endl;
         m_gameState->print();
+        cout << endl;
     }
 
     void printParams(){
+        cout << "### PARAMS ####" << endl;
         m_gameParams->print();
+        cout << endl;
     }
 
 };

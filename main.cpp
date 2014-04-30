@@ -8,7 +8,7 @@ using namespace std;
 int main(int argc, char *argv[]){
 
     if (argc!=4){
-        fprintf(stderr, "\nSyntax:\nInserisci il seed_player il seed_board e il qi\n");
+        fprintf(stderr, "\nSyntax:\nInserisci il seedPlayer il seedGame e il qi\n");
         cout << "il qi e' un numero tra 0 e 1 che indica l'intelligenza del giocatore; " << endl;
         cout << "se qi=1, il giocatore sceglie sempre la migliore mossa possibile. " << endl;
 
@@ -16,28 +16,22 @@ int main(int argc, char *argv[]){
     }
 
     int seedPlayer = atoll(argv[1]);
-    int seedBoard = atoll(argv[2]);
+    int seedGame = atoll(argv[2]);
 
     //qi è un numero compreso tra 0 e 1 che indica l'intelligenza del giocatore
     //qi=1 -> giocatore sceglie sempre la mossa migliore da fare
     //qi=0 -> giocatore sceglie sempre una mossa random
-    //in questo caso, i metodi playRandomMove() e playRandomMove_smarter() sono
+    //in questo caso, i metodi playRandomMove() e playSmartRandomMove() sono
     //equivalenti
 
-    double qi=atof(argv[3]);
+    double qi = atof(argv[3]);
 
-    Game * game = new Game();
-    game->setMode(Mode::UntimedGame);
-    game->setLevel(0);
-    game->startNewGame(seedBoard);
-    game->printBoard();
-
+    Game * game = new Game(seedGame);
     BenchmarkSuite bench(game);
 
     //questo è per fare una singola partita col giocatore intelligente
 
-    int numero_di_mosse = 3;
-    bench.singleGame(game, qi, numero_di_mosse, seedPlayer, seedBoard);
+    bench.singleGame(qi, seedPlayer);
 
 
 //
