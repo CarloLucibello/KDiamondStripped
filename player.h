@@ -7,7 +7,13 @@
 
 
 class Player{
-    double qi;
+
+    vector<int> count;
+    vector<int> count_p;
+    vector<int> count_t;
+    
+    QList<QPoint> directions;
+    
 public:
     Game * m_game;
     LinCongRNG rng;
@@ -22,29 +28,87 @@ public:
     }
 
     void playMove(int i, bool verbose){
+        
         const auto& moves = m_game->availMoves();
         auto m = moves[i % moves.size()];
+        
         if(verbose){
             cout << "MOVING : " << m.first.x() << " " << m.first.y() << " --> " << m.second.x() << " " << m.second.y() << endl;
             cout << endl;
         }
+        
+        m_game->mossaSelezionata = m;
+        
+        if (m_game->m_board->diamond(m.first)->color() == Color::JollyScoppiaTutto){
+            m_game->m_board->usoJollySpaccaTutto=1;
+            cout << "USO IL JOLLY SPACCA TUTTO" << endl;
+        }
+        
+        if (count[i]==4){
+            
+            m_game->m_board->creaJollyHorV=1;
+            //questo è il punto in cui devo andare a creare il jolly
+            m_game->m_board->pointJolly=m.second;
+            if (abs(directions[i].x()) > abs(directions[i].y())){
+                if (count_p[i]>count_t[i])
+                {
+                    cout << "CREO CARAMELLA JOLLY ORIZZONTALE" << endl;
+                    m_game->m_board->hOrvFlagJolly=0;
+                }
+                else
+                {
+                    m_game->m_board->hOrvFlagJolly=1;
+                    cout << "CREO CARAMELLA JOLLY VERTICALE" << endl;
+                }
+            }
+            else
+                if (count_p[i]>count_t[i])
+                {
+                    cout << "CREO CARAMELLA JOLLY VERTICALE" << endl;
+                    m_game->m_board->hOrvFlagJolly=1;
+                    
+                }
+                else
+                {
+                    cout << "CREO CARAMELLA JOLLY ORIZZONTALE" << endl;
+                    m_game->m_board->hOrvFlagJolly=0;
+                }
+        }
+        
+        if (count[i]==5){
+            m_game->m_board->creaJollySpaccaTutto=1;
+            m_game->m_board->pointJolly=m.second;
+            cout << "CREO CARAMELLA JOLLY SCOPPIA TUTTO" << endl;
+        }
+
+        
         m_game->clickDiamond(m.first);
         m_game->clickDiamond(m.second);
 
+        
+        count.resize(0);
+        count_p.resize(0);
+        count_t.resize(0);
+        directions.clear();
+      
    }
 
     void playSmartRandomMove(double qi, bool verbose = false){
+        m_game->m_board->creaJollyHorV=0;
+        m_game->m_board->creaJollySpaccaTutto=0;
+        
         const auto& moves = m_game->availMoves();
-
-        vector<int> count;
+        
         count.resize(moves.size());
-
+        count_p.resize(moves.size());
+        count_t.resize(moves.size());
+        
         //per ogni mossa, valuto quante caramelle scoppio
-        //a seconda della direzione della mossa, cerco caramelle uguali a qualla
+        //a seconda della direzione della mossa, cerco caramelle uguali a quella
         //che sto spostando lungo la direzione parallela alla mossa
         //e lungo la direzione trasversa.
         //in quest'ultimo caso cerco in entrambi i versi. nel primo caso
-        //devo cercare soltanto lungo il verso conconde allo spostamento.
+        //devo cercare soltanto lungo il verso concorde allo spostamento.
 
         for (int i = 0; i < moves.size(); ++i){
             auto m = moves[i];
@@ -105,8 +169,14 @@ public:
                 count[i] = count_tra;
             else
                 count[i] = count_par;
+            
+            count_t[i]=count_tra;
+            count_p[i]=count_par;
+            
+            
         }
 
+        
         //cerco la mossa più conveniente da fare:
         int argmax = 0;
         for (int i = 1; i < moves.size(); ++i)
@@ -116,6 +186,12 @@ public:
         double r = rng.unifReal();
         int mossa_scelta = r < qi ? argmax : rng.unifInt(moves.size());
         playMove(mossa_scelta, verbose);
+        
+        if (verbose){
+            cout << "count_tra" << " count_par" << endl;
+            cout << count_t[mossa_scelta] << " " << count_p[mossa_scelta] << endl;
+        }
+        
     }
 
 

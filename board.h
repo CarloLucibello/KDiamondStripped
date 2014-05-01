@@ -51,6 +51,23 @@ public:
 
 class Board {
 public:
+    int sizeDeleted;
+    Color colorDeleted;
+    
+    //queste flag mi dicono se devo creare o no dei jolly
+    bool creaJollyHorV;
+    bool creaJollySpaccaTutto;
+    
+    //queste flag mi dicono se sto usando il jolly spacca tutto
+    bool usoJollySpaccaTutto;
+    
+    //questa flag mi dice se il jolly hOrv (che è quelle che formo dalla linea di 4
+    //caramelle) è verticale o orizzontale
+    int hOrvFlagJolly;
+    
+    //questo è il punto in cui creare il jolly
+    QPoint pointJolly;
+    
     Board(int seed);
     void setParams(const GameParams* gameParams);
     void startNewGame();

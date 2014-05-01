@@ -181,10 +181,40 @@ void Board::swapDiamonds(const QPoint& point1, const QPoint& point2){
 }
 
 void Board::fillGaps(){
+    
+    
+    //se scoppio 4 caramelle, ricreo subito la caramella jolly,
+    //nel punto in cui sposto la caramella
+    //che ho selezionato e mosso.
+    
+    //oss: se nelle valanghe si formano delle righe di 4 o 5 caramelle, vengono
+    //creati dei jolly? se si, in che punto? (quando è il giocatore a fare una
+    //mossa che porta alla creazione di un jolly, il jolly viene creato nel punto
+    //in cui spostiamo la caramella selezionata)
+    //per ora assumo che la risposta è no.
+    
+    if (creaJollyHorV){
+        Diamond* diamondJolly;
+        cout << "creo Jolly O-V in " << pointJolly.x() << " " << pointJolly.y() << endl;
+        if (hOrvFlagJolly==0) diamondJolly = spawnDiamond(Color(int(colorDeleted)+8));
+        if (hOrvFlagJolly==1) diamondJolly = spawnDiamond(Color(int(colorDeleted)+15));
+        rDiamond(pointJolly) = diamondJolly;
+        creaJollyHorV=0;
+    }
+    
+    if (creaJollySpaccaTutto){
+        Diamond* diamondJolly;
+        cout << "creo Jolly SpaccaTutto in " << pointJolly.x() << " " << pointJolly.y() << endl;
+        diamondJolly = spawnDiamond(Color(23));
+        rDiamond(pointJolly) = diamondJolly;
+        creaJollySpaccaTutto=0;
+    }
+    
 	//fill gaps
 	for (int x = 0; x < m_size; ++x){
 //		We have to search from the bottom of the column. Exclude the lowest element (x = m_size - 1) because it cannot move down.
 		for (int y = m_size - 2; y >= 0; --y){
+            
 			if (!diamond(QPoint(x, y))) //c'è un gap o un WALL
 //				no need to move gaps -> these are moved later
 				continue;
@@ -227,6 +257,10 @@ void Board::fillGaps(){
 			if (diamond || mask(QPoint(x, y)) == CellMask::WALL)
 				continue; //inside of diamond stack - no gaps to fill
 			diamond = spawnDiamond(m_randcol->gen());
+            
+            cout << "SIZE: " << sizeDeleted << endl;
+            cout << "colore caramella creata: " << int(diamond->color()) << " in " << x << " " << y << endl;
+            
 		}
 	}
 }

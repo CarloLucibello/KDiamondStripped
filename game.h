@@ -25,6 +25,8 @@ enum class Job {
 
 class Game{
 public:
+    pair<QPoint,QPoint> mossaSelezionata;
+    bool UseJollyHorV(const int x, const int y, int shift) const;
     Game(int seed);
     ~Game();
     void startNewGame();
@@ -44,6 +46,13 @@ public:
 
     QList<Job> m_jobQueue;
     QList<pair<QPoint,QPoint>> m_availableMoves;
+    
+    QList<pair<QPoint,QPoint>> m_availableMovesJ_spaccatutto;
+    QList<pair<QPoint,QPoint>> m_availableMovesJ_H;
+    QList<pair<QPoint,QPoint>> m_availableMovesJ_V;
+
+    
+    
     QList<QPoint> m_swappingDiamonds;
     Board* m_board;
     GameState* m_gameState;
