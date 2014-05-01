@@ -193,22 +193,22 @@ void Board::fillGaps(){
     //in cui spostiamo la caramella selezionata)
     //per ora assumo che la risposta è no.
     
+    
     if (creaJollyHorV){
-        Diamond* diamondJolly;
+        Diamond*& diamondJolly = this->rDiamond(pointJolly);
         cout << "creo Jolly O-V in " << pointJolly.x() << " " << pointJolly.y() << endl;
         if (hOrvFlagJolly==0) diamondJolly = spawnDiamond(Color(int(colorDeleted)+8));
         if (hOrvFlagJolly==1) diamondJolly = spawnDiamond(Color(int(colorDeleted)+15));
-        rDiamond(pointJolly) = diamondJolly;
         creaJollyHorV=0;
     }
     
     if (creaJollySpaccaTutto){
-        Diamond* diamondJolly;
+        Diamond*& diamondJolly = this->rDiamond(pointJolly);
         cout << "creo Jolly SpaccaTutto in " << pointJolly.x() << " " << pointJolly.y() << endl;
         diamondJolly = spawnDiamond(Color(23));
-        rDiamond(pointJolly) = diamondJolly;
         creaJollySpaccaTutto=0;
     }
+    
     
 	//fill gaps
 	for (int x = 0; x < m_size; ++x){

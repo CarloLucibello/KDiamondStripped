@@ -98,7 +98,30 @@ public:
         m_game->m_board->creaJollySpaccaTutto=0;
         
         const auto& moves = m_game->availMoves();
+
+        const auto& movesJ_spaccatutto = m_game->availMovesJ_spaccatutto();
+        const auto& movesJ_H = m_game->availMovesJ_H();
+        const auto& movesJ_V = m_game->availMovesJ_V();
         
+        
+        
+        /*
+         
+        // se c'è un jolly spacca tutto lo uso 
+        if (movesJ_spaccatutto.size()>0){
+            
+            int i_mossa=rng.unifInt(4*movesJ_spaccatutto.size());
+            auto m = moves[i_mossa];
+            
+            QPoint point(m.first.x(), m.first.y());
+            QPoint dir(m.second.x() - m.first.x(), m.second.y() - m.first.y());
+            
+            directions.append(dir);
+            
+        }
+        
+        */
+         
         count.resize(moves.size());
         count_p.resize(moves.size());
         count_t.resize(moves.size());
@@ -110,12 +133,16 @@ public:
         //in quest'ultimo caso cerco in entrambi i versi. nel primo caso
         //devo cercare soltanto lungo il verso concorde allo spostamento.
 
+
+        
         for (int i = 0; i < moves.size(); ++i){
             auto m = moves[i];
 
             QPoint point(m.first.x(), m.first.y());
             QPoint dir(m.second.x() - m.first.x(), m.second.y() - m.first.y());
 
+            directions.append(dir);
+            
             int size = m_game->m_board->m_size;
             auto board = m_game->m_board;
             int n = 2; //parte da due perché viene spostato
