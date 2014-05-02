@@ -32,11 +32,6 @@ public:
         const auto& moves = m_game->availMoves();
         auto m = moves[i % moves.size()];
         
-        if(verbose){
-            cout << "MOVING : " << m.first.x() << " " << m.first.y() << " --> " << m.second.x() << " " << m.second.y() << endl;
-            cout << endl;
-        }
-        
         m_game->mossaSelezionata = m;
         
         if (m_game->m_board->diamond(m.first)->color() == Color::JollyScoppiaTutto){
@@ -102,14 +97,11 @@ public:
         const auto& movesJ_spaccatutto = m_game->availMovesJ_spaccatutto();
         const auto& movesJ_H = m_game->availMovesJ_H();
         const auto& movesJ_V = m_game->availMovesJ_V();
-        
-        
-        
-        /*
          
         // se c'è un jolly spacca tutto lo uso 
+        /*
         if (movesJ_spaccatutto.size()>0){
-            
+        
             int i_mossa=rng.unifInt(4*movesJ_spaccatutto.size());
             auto m = moves[i_mossa];
             
@@ -117,9 +109,10 @@ public:
             QPoint dir(m.second.x() - m.first.x(), m.second.y() - m.first.y());
             
             directions.append(dir);
-            
+         
+             
         }
-        
+         
         */
          
         count.resize(moves.size());
@@ -212,12 +205,15 @@ public:
         //estraggo un numero random tra 0 e 1 e scelgo se fare la mossa più intelligente in base al qi del giocatore
         double r = rng.unifReal();
         int mossa_scelta = r < qi ? argmax : rng.unifInt(moves.size());
-        playMove(mossa_scelta, verbose);
         
         if (verbose){
-            cout << "count_tra" << " count_par" << endl;
-            cout << count_t[mossa_scelta] << " " << count_p[mossa_scelta] << endl;
+            
+            auto m = moves[mossa_scelta];
+            cout << "MOVING : " << m.first.x() << " " << m.first.y() << " --> " << m.second.x() << " " << m.second.y() << endl;            
+            cout << "count_tra= " << count_t[mossa_scelta] << " count_par= " << count_p[mossa_scelta] << endl;
         }
+        
+        playMove(mossa_scelta, verbose);
         
     }
 
