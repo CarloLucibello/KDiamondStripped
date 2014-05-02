@@ -43,6 +43,9 @@ public:
     QList<QPoint> findCompletedRows();
     void getMoves();
     const QList<pair<QPoint,QPoint>>& availMoves() const;
+    const QList<pair<QPoint,QPoint>>& availMovesJ_spaccatutto() const;
+    const QList<pair<QPoint,QPoint>>& availMovesJ_H() const;
+    const QList<pair<QPoint,QPoint>>& availMovesJ_V() const;
 
     QList<Job> m_jobQueue;
     QList<pair<QPoint,QPoint>> m_availableMoves;

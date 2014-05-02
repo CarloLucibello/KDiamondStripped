@@ -357,18 +357,17 @@ void Game::getMoves(){
         
 	}
     
+    /*
     cout << "sizes1: " << endl;
     cout << m_availableMoves.size() << endl;
     cout << m_availableMovesJ_spaccatutto.size() << endl;
     cout << m_availableMovesJ_V.size() << endl;
     cout << m_availableMovesJ_H.size() << endl;
+    */
     
     m_availableMoves.append(m_availableMovesJ_spaccatutto);
     m_availableMoves.append(m_availableMovesJ_V);
     m_availableMoves.append(m_availableMovesJ_H);
-    
-    cout << "sizes2: " << endl;
-    cout << m_availableMoves.size() << endl;
     
     
 #undef C
@@ -485,7 +484,7 @@ bool Game::executeFirstJob(){
 		}
 
 		case Job::FillGapsJob:
-//		cout << "Job::FillGapsJob:" << endl;
+		cout << "Job::FillGapsJob:" << endl;
 			//fill gaps
 			m_board->fillGaps();
 			m_jobQueue.prepend(Job::RemoveRowsJob); //allow cascades (i.e. clear rows that have been formed by falling diamonds)
@@ -580,6 +579,8 @@ QList<QPoint> Game::findCompletedRows(){
     
     if (!m_board->usoJollySpaccaTutto){
     
+        cout << "CIAOOOOOO" << endl;
+        
         for (y = 0; y < gridSize; ++y){
             for (x = 0; x < gridSize - 2; ++x){ //counter stops at gridSize - 2 to ensure availability of indices x + 1, x + 2
                 currentColor = C(x, y);
@@ -593,6 +594,9 @@ QList<QPoint> Game::findCompletedRows(){
                 diamonds << QPoint(x, y);
                 diamonds << QPoint(x + 1, y);
                 diamonds << QPoint(x + 2, y);
+                
+                cout << "DIAMONDS SIZE: " << diamonds.size() << " at " << x << " " << y << endl;
+                
                 //Does the row have even more elements?
                 if (x + 3 >= gridSize){
                     //impossible to locate more diamonds - do not go through the following loop
@@ -658,6 +662,18 @@ QList<QPoint> Game::findCompletedRows(){
 
 const QList<pair<QPoint,QPoint>>& Game::availMoves() const{
     return m_availableMoves;
+}
+
+const QList<pair<QPoint,QPoint>>& Game::availMovesJ_spaccatutto() const{
+    return m_availableMovesJ_spaccatutto;
+}
+
+const QList<pair<QPoint,QPoint>>& Game::availMovesJ_H() const{
+    return m_availableMovesJ_H;
+}
+
+const QList<pair<QPoint,QPoint>>& Game::availMovesJ_V() const{
+    return m_availableMovesJ_V;
 }
 
 bool Game::isFinished() const{
