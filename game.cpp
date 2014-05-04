@@ -48,9 +48,23 @@ void Game::getMoves(){
                     auto rH2 = findFigureRowH(dest);
                     auto rV1 = findFigureRowV(point);
                     auto rV2 = findFigureRowV(dest);
-                    if(rH1.size() > 2 || rH2.size() > 2
-                        || rV1.size() > 2 || rV2.size() > 2){
-                        m_availableMoves.append({point, dest});
+
+                    //se la mossa ha successo
+                    if(rH1.size() >= 2 || rV1.size() >= 2
+                            || rH2.size() >= 2 || rV2.size() >= 2){
+                        Move m(point, dest);
+                        if(rH1.size() >= 2 || rV1.size() >= 2){
+                            swap(m.m_from, m.m_to);
+                            m.m_toDelete.append(point);
+                            m.m_toDelete += rH1;
+                            m.m_toDelete += rV1;
+                        }
+                        if(rH2.size() >= 2 || rV2.size() >= 2){
+                            m.m_toDelete.append(dest);
+                            m.m_toDelete += rH2;
+                            m.m_toDelete += rV2;
+                        }
+                        m_availableMoves.append(m);
                     }
                     m_board->swapDiamonds(point, dest);
                 }
@@ -64,12 +78,12 @@ void Game::getMoves(){
 	}
 }
 
-//ritorna la riga verticale contenente il punto
+//ritorna la riga verticale contenente il punto (escluso il punto stesso)
 QVector<QPoint> Game::findFigureRowV(const QPoint& point){
     QVector<QPoint> row;
     #define C(X, Y) (m_board->hasDiamond(QPoint(X, Y)) ? m_board->diamond(QPoint(X, Y))->color() : Color::Selection)
     Color currColor = m_board->diamond(point)->color();  //ATTENZIONE Non controllo che il colore sia valido (!=Selection)
-    int yt = point.y();
+    int yt = point.y() + 1;
     const int x = point.x();
     while(C(x, yt) == currColor){ //ciclo verso il basso
         row.append(QPoint(x, yt));
@@ -85,12 +99,12 @@ QVector<QPoint> Game::findFigureRowV(const QPoint& point){
     return row;
 }
 
-//ritorna la riga orizzontale contenente il punto
+//ritorna la riga orizzontale contenente il punto (escluso il punto stesso)
 QVector<QPoint> Game::findFigureRowH(const QPoint& point){
     QVector<QPoint> row;
     #define C(X, Y) (m_board->hasDiamond(QPoint(X, Y)) ? m_board->diamond(QPoint(X, Y))->color() : Color::Selection)
     Color currColor = m_board->diamond(point)->color();  //ATTENZIONE Non controllo che il colore sia valido (!=Selection)
-    int xt = point.x();
+    int xt = point.x() + 1;
     const int y = point.y();
     while(C(xt, y) == currColor){ //ciclo verso destra
         row.append(QPoint(xt, y));

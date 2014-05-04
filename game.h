@@ -44,6 +44,11 @@ public:
         return m_toDelete;
     }
 
+    int numToDelete() const{
+        return m_toDelete.size();
+    }
+
+
 private:
     QPoint m_from;
     QPoint m_to;
