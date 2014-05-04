@@ -183,7 +183,7 @@ bool Game::executeFirstJob(){
 		case Job::RemoveRowsJob: {
 //				cout<<"Job::RemoveRowJob" << endl;
 			//find diamond rows and delete these diamonds
-			const QList<QPoint> diamondsToRemove = findCompletedRows();
+			const QVector<QPoint> diamondsToRemove = findFigures();
 //							cout<<"Job::RemoveRowJob1" << endl;
 //            cout<<"Diamons to remove " << diamondsToRemove.size() << endl;
 			if (diamondsToRemove.isEmpty()){
@@ -216,7 +216,7 @@ bool Game::executeFirstJob(){
 //				//report to Game
 				m_gameState->addPoints(diamondsToRemove.size());
 				//invoke remove animation, then fill gaps immediately after the animation
-				foreach (const QPoint& diamondPos, diamondsToRemove)
+				for(const QPoint& diamondPos: diamondsToRemove)
 					m_board->removeDiamond(diamondPos);
 				m_jobQueue.prepend(Job::FillGapsJob);
 //				printBoard();
@@ -254,71 +254,100 @@ void Game::executeJobs(){
     }
 }
 
-QList<QPoint> Game::findCompletedRows(){
-	//The tactic of this function is brute-force. For now, I do not have a better idea
-	Color currentColor;
-	QList<QPoint> diamonds;
-	int x, y, xh, yh; //counters
+QVector<QPoint> Game::findFigures(){
+	QVector<QPoint> diamonds;
 	const int gridSize = m_board->gridSize();
-#define C(X, Y) (m_board->hasDiamond(QPoint(X, Y))? m_board->diamond(QPoint(X, Y))->color() : Color::Selection)
-	//searching in horizontal direction
-	for (y = 0; y < gridSize; ++y){
-		for (x = 0; x < gridSize - 2; ++x){ //counter stops at gridSize - 2 to ensure availability of indices x + 1, x + 2
-			currentColor = C(x, y);
-			if(currentColor == Color::Selection)
-                continue;
-			if (currentColor != C(x + 1, y))
-				continue;
-			if (currentColor != C(x + 2, y))
-				continue;
-			//If the execution is here, we have found a row of three diamonds starting at (x,y).
-			diamonds << QPoint(x, y);
-			diamonds << QPoint(x + 1, y);
-			diamonds << QPoint(x + 2, y);
-			//Does the row have even more elements?
-			if (x + 3 >= gridSize){
-				//impossible to locate more diamonds - do not go through the following loop
-				x += 2;
-				continue;
-			}
-			for (xh = x + 3; xh <= gridSize - 1; ++xh){
-				if (currentColor == C(xh, y))
-					diamonds << QPoint(xh, y);
-				else
-					break; //row has stopped before this diamond - no need to continue searching
-			}
-			x = xh - 1; //do not search at this position in the row anymore (add -1 because x is incremented before the next loop)
-		}
+	QVector<bool> inFigure(gridSize * gridSize, false);
+	for (QPoint point; point.x() < gridSize; ++point.rx()){
+		for (point.ry() = 0; point.y() < gridSize ; ++point.ry()){
+            if(m_board->hasDiamond(point) && !inFigure[point.x() + gridSize * point.y()]){
+                auto rH = findFigureRowH(point);
+                auto rV = findFigureRowV(point);
+                if(rH.size() >= 2 || rV.size() >= 2){
+                    diamonds.append(point);
+                    inFigure[point.x() + gridSize * point.y()] = true;
+                    diamonds += rH;
+                    for(auto& p : rH){
+                        inFigure[p.x() + gridSize * p.y()] = true;
+                    }
+
+                    diamonds += rV;
+                    for(auto& p : rV){
+                        inFigure[p.x() + gridSize * p.y()] = true;
+                    }
+                }
+            }
+        }
 	}
-	//searching in vertical direction (essentially the same algorithm, just with swapped indices -> no comments here, read the comments above)
-	for (x = 0; x < gridSize; ++x){
-		for (y = 0; y < gridSize - 2; ++y){
-			currentColor = C(x, y);
-            if(currentColor == Color::Selection)
-                continue;
-			if (currentColor != C(x, y + 1))
-				continue;
-			if (currentColor != C(x, y + 2))
-				continue;
-			diamonds << QPoint(x, y);
-			diamonds << QPoint(x, y + 1);
-			diamonds << QPoint(x, y + 2);
-			if (y + 3 >= gridSize){
-				y += 2;
-				continue;
-			}
-			for (yh = y + 3; yh <= gridSize - 1; ++yh){
-				if (currentColor == C(x, yh))
-					diamonds << QPoint(x, yh);
-				else
-					break;
-			}
-			y = yh - 1;
-		}
-	}
-#undef C
 	return diamonds;
 }
+
+//Sostituito da find figures
+//QList<QPoint> Game::findCompletedRows(){
+//	//The tactic of this function is brute-force. For now, I do not have a better idea
+//	Color currentColor;
+//	QList<QPoint> diamonds;
+//	int x, y, xh, yh; //counters
+//	const int gridSize = m_board->gridSize();
+//#define C(X, Y) (m_board->hasDiamond(QPoint(X, Y))? m_board->diamond(QPoint(X, Y))->color() : Color::Selection)
+//	//searching in horizontal direction
+//	for (y = 0; y < gridSize; ++y){
+//		for (x = 0; x < gridSize - 2; ++x){ //counter stops at gridSize - 2 to ensure availability of indices x + 1, x + 2
+//			currentColor = C(x, y);
+//			if(currentColor == Color::Selection)
+//                continue;
+//			if (currentColor != C(x + 1, y))
+//				continue;
+//			if (currentColor != C(x + 2, y))
+//				continue;
+//			//If the execution is here, we have found a row of three diamonds starting at (x,y).
+//			diamonds << QPoint(x, y);
+//			diamonds << QPoint(x + 1, y);
+//			diamonds << QPoint(x + 2, y);
+//			//Does the row have even more elements?
+//			if (x + 3 >= gridSize){
+//				//impossible to locate more diamonds - do not go through the following loop
+//				x += 2;
+//				continue;
+//			}
+//			for (xh = x + 3; xh <= gridSize - 1; ++xh){
+//				if (currentColor == C(xh, y))
+//					diamonds << QPoint(xh, y);
+//				else
+//					break; //row has stopped before this diamond - no need to continue searching
+//			}
+//			x = xh - 1; //do not search at this position in the row anymore (add -1 because x is incremented before the next loop)
+//		}
+//	}
+//	//searching in vertical direction (essentially the same algorithm, just with swapped indices -> no comments here, read the comments above)
+//	for (x = 0; x < gridSize; ++x){
+//		for (y = 0; y < gridSize - 2; ++y){
+//			currentColor = C(x, y);
+//            if(currentColor == Color::Selection)
+//                continue;
+//			if (currentColor != C(x, y + 1))
+//				continue;
+//			if (currentColor != C(x, y + 2))
+//				continue;
+//			diamonds << QPoint(x, y);
+//			diamonds << QPoint(x, y + 1);
+//			diamonds << QPoint(x, y + 2);
+//			if (y + 3 >= gridSize){
+//				y += 2;
+//				continue;
+//			}
+//			for (yh = y + 3; yh <= gridSize - 1; ++yh){
+//				if (currentColor == C(x, yh))
+//					diamonds << QPoint(x, yh);
+//				else
+//					break;
+//			}
+//			y = yh - 1;
+//		}
+//	}
+//#undef C
+//	return diamonds;
+//}
 
 const QVector<Move>& Game::availMoves() const{
     return m_availableMoves;

@@ -71,7 +71,8 @@ public:
     bool isFinished() const;
     bool isWon() const;
 //  private:
-    QList<QPoint> findCompletedRows();
+//    QList<QPoint> findCompletedRows();
+    QVector<QPoint> findFigures();
     QVector<QPoint> findFigureRowH(const QPoint& point);
     QVector<QPoint> findFigureRowV(const QPoint& point);
 

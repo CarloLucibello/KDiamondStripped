@@ -115,8 +115,11 @@ bool Board::isOccupable(const QPoint& point) const{
 	return isInBoard && mask(point) == CellMask::BLANK;
 }
 
+
 bool Board::hasDiamond(const QPoint& point) const{
 	return isOccupable(point) && diamond(point) != 0;
+    //In teoria se tutto è stato fatto bene si potrebbe sostituire con il semplce
+    // return  diamond(point) != 0;
 }
 
 QList<QPoint> Board::selections() const{

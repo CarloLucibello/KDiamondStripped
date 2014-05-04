@@ -30,7 +30,6 @@ public:
         }
         m_game->clickDiamond(m.from());
         m_game->clickDiamond(m.to());
-
    }
 
     void playSmartRandomMove(double qi, bool verbose = false){
