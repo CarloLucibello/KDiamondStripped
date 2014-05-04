@@ -51,9 +51,6 @@ public:
         int mossa_scelta = r < qi ? argmax : rng.unifInt(moves.size());
         playMove(mossa_scelta, verbose);
     }
-
-
-
 };
 
 #endif // PLAYER_H
