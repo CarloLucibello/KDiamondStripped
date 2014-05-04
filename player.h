@@ -25,11 +25,11 @@ public:
         const auto& moves = m_game->availMoves();
         auto m = moves[i % moves.size()];
         if(verbose){
-            cout << "MOVING : " << m.first.x() << " " << m.first.y() << " --> " << m.second.x() << " " << m.second.y() << endl;
+            cout << "MOVING : " << m.from().x() << " " << m.from().y() << " --> " << m.to().x() << " " << m.to().y() << endl;
             cout << endl;
         }
-        m_game->clickDiamond(m.first);
-        m_game->clickDiamond(m.second);
+        m_game->clickDiamond(m.from());
+        m_game->clickDiamond(m.to());
 
    }
 
@@ -40,7 +40,7 @@ public:
         count.resize(moves.size());
 
         //per ogni mossa, valuto quante caramelle scoppio
-        //a seconda della direzione della mossa, cerco caramelle uguali a qualla
+        //a  seconda della direzione della mossa, cerco caramelle uguali a qualla
         //che sto spostando lungo la direzione parallela alla mossa
         //e lungo la direzione trasversa.
         //in quest'ultimo caso cerco in entrambi i versi. nel primo caso
@@ -49,8 +49,8 @@ public:
         for (int i = 0; i < moves.size(); ++i){
             auto m = moves[i];
 
-            QPoint point(m.first.x(), m.first.y());
-            QPoint dir(m.second.x() - m.first.x(), m.second.y() - m.first.y());
+            QPoint point(m.from().x(), m.from().y());
+            QPoint dir(m.to().x() - m.from().x(), m.to().y() - m.from().y());
 
             int size = m_game->m_board->m_size;
             auto board = m_game->m_board;

@@ -35,20 +35,21 @@ void Game::setLevel(const int level){
 void Game::getMoves(){
 	m_availableMoves.clear();
 	const int gridSize = m_board->gridSize();
-	for (QPoint point; point.x() < gridSize; ++point.rx()){
-		for (point.ry() = 0; point.y() < gridSize; ++point.ry()){
+	for (QPoint point; point.x() < gridSize - 1; ++point.rx()){
+		for (point.ry() = 0; point.y() < gridSize - 1; ++point.ry()){
 			if(!m_board->hasDiamond(point)) continue;
-
-            QVector<QPoint> destinations = {point + QPoint(1, 0)
-                            , point + QPoint(-1, 0)
-                            , point + QPoint(0, 1)
-                            , point + QPoint(0, -1)};
+             //guardo solo a sinistra e in basso, gli altri casi sono considerati
+             //dagli altri punti
+            QVector<QPoint> destinations = {point + QPoint(1, 0), point + QPoint(0, 1)};
             for(auto dest : destinations){
                 if(m_board->hasDiamond(dest)){
-                    m_board->swapDiamonds(point, dest);
-                    auto rH = findFigureRowH(dest);
-                    auto rV = findFigureRowV(dest);
-                    if(rH.size() > 2 || rV.size() > 2){
+                    m_board->swapDiamonds(point, dest); //ATTENZIONE questo swap non deve produrre animazioni
+                    auto rH1 = findFigureRowH(point);
+                    auto rH2 = findFigureRowH(dest);
+                    auto rV1 = findFigureRowV(point);
+                    auto rV2 = findFigureRowV(dest);
+                    if(rH1.size() > 2 || rH2.size() > 2
+                        || rV1.size() > 2 || rV2.size() > 2){
                         m_availableMoves.append({point, dest});
                     }
                     m_board->swapDiamonds(point, dest);
@@ -305,7 +306,7 @@ QList<QPoint> Game::findCompletedRows(){
 	return diamonds;
 }
 
-const QList<pair<QPoint,QPoint>>& Game::availMoves() const{
+const QVector<Move>& Game::availMoves() const{
     return m_availableMoves;
 }
 

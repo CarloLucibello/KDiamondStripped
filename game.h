@@ -23,6 +23,33 @@ enum class Job {
     EndGameJob //announce end of game
 };
 
+class Move{
+    friend class Game;
+public:
+    Move(){}
+
+    Move(const QPoint& from, const QPoint& to)
+        : m_from(from)
+        , m_to(to){}
+
+    QPoint from() const{
+        return m_from;
+    }
+
+    QPoint to() const {
+        return m_to;
+    }
+
+    const QVector<QPoint>& toDelete(){
+        return m_toDelete;
+    }
+
+private:
+    QPoint m_from;
+    QPoint m_to;
+    QVector<QPoint> m_toDelete;
+};
+
 
 class Game{
 public:
@@ -44,10 +71,10 @@ public:
     QVector<QPoint> findFigureRowV(const QPoint& point);
 
     void getMoves();
-    const QList<pair<QPoint,QPoint>>& availMoves() const;
+    const QVector<Move>& availMoves() const;
 
     QList<Job> m_jobQueue;
-    QList<pair<QPoint,QPoint>> m_availableMoves;
+    QVector<Move> m_availableMoves;
     QList<QPoint> m_swappingDiamonds;
     Board* m_board;
     GameState* m_gameState;
@@ -64,7 +91,7 @@ public:
     void printMoves(){
         cout << "### MOVES ####" << endl;
         for(auto& m : m_availableMoves){
-            cout << m.first.x() << "  " << m.first.y() << " --> " << m.second.x() << "  " << m.second.y() <<  endl;
+            cout << m.from().x() << "  " << m.from().y() << " --> " << m.to().x() << "  " << m.to().y() <<  endl;
         }
         cout << endl;
     }
