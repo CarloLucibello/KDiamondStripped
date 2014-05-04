@@ -33,75 +33,78 @@ void Game::setLevel(const int level){
 
 //Checks amount of possible moves remaining
 void Game::getMoves(){
-#define C(X, Y) (m_board->hasDiamond(QPoint(X, Y)) ? m_board->diamond(QPoint(X, Y))->color() : Color::Selection)
 	m_availableMoves.clear();
-	Color curColor;
 	const int gridSize = m_board->gridSize();
-	for (int x = 0; x < gridSize; ++x){
-		for (int y = 0; y < gridSize; ++y){
-			curColor = C(x, y);
-			if(curColor == Color::Selection) continue;
+	for (QPoint point; point.x() < gridSize; ++point.rx()){
+		for (point.ry() = 0; point.y() < gridSize; ++point.ry()){
+			if(!m_board->hasDiamond(point)) continue;
 
-			if (curColor == C(x + 1, y)){
-                if(C(x - 1, y) != Color::Selection){ //controlla che il diamante si possa posizionare
-                    if (curColor == C(x - 2, y))
-                        m_availableMoves.append({QPoint(x - 2, y), QPoint(x - 1, y)});
-                    if (curColor == C(x - 1, y - 1))
-                        m_availableMoves.append({QPoint(x - 1, y - 1), QPoint(x - 1, y)});
-                    if (curColor == C(x - 1, y + 1))
-                        m_availableMoves.append({QPoint(x - 1, y + 1), QPoint(x - 1, y)});
+            QVector<QPoint> destinations = {point + QPoint(1, 0)
+                            , point + QPoint(-1, 0)
+                            , point + QPoint(0, 1)
+                            , point + QPoint(0, -1)};
+            for(auto dest : destinations){
+                if(m_board->hasDiamond(dest)){
+                    m_board->swapDiamonds(point, dest);
+                    auto rH = findFigureRowH(dest);
+                    auto rV = findFigureRowV(dest);
+                    if(rH.size() > 2 || rV.size() > 2){
+                        m_availableMoves.append({point, dest});
+                    }
+                    m_board->swapDiamonds(point, dest);
                 }
+            }
+        }
+    }
 
-                if(C(x + 2, y) != Color::Selection){
-                    if (curColor == C(x + 3, y))
-                        m_availableMoves.append({QPoint(x + 3, y), QPoint(x + 2, y)});
-                    if (curColor == C(x + 2, y - 1))
-                        m_availableMoves.append({QPoint(x + 2, y - 1), QPoint(x + 2, y)});
-                    if (curColor == C(x + 2, y + 1))
-                        m_availableMoves.append({QPoint(x + 2, y + 1), QPoint(x + 2, y)});
-                }
-			}
-
-			if (curColor == C(x + 2, y) && C(x + 1, y) != Color::Selection){
-				if (curColor == C(x + 1, y - 1))
-					m_availableMoves.append({QPoint(x + 1, y - 1), QPoint(x + 1, y)});
-				if (curColor == C(x + 1, y + 1))
-					m_availableMoves.append({QPoint(x + 1, y + 1), QPoint(x + 1, y)});
-			}
-
-			if (curColor == C(x, y + 1)){
-                if(C(x, y - 1) != Color::Selection){
-                    if (curColor == C(x, y - 2))
-                        m_availableMoves.append({QPoint(x, y - 2), QPoint(x, y - 1)});
-                    if (curColor == C(x - 1, y - 1))
-                        m_availableMoves.append({QPoint(x - 1, y - 1), QPoint(x, y - 1)});
-                    if (curColor == C(x + 1, y - 1))
-                        m_availableMoves.append({QPoint(x + 1, y - 1), QPoint(x, y - 1)});
-                }
-                if(C(x, y + 2) != Color::Selection){
-                    if (curColor == C(x, y + 3))
-                        m_availableMoves.append({QPoint(x, y + 3), QPoint(x, y + 2)});
-                    if (curColor == C(x - 1, y + 2))
-                        m_availableMoves.append({QPoint(x - 1, y + 2), QPoint(x, y + 2)});
-                    if (curColor == C(x + 1, y + 2))
-                        m_availableMoves.append({QPoint(x + 1, y + 2), QPoint(x, y + 2)});
-                }
-			}
-
-			if (curColor == C(x, y + 2) && C(x, y + 1) != Color::Selection){
-				if (curColor == C(x - 1, y + 1))
-					m_availableMoves.append({QPoint(x - 1, y + 1), QPoint(x, y + 1)});
-				if (curColor == C(x + 1, y + 1))
-					m_availableMoves.append({QPoint(x + 1, y + 1), QPoint(x, y + 1)});
-			}
-		}
-	}
-#undef C
-	if (m_availableMoves.isEmpty()){
+    if (m_availableMoves.isEmpty()){
 		m_board->clearSelection();
 		m_gameState->setState(State::Finished); //TODO, forse va agginto un EndGameJob
 	}
 }
+
+//ritorna la riga verticale contenente il punto
+QVector<QPoint> Game::findFigureRowV(const QPoint& point){
+    QVector<QPoint> row;
+    #define C(X, Y) (m_board->hasDiamond(QPoint(X, Y)) ? m_board->diamond(QPoint(X, Y))->color() : Color::Selection)
+    Color currColor = m_board->diamond(point)->color();  //ATTENZIONE Non controllo che il colore sia valido (!=Selection)
+    int yt = point.y();
+    const int x = point.x();
+    while(C(x, yt) == currColor){ //ciclo verso il basso
+        row.append(QPoint(x, yt));
+        yt++;
+    }
+
+    yt = point.y() - 1;
+    while(C(x, yt) == currColor){ //ciclo verso l'alto
+        row.append(QPoint(x, yt));
+        yt--;
+    }
+    #undef C
+    return row;
+}
+
+//ritorna la riga orizzontale contenente il punto
+QVector<QPoint> Game::findFigureRowH(const QPoint& point){
+    QVector<QPoint> row;
+    #define C(X, Y) (m_board->hasDiamond(QPoint(X, Y)) ? m_board->diamond(QPoint(X, Y))->color() : Color::Selection)
+    Color currColor = m_board->diamond(point)->color();  //ATTENZIONE Non controllo che il colore sia valido (!=Selection)
+    int xt = point.x();
+    const int y = point.y();
+    while(C(xt, y) == currColor){ //ciclo verso destra
+        row.append(QPoint(xt, y));
+        xt++;
+    }
+
+    xt = point.x() - 1;
+    while(C(xt, y) == currColor){ //ciclo verso sinistra
+        row.append(QPoint(xt, y));
+        xt--;
+    }
+    #undef C
+    return row;
+}
+
 
 void Game::clickDiamond(const QPoint& point){
 	if (m_gameState->state() != State::Playing)

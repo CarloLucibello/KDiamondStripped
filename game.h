@@ -23,6 +23,7 @@ enum class Job {
     EndGameJob //announce end of game
 };
 
+
 class Game{
 public:
     Game(int seed);
@@ -39,6 +40,9 @@ public:
     bool isWon() const;
 //  private:
     QList<QPoint> findCompletedRows();
+    QVector<QPoint> findFigureRowH(const QPoint& point);
+    QVector<QPoint> findFigureRowV(const QPoint& point);
+
     void getMoves();
     const QList<pair<QPoint,QPoint>>& availMoves() const;
 

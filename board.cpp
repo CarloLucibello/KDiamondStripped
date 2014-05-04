@@ -240,6 +240,3 @@ void Board::clearDiamonds(){
             }
 }
 
-
-
-

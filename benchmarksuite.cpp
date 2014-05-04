@@ -45,6 +45,7 @@ void BenchmarkSuite::singleGame(double qi,  int seedPlayer, bool verbose){
         if(verbose){
             cout << "numero di mosse possibili: " << m_game->availMoves().size() << endl;
             cout << endl;
+            m_game->printMoves();
         }
         player->playSmartRandomMove(qi, verbose);
         if(verbose){
