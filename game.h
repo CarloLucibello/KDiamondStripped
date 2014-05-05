@@ -16,7 +16,7 @@ using namespace std;
 //jobs to be done during the board update
 enum class Job {
     SwapDiamondsJob = 1, //swap selected diamonds
-    RemoveRowsJob, //remove complete rows of diamonds and add points
+    RemoveFiguresJob, //remove complete rows of diamonds and add points
     RevokeSwapDiamondsJob, //revoke swapping of diamonds (will be requested by the RemoveRowsJob if no rows have been formed)
     FillGapsJob,
     UpdateAvailableMovesJob, //find and count available moves after the board has been changed
@@ -73,6 +73,7 @@ public:
 //  private:
 //    QList<QPoint> findCompletedRows();
     QVector<QPoint> findFigures();
+    QVector<QPoint> findFigure(QPoint point);
     QVector<QPoint> findFigureRowH(const QPoint& point);
     QVector<QPoint> findFigureRowV(const QPoint& point);
 

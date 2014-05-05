@@ -44,29 +44,15 @@ void Game::getMoves(){
             for(auto dest : destinations){
                 if(m_board->hasDiamond(dest)){
                     m_board->swapDiamonds(point, dest); //ATTENZIONE questo swap non deve produrre animazioni
-                    auto rH1 = findFigureRowH(point);
-                    auto rH2 = findFigureRowH(dest);
-                    auto rV1 = findFigureRowV(point);
-                    auto rV2 = findFigureRowV(dest);
-
+                    auto figure1 = findFigure(point);
+                    auto figure2 = findFigure(dest);
                     //se la mossa ha successo
-                    if(rH1.size() >= 2 || rV1.size() >= 2
-                            || rH2.size() >= 2 || rV2.size() >= 2){
-                        Move m(point, dest);
-                        if(rH1.size() >= 2 || rV1.size() >= 2){
-                            swap(m.m_from, m.m_to);
-                            m.m_toDelete.append(point);
-                            m.m_toDelete += rH1;
-                            m.m_toDelete += rV1;
-                        }
-                        if(rH2.size() >= 2 || rV2.size() >= 2){
-                            m.m_toDelete.append(dest);
-                            m.m_toDelete += rH2;
-                            m.m_toDelete += rV2;
-                        }
-                        m_availableMoves.append(m);
+                    if(!(figure1.isEmpty() && figure2.isEmpty())){
+                        Move mov(point, dest);
+                        mov.m_toDelete = figure1 + figure2;
+                        m_availableMoves.append(mov);
                     }
-                    m_board->swapDiamonds(point, dest);
+                    m_board->swapDiamonds(point, dest); //riswappo indietro
                 }
             }
         }
@@ -170,7 +156,7 @@ bool Game::executeFirstJob(){
 			const QList<QPoint> points = m_board->selections();
 			m_swappingDiamonds = points;
             m_board->swapDiamonds(points[0], points[1]);
-			m_jobQueue << Job::RemoveRowsJob; //We already insert this here to avoid another conditional statement.
+			m_jobQueue << Job::RemoveFiguresJob; //We already insert this here to avoid another conditional statement.
             break;
 		} //fall through
 
@@ -180,7 +166,7 @@ bool Game::executeFirstJob(){
 			m_board->swapDiamonds(m_swappingDiamonds[0], m_swappingDiamonds[1]);
 			break;
 
-		case Job::RemoveRowsJob: {
+		case Job::RemoveFiguresJob: {
 //				cout<<"Job::RemoveRowJob" << endl;
 			//find diamond rows and delete these diamonds
 			const QVector<QPoint> diamondsToRemove = findFigures();
@@ -228,7 +214,7 @@ bool Game::executeFirstJob(){
 //		cout << "Job::FillGapsJob:" << endl;
 			//fill gaps
 			m_board->fillGaps();
-			m_jobQueue.prepend(Job::RemoveRowsJob); //allow cascades (i.e. clear rows that have been formed by falling diamonds)
+			m_jobQueue.prepend(Job::RemoveFiguresJob); //allow cascades (i.e. clear rows that have been formed by falling diamonds)
 //			printBoard();
 			break;
 
@@ -260,94 +246,41 @@ QVector<QPoint> Game::findFigures(){
 	QVector<bool> inFigure(gridSize * gridSize, false);
 	for (QPoint point; point.x() < gridSize; ++point.rx()){
 		for (point.ry() = 0; point.y() < gridSize ; ++point.ry()){
+            //controllo che ci sia un diamante e che non sia già parte di una figura
             if(m_board->hasDiamond(point) && !inFigure[point.x() + gridSize * point.y()]){
-                auto rH = findFigureRowH(point);
-                auto rV = findFigureRowV(point);
-                if(rH.size() >= 2 || rV.size() >= 2){
-                    diamonds.append(point);
-                    inFigure[point.x() + gridSize * point.y()] = true;
-                    diamonds += rH;
-                    for(auto& p : rH){
-                        inFigure[p.x() + gridSize * p.y()] = true;
-                    }
-
-                    diamonds += rV;
-                    for(auto& p : rV){
-                        inFigure[p.x() + gridSize * p.y()] = true;
-                    }
+                auto figure = findFigure(point);
+                for(auto& p : figure){
+                    inFigure[p.x() + gridSize * p.y()] = true;
                 }
+                diamonds += figure;
             }
         }
 	}
 	return diamonds;
 }
 
-//Sostituito da find figures
-//QList<QPoint> Game::findCompletedRows(){
-//	//The tactic of this function is brute-force. For now, I do not have a better idea
-//	Color currentColor;
-//	QList<QPoint> diamonds;
-//	int x, y, xh, yh; //counters
-//	const int gridSize = m_board->gridSize();
-//#define C(X, Y) (m_board->hasDiamond(QPoint(X, Y))? m_board->diamond(QPoint(X, Y))->color() : Color::Selection)
-//	//searching in horizontal direction
-//	for (y = 0; y < gridSize; ++y){
-//		for (x = 0; x < gridSize - 2; ++x){ //counter stops at gridSize - 2 to ensure availability of indices x + 1, x + 2
-//			currentColor = C(x, y);
-//			if(currentColor == Color::Selection)
-//                continue;
-//			if (currentColor != C(x + 1, y))
-//				continue;
-//			if (currentColor != C(x + 2, y))
-//				continue;
-//			//If the execution is here, we have found a row of three diamonds starting at (x,y).
-//			diamonds << QPoint(x, y);
-//			diamonds << QPoint(x + 1, y);
-//			diamonds << QPoint(x + 2, y);
-//			//Does the row have even more elements?
-//			if (x + 3 >= gridSize){
-//				//impossible to locate more diamonds - do not go through the following loop
-//				x += 2;
-//				continue;
-//			}
-//			for (xh = x + 3; xh <= gridSize - 1; ++xh){
-//				if (currentColor == C(xh, y))
-//					diamonds << QPoint(xh, y);
-//				else
-//					break; //row has stopped before this diamond - no need to continue searching
-//			}
-//			x = xh - 1; //do not search at this position in the row anymore (add -1 because x is incremented before the next loop)
-//		}
-//	}
-//	//searching in vertical direction (essentially the same algorithm, just with swapped indices -> no comments here, read the comments above)
-//	for (x = 0; x < gridSize; ++x){
-//		for (y = 0; y < gridSize - 2; ++y){
-//			currentColor = C(x, y);
-//            if(currentColor == Color::Selection)
-//                continue;
-//			if (currentColor != C(x, y + 1))
-//				continue;
-//			if (currentColor != C(x, y + 2))
-//				continue;
-//			diamonds << QPoint(x, y);
-//			diamonds << QPoint(x, y + 1);
-//			diamonds << QPoint(x, y + 2);
-//			if (y + 3 >= gridSize){
-//				y += 2;
-//				continue;
-//			}
-//			for (yh = y + 3; yh <= gridSize - 1; ++yh){
-//				if (currentColor == C(x, yh))
-//					diamonds << QPoint(x, yh);
-//				else
-//					break;
-//			}
-//			y = yh - 1;
-//		}
-//	}
-//#undef C
-//	return diamonds;
-//}
+QVector<QPoint> Game::findFigure(QPoint point){
+    auto rH = findFigureRowH(point);
+    auto rV = findFigureRowV(point);
+
+    QVector<QPoint> figure;
+    //Controllo che figura ho trovato. Si può rendere pìù efficiente
+    if(rH.size() >= 2 && rV.size() < 2){
+    //riga orizzontale
+        figure.append(point);
+        figure += rH;
+    } else if(rH.size() < 2 && rV.size() >= 2){
+    // riga verticale
+        figure.append(point);
+        figure += rV;
+    } else if(rH.size() >= 2 && rV.size() >= 2){
+        //ho trovato una T o una L
+        figure.append(point);
+        figure += rH;
+        figure += rV;
+    }
+    return figure;
+}
 
 const QVector<Move>& Game::availMoves() const{
     return m_availableMoves;
