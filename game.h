@@ -55,6 +55,11 @@ private:
     QVector<QPoint> m_toDelete;
 };
 
+class Figure{
+public:
+
+    QVector<QPoint> m_points;
+};
 
 class Game{
 public:

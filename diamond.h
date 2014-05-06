@@ -23,10 +23,12 @@ public:
     Color color() const;
     void clicked();
     void dragged(const QPoint& direction);
-    bool isJollyH();
-    bool isJollyV();
-    bool isCookie();
-
+    bool isJollyH() const;
+    bool isJollyV() const;
+    bool isCookie() const;
+    void setJollyH(bool val);
+    void setJollyV(bool val);
+    void setCookie(bool val);
 private:
     Color m_color;
     bool m_isJollyV;
