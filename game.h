@@ -10,9 +10,6 @@
 #include <utility>
 using namespace std;
 
-
-
-
 //jobs to be done during the board update
 enum class Job {
     SwapDiamondsJob = 1, //swap selected diamonds
@@ -21,6 +18,30 @@ enum class Job {
     FillGapsJob,
     UpdateAvailableMovesJob, //find and count available moves after the board has been changed
     EndGameJob //announce end of game
+};
+
+enum class FigureType {
+    RowH,
+    RowV,
+    LT
+};
+
+class Figure{
+public:
+
+    FigureType m_type;
+    QVector<QPoint> m_points;
+
+    Figure(QVector<QPoint> points, FigureType type): m_points(points), m_type(type) {};
+    
+    QVector<QPoint> points() const{
+        return m_points;
+    }
+    
+    FigureType type() const {
+        return m_type;
+    }
+    
 };
 
 class Move{
@@ -55,12 +76,6 @@ private:
     QVector<QPoint> m_toDelete;
 };
 
-class Figure{
-public:
-
-    QVector<QPoint> m_points;
-};
-
 class Game{
 public:
     Game(int seed);
@@ -78,7 +93,7 @@ public:
 //  private:
 //    QList<QPoint> findCompletedRows();
     QVector<QPoint> findFigures();
-    QVector<QPoint> findFigure(QPoint point);
+    Figure findFigure(QPoint point);
     QVector<QPoint> findFigureRowH(const QPoint& point);
     QVector<QPoint> findFigureRowV(const QPoint& point);
 

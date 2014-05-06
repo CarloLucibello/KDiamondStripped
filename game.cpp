@@ -40,12 +40,14 @@ void Game::getMoves(){
 			if(!m_board->hasDiamond(point)) continue;
              //guardo solo a sinistra e in basso, gli altri casi sono considerati
              //dagli altri punti
-            QVector<QPoint> destinations = {point + QPoint(1, 0), point + QPoint(0, 1)};
+            QVector<QPoint> destinations;
+            destinations.append(point + QPoint(1, 0));
+            destinations.append(point + QPoint(0, 1));
             for(auto dest : destinations){
                 if(m_board->hasDiamond(dest)){
                     m_board->swapDiamonds(point, dest); //ATTENZIONE questo swap non deve produrre animazioni
-                    auto figure1 = findFigure(point);
-                    auto figure2 = findFigure(dest);
+                    auto figure1 = findFigure(point).points();
+                    auto figure2 = findFigure(dest).points();
                     //se la mossa ha successo
                     if(!(figure1.isEmpty() && figure2.isEmpty())){
                         Move mov(point, dest);
@@ -248,7 +250,7 @@ QVector<QPoint> Game::findFigures(){
 		for (point.ry() = 0; point.y() < gridSize ; ++point.ry()){
             //controllo che ci sia un diamante e che non sia già parte di una figura
             if(m_board->hasDiamond(point) && !inFigure[point.x() + gridSize * point.y()]){
-                auto figure = findFigure(point);
+                auto figure = findFigure(point).points();
                 for(auto& p : figure){
                     inFigure[p.x() + gridSize * p.y()] = true;
                 }
@@ -259,27 +261,46 @@ QVector<QPoint> Game::findFigures(){
 	return diamonds;
 }
 
-QVector<QPoint> Game::findFigure(QPoint point){
+Figure Game::findFigure(QPoint point){
     auto rH = findFigureRowH(point);
     auto rV = findFigureRowV(point);
 
+    FigureType type;
+    
     QVector<QPoint> figure;
     //Controllo che figura ho trovato. Si può rendere pìù efficiente
     if(rH.size() >= 2 && rV.size() < 2){
     //riga orizzontale
         figure.append(point);
         figure += rH;
+        //qua devi vedere se la fila è di 4 o 5 e, nel caso, creare un jolly
+        //in point
+        type = FigureType::RowH;
+        
     } else if(rH.size() < 2 && rV.size() >= 2){
     // riga verticale
         figure.append(point);
         figure += rV;
+        //qua devi vedere se la fila è di 4 o 5 e, nel caso, creare un jolly
+        //in point
+        type = FigureType::RowV;
+
     } else if(rH.size() >= 2 && rV.size() >= 2){
         //ho trovato una T o una L
         figure.append(point);
         figure += rH;
         figure += rV;
+        type = FigureType::LT;
+
+        //qua se rH.size()=2 e rV.size()=2 allora devi creare una busta in point
+        //se però, per esempio, rH.size()=3 e rV.size()=2, c'è un conflitto:
+        //-creo un jolly verticale in point?
+        //-creo sempre una busta in point?
     }
-    return figure;
+    
+    Figure fig(figure, type);
+    
+    return fig;
 }
 
 const QVector<Move>& Game::availMoves() const{
