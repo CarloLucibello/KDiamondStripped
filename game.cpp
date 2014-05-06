@@ -250,11 +250,15 @@ QVector<QPoint> Game::findFigures(){
 		for (point.ry() = 0; point.y() < gridSize ; ++point.ry()){
             //controllo che ci sia un diamante e che non sia già parte di una figura
             if(m_board->hasDiamond(point) && !inFigure[point.x() + gridSize * point.y()]){
-                auto figure = findFigure(point).points();
-                for(auto& p : figure){
+                auto figure = findFigure(point);
+                for(auto& p : figure.points()){
                     inFigure[p.x() + gridSize * p.y()] = true;
                 }
-                diamonds += figure;
+                
+                if (figure.points().size()>0)
+                    cout << "------------tipo di figura: " << int(figure.type()) << " in " << point.x() << " " << point.y() << endl;
+                
+                diamonds += figure.points();
             }
         }
 	}
