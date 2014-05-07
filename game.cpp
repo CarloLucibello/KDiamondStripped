@@ -170,11 +170,9 @@ bool Game::executeFirstJob(){
 
 		case Job::RemoveFiguresJob: {
 //				cout<<"Job::RemoveRowJob" << endl;
-			//find diamond rows and delete these diamonds
-			const QVector<QPoint> diamondsToRemove = findFigures();
-//							cout<<"Job::RemoveRowJob1" << endl;
-//            cout<<"Diamons to remove " << diamondsToRemove.size() << endl;
-			if (diamondsToRemove.isEmpty()){
+			const QVector<Figure> figuresToRemove = findFigures();
+            cout<<"#Figures to remove " << figuresToRemove.size() << endl;
+			if (figuresToRemove.isEmpty()){
 				//no diamond rows were formed by the last move -> revoke movement (unless we are in a cascade)
 				if (!m_swappingDiamonds.isEmpty()){
 					m_jobQueue.prepend(Job::RevokeSwapDiamondsJob);
@@ -201,11 +199,13 @@ bool Game::executeFirstJob(){
                     m_board->clearSelection();
 				}
 				//
-//				//report to Game
-				m_gameState->addPoints(diamondsToRemove.size());
-				//invoke remove animation, then fill gaps immediately after the animation
-				for(const QPoint& diamondPos: diamondsToRemove)
-					m_board->removeDiamond(diamondPos);
+//				//Elimino le figure
+                for(const auto& fig : figuresToRemove){
+                    m_gameState->addPoints(fig.points().size());
+                    //invoke remove animation, then fill gaps immediately after the animation
+                    for(const QPoint& diamondPos: fig.points())
+                        m_board->removeDiamond(diamondPos);
+                }
 				m_jobQueue.prepend(Job::FillGapsJob);
 //				printBoard();
 			}
@@ -242,8 +242,8 @@ void Game::executeJobs(){
     }
 }
 
-QVector<QPoint> Game::findFigures(){
-	QVector<QPoint> diamonds;
+QVector<Figure> Game::findFigures(){
+	QVector<Figure> diamonds;
 	const int gridSize = m_board->gridSize();
 	QVector<bool> inFigure(gridSize * gridSize, false);
 	for (QPoint point; point.x() < gridSize; ++point.rx()){
@@ -257,9 +257,8 @@ QVector<QPoint> Game::findFigures(){
 
                 if (figure.points().size() > 0){
                     cout << "------------tipo di figura: " << int(figure.type()) << " in " << point.x() << " " << point.y() << endl;
+                    diamonds += figure;
                 }
-
-                diamonds += figure.points();
             }
         }
 	}

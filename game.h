@@ -97,7 +97,7 @@ public:
     bool isWon() const;
 //  private:
 //    QList<QPoint> findCompletedRows();
-    QVector<QPoint> findFigures();
+    QVector<Figure> findFigures();
     Figure findFigure(QPoint point);
     QVector<QPoint> findRowH(const QPoint& point);
     QVector<QPoint> findRowV(const QPoint& point);
