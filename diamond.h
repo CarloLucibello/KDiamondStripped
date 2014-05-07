@@ -18,7 +18,6 @@ enum class Color{
 
 enum class JollyType {None = 0, H, V, Cookie, Bag};
 
-
 class Diamond{
 public:
     Diamond(Color color, JollyType jollyType = JollyType::None);

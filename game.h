@@ -29,7 +29,7 @@ enum class FigureType {
 
 class Figure{
 public:
-
+    
     FigureType m_type;
     QVector<QPoint> m_points;
 

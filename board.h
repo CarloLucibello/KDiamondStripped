@@ -104,12 +104,38 @@ public:
             for(point.rx() = 0; point.x() < m_size; point.rx()++){
                 if(hasDiamond(point)){
                     auto d = diamond(point);
+                    
+                    // questo è come stampo ora:
                     if(d->isJolly()){
-                        cout << "*";
+                        {
+                            if (d->jollyType() == JollyType::H) cout << "H" << int(d->color());
+                            if (d->jollyType() == JollyType::V) cout << "V" << int(d->color());
+                            if (d->jollyType() == JollyType::Bag) cout << "B" << int(d->color());
+                            if (d->jollyType() == JollyType::Cookie) cout << "*" << int(d->color());
+                        }
+                        cout << " ";
                     }
-                    cout << int(d->color()) << " ";
+                    else cout << int(d->color()) << "  ";
+                    
+                    // questo è come vorrei stampare
+                    /*
+                    if(d->isJolly()){
+                        //cout << "*";
+                        
+                         {
+                         if (d->jollyType() == JollyType::H) cout << "H";
+                         if (d->jollyType() == JollyType::V) cout << "V";
+                         if (d->jollyType() == JollyType::Bag) cout << "B  ";
+                         if (d->jollyType() == JollyType::Cookie) cout << "*  ";
+                         }
+                        
+                         if (d->jollyType() == JollyType::H || d->jollyType() == JollyType::V) cout << int(d->color()) << " ";
+                        continue;
+                    }
+                    cout << int(d->color()) << "  ";
+                    */
                 } else {
-                    cout << "- ";
+                    cout << "-  ";
                 }
             }
             cout << endl;
