@@ -192,59 +192,38 @@ bool Game::executeFirstJob(){
 					m_availableMoves.clear();
 				}
 				//Controllo se sto swappando e dato che lo swap ha avuto successo
-				// incremento il numero di mosse ed elimino la selezione
-                
-                auto m_puntiSwappati=m_swappingDiamonds;
-                
+                //salvo i punti swappati perché mi serviranno
+                auto puntiSwappati = m_swappingDiamonds;
+                // incremento il numero di mosse ed elimino la selezione
 				if(!m_swappingDiamonds.isEmpty()){
                     m_gameState->updateMovesLeft();
                     m_swappingDiamonds.clear();
                     m_board->clearSelection();
 				}
 
-                /*
-                if (!m_puntiSwappati.isEmpty()) {
-                    cout << "-------------------------------m_swappingDiamonds non vuoto!" << endl;
-                    for (auto p : m_puntiSwappati){
-                        cout << "coordinate del punto selezionato: " << p.x() << " " << p.y() << endl;
-                        
-                        //for (auto pointsFigure : FigureDel){
-                        //    if (pointsFigure == p) cout << pointsFigure.x() << " " << pointsFigure.y() << "in figure" << endl;
-                        //}
-                        
-                            
-                    }
-                    
-                    
-                }
-                else
-                    cout << "-------------------------------m_swappingDiamonds vuoto!" << endl;
-            
-                 */
-                
-                
+
 //				/** Annoto i jolly che devo inserire
                 QVector<QPoint> jPoint;
                 QVector<JollyType> jType;
                 QVector<Color> jColor;
                 for(const auto& fig : figuresToRemove){
                     if(fig.size() > 3){
-                        
                         // creo il jolly nel punto in cui sposto il diamante
-                        // questa cosa in realtà è da controllare bene perchè
-                        // c'è un'ambiguità tra m_puntiSwappati[1] e m_puntiSwappati[0]
-                        // che puoi risolvere vedendo quale dei due sta in inFigure
-                        
                         // se creo un jolly durante una valanga lo
                         // creo nell'ultimo punto di points
-                        
-                        QPoint point;
-                        if (!m_puntiSwappati.isEmpty()){
-                            point=m_puntiSwappati[1];
+                        QPoint point = fig.points().last(); //assegnazione di default
+                        if (!puntiSwappati.isEmpty()){
+                            //Se ho appena fatto la mossa la figura contenerra'
+                            // sicuramente uno e un solo punto swappato
+                            //assert(fig.points().contains(puntiSwappati[0])|| fig.points().contains(puntiSwappati[1]));
+                            if(fig.points().contains(puntiSwappati[0])){
+                                point = puntiSwappati[0];
+                            }
+                            else {
+                                point = puntiSwappati[1];
+                            }
                         }
-                        else point = fig.points().last();
-                        
-                        
+
                         auto color = m_board->diamond(point)->color();
                         JollyType type;
                         if(fig.type() == FigureType::RowH && fig.size() == 4){
@@ -265,9 +244,7 @@ bool Game::executeFirstJob(){
                         jColor += color;
                     }
                 }
-                
-                m_puntiSwappati.clear();
-                
+
                 //Segno i punti ed elimino le figure
                 for(const auto& fig : figuresToRemove){
                     m_gameState->addPoints(fig.size());//TODO cambiare addPoints per accettare una figura
@@ -283,10 +260,10 @@ bool Game::executeFirstJob(){
 
 				m_jobQueue.prepend(Job::FillGapsJob);
 //				printBoard();
-                
-                
 
-                
+
+
+
 			}
 			break;
 		}
@@ -341,7 +318,7 @@ QVector<Figure> Game::findFigures(){
             }
         }
 	}
-    
+
 	return diamonds;
 }
 
