@@ -21,7 +21,8 @@ enum class Job {
 };
 
 enum class FigureType {
-    RowH,
+    None,
+    RowH = 1,
     RowV,
     LT
 };
@@ -32,16 +33,20 @@ public:
     FigureType m_type;
     QVector<QPoint> m_points;
 
-    Figure(QVector<QPoint> points, FigureType type): m_points(points), m_type(type) {};
-    
+    Figure() {}
+
+    Figure(QVector<QPoint> points, FigureType type)
+        : m_points(points)
+        , m_type(type) {}
+
     QVector<QPoint> points() const{
         return m_points;
     }
-    
+
     FigureType type() const {
         return m_type;
     }
-    
+
 };
 
 class Move{
@@ -94,8 +99,8 @@ public:
 //    QList<QPoint> findCompletedRows();
     QVector<QPoint> findFigures();
     Figure findFigure(QPoint point);
-    QVector<QPoint> findFigureRowH(const QPoint& point);
-    QVector<QPoint> findFigureRowV(const QPoint& point);
+    QVector<QPoint> findRowH(const QPoint& point);
+    QVector<QPoint> findRowV(const QPoint& point);
 
     void getMoves();
     const QVector<Move>& availMoves() const;

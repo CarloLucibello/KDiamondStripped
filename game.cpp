@@ -67,7 +67,7 @@ void Game::getMoves(){
 }
 
 //ritorna la riga verticale contenente il punto (escluso il punto stesso)
-QVector<QPoint> Game::findFigureRowV(const QPoint& point){
+QVector<QPoint> Game::findRowV(const QPoint& point){
     QVector<QPoint> row;
     #define C(X, Y) (m_board->hasDiamond(QPoint(X, Y)) ? m_board->diamond(QPoint(X, Y))->color() : Color::Selection)
     Color currColor = m_board->diamond(point)->color();  //ATTENZIONE Non controllo che il colore sia valido (!=Selection)
@@ -88,7 +88,7 @@ QVector<QPoint> Game::findFigureRowV(const QPoint& point){
 }
 
 //ritorna la riga orizzontale contenente il punto (escluso il punto stesso)
-QVector<QPoint> Game::findFigureRowH(const QPoint& point){
+QVector<QPoint> Game::findRowH(const QPoint& point){
     QVector<QPoint> row;
     #define C(X, Y) (m_board->hasDiamond(QPoint(X, Y)) ? m_board->diamond(QPoint(X, Y))->color() : Color::Selection)
     Color currColor = m_board->diamond(point)->color();  //ATTENZIONE Non controllo che il colore sia valido (!=Selection)
@@ -254,10 +254,11 @@ QVector<QPoint> Game::findFigures(){
                 for(auto& p : figure.points()){
                     inFigure[p.x() + gridSize * p.y()] = true;
                 }
-                
-                if (figure.points().size()>0)
+
+                if (figure.points().size() > 0){
                     cout << "------------tipo di figura: " << int(figure.type()) << " in " << point.x() << " " << point.y() << endl;
-                
+                }
+
                 diamonds += figure.points();
             }
         }
@@ -266,45 +267,61 @@ QVector<QPoint> Game::findFigures(){
 }
 
 Figure Game::findFigure(QPoint point){
-    auto rH = findFigureRowH(point);
-    auto rV = findFigureRowV(point);
+    auto rH = findRowH(point);
+    auto rV = findRowV(point);
 
     FigureType type;
-    
-    QVector<QPoint> figure;
+    QVector<QPoint> points;
     //Controllo che figura ho trovato. Si può rendere pìù efficiente
     if(rH.size() >= 2 && rV.size() < 2){
     //riga orizzontale
-        figure.append(point);
-        figure += rH;
-        //qua devi vedere se la fila è di 4 o 5 e, nel caso, creare un jolly
-        //in point
+        points.append(point);
+        points += rH;
         type = FigureType::RowH;
-        
+        //controllo se si crea una T o una L
+        for(auto p : rH){
+            auto rV2 = findRowV(p);
+            if(rV2.size() >= 2){
+                points += rV2;
+                type = FigureType::LT;
+                //ATTENZIONE si possono avere più file verticali o posso
+                //mettere un break?
+                //break;
+            }
+        }
     } else if(rH.size() < 2 && rV.size() >= 2){
     // riga verticale
-        figure.append(point);
-        figure += rV;
-        //qua devi vedere se la fila è di 4 o 5 e, nel caso, creare un jolly
-        //in point
+        points.append(point);
+        points += rV;
         type = FigureType::RowV;
+        //controllo se si crea una T o una L
+        for(auto p : rV){
+            auto rH2 = findRowH(p);
+            if(rH2.size() >= 2){
+                points += rH2;
+                type = FigureType::LT;
+                //ATTENZIONE si possono avere più file verticali o posso
+                //mettere un break?
+                //break;
+            }
+        }
 
     } else if(rH.size() >= 2 && rV.size() >= 2){
         //ho trovato una T o una L
-        figure.append(point);
-        figure += rH;
-        figure += rV;
+        points.append(point);
+        points += rH;
+        points += rV;
         type = FigureType::LT;
+        //ATTENZIONE non controllo la creazione di figure più complesse
+        // che si potrebbero formare quando calano i diamanti dall'alto
 
         //qua se rH.size()=2 e rV.size()=2 allora devi creare una busta in point
         //se però, per esempio, rH.size()=3 e rV.size()=2, c'è un conflitto:
         //-creo un jolly verticale in point?
         //-creo sempre una busta in point?
     }
-    
-    Figure fig(figure, type);
-    
-    return fig;
+
+    return Figure(points, type);
 }
 
 const QVector<Move>& Game::availMoves() const{
