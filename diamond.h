@@ -16,25 +16,25 @@ enum class Color{
     ColorsCount
 };
 
+enum class JollyType {None = 0, H, V, Cookie, Bag};
+
+
 class Diamond{
 public:
-    Diamond(Color color);
+    Diamond(Color color, JollyType jollyType = JollyType::None);
 
     Color color() const;
     void clicked();
     void dragged(const QPoint& direction);
-    bool isJollyH() const;
-    bool isJollyV() const;
-    bool isCookie() const;
-    void setJollyH(bool val);
-    void setJollyV(bool val);
-    void setCookie(bool val);
+    bool isJolly() const;
+    void setJolly(JollyType type);
+    JollyType jollyType() const;
+
 private:
     Color m_color;
-    bool m_isJollyV;
-    bool m_isJollyH;
-    bool m_isCookie;
+    JollyType m_jollyType;
 };
+
 
 
 #endif // DIAMOND_H

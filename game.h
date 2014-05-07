@@ -47,6 +47,9 @@ public:
         return m_type;
     }
 
+    int size() const {
+        return m_points.size();
+    }
 };
 
 class Move{

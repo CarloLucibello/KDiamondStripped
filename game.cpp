@@ -198,14 +198,45 @@ bool Game::executeFirstJob(){
                     m_swappingDiamonds.clear();
                     m_board->clearSelection();
 				}
-				//
-//				//Elimino le figure
+
+//				/** Annoto i jolly che devo inserire
+                QVector<QPoint> jPoint;
+                QVector<JollyType> jType;
+                QVector<Color> jColor;
                 for(const auto& fig : figuresToRemove){
-                    m_gameState->addPoints(fig.points().size());
+                    if(fig.size() > 3){
+                        auto point = fig.points().last(); //TODO Per ora lo metto nell'ultimo punto
+                        auto color = m_board->diamond(point)->color();
+                        JollyType type;
+                        if(fig.type() == FigureType::RowH && fig.size() == 4){
+                            type = JollyType::H;
+                        } else if(fig.type() == FigureType::RowV && fig.size() == 4){
+                            type = JollyType::V;
+                        } else if((fig.type() == FigureType::RowV || fig.type() == FigureType::RowH)
+                            && fig.size() > 4){
+                            type = JollyType::Cookie;
+                        } else if(fig.type() == FigureType::LT){
+                            type = JollyType::Bag;
+                        }
+                        jPoint += point;
+                        jType += type;
+                        jColor += color;
+                    }
+                }
+
+                //Segno i punti ed elimino le figure
+                for(const auto& fig : figuresToRemove){
+                    m_gameState->addPoints(fig.size());//TODO cambiare addPoints per accettare una figura
                     //invoke remove animation, then fill gaps immediately after the animation
                     for(const QPoint& diamondPos: fig.points())
                         m_board->removeDiamond(diamondPos);
                 }
+
+                //Creo i Jolly
+                for(int i = 0; i < jPoint.size(); ++i){
+                    m_board->rDiamond(jPoint[i]) = m_board->spawnDiamond(jColor[i], jType[i]);
+                }
+
 				m_jobQueue.prepend(Job::FillGapsJob);
 //				printBoard();
 			}
@@ -255,7 +286,7 @@ QVector<Figure> Game::findFigures(){
                     inFigure[p.x() + gridSize * p.y()] = true;
                 }
 
-                if (figure.points().size() > 0){
+                if (figure.size() > 0){
                     cout << "------------tipo di figura: " << int(figure.type()) << " in " << point.x() << " " << point.y() << endl;
                     diamonds += figure;
                 }

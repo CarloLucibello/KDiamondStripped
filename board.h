@@ -83,7 +83,7 @@ public:
 //private:
     QPoint findDiamond(Diamond* diamond) const;
     Diamond*& rDiamond(const QPoint& point);
-    Diamond* spawnDiamond(Color color);
+    Diamond* spawnDiamond(Color color, JollyType jtype = JollyType::None);
 
     void clearDiamonds();
 
@@ -103,7 +103,11 @@ public:
         for(QPoint point; point.y() < m_size; point.ry()++){
             for(point.rx() = 0; point.x() < m_size; point.rx()++){
                 if(hasDiamond(point)){
-                    cout << int(diamond(point)->color()) << " ";
+                    auto d = diamond(point);
+                    if(d->isJolly()){
+                        cout << "*";
+                    }
+                    cout << int(d->color()) << " ";
                 } else {
                     cout << "- ";
                 }

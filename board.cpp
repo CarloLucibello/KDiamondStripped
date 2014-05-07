@@ -83,8 +83,8 @@ void Board::startNewGame(){
     }
 }
 
-Diamond* Board::spawnDiamond(Color color){
-	Diamond* diamond = new Diamond(color);
+Diamond* Board::spawnDiamond(Color color, JollyType jtype){
+	Diamond* diamond = new Diamond(color, jtype);
     m_numDiamonds++;
     m_colorCount[int(color)]++;
 	return diamond;
