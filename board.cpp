@@ -161,14 +161,14 @@ void Board::clearSelection(){
 	m_activeSelectors.clear();
 }
 
-//Non fa alcun check sulla presenza del diamante
 void Board::removeDiamond(const QPoint& point){
 	Diamond* diamond = this->diamond(point);
 	//può capitare che la funzione possa essere chiamate più volte nello stesso punto
 	// se il diamante appartiene a più figure da scoppiare
+    cout << diamond << endl;
 	if(diamond != 0) {
         m_colorCount[int(diamond->color())]--;
-        delete diamond;//diamond has already been removed
+        delete diamond;
         rDiamond(point) = 0;
         m_numDiamonds--;
 	}
@@ -230,9 +230,9 @@ void Board::fillGaps(){
 			if (diamond || mask(QPoint(x, y)) == CellMask::WALL)
 				continue; //inside of diamond stack - no gaps to fill
 			diamond = spawnDiamond(m_randcol->gen());
-            
+
             cout << "creato diamante di colore: " << int(diamond->color()) << " in " << x<< " " << y << endl;
-            
+
 		}
 	}
 }

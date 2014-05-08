@@ -19,7 +19,7 @@ public:
 class BenchmarkSuite{
 public:
     BenchmarkSuite(Game* game);
-    BenchmarkResults testLevel(int level, int niter = 1000);
+    BenchmarkResults testLevel(int level, int niter = 1000, int seed = -1);
     void singleGame(double qi, int seedPlayer = -1, bool verbose = true);
 
 

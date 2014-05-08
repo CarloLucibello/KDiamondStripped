@@ -169,9 +169,9 @@ bool Game::executeFirstJob(){
 			break;
 
 		case Job::RemoveFiguresJob: {
-//				cout<<"Job::RemoveRowJob" << endl;
+        cout<<"Job::RemoveRowJob" << endl;
 			const QVector<Figure> figuresToRemove = findFigures();
-            cout<<"#Figures to remove " << figuresToRemove.size() << endl;
+            cout<<"Num figures to remove =" << figuresToRemove.size() << endl;
 			if (figuresToRemove.isEmpty()){
 				//no diamond rows were formed by the last move -> revoke movement (unless we are in a cascade)
 				if (!m_swappingDiamonds.isEmpty()){
@@ -244,20 +244,27 @@ bool Game::executeFirstJob(){
                 }
 
                 //Segno i punti ed elimino le figure
+                cout<<"### Removing Figures" << endl;
+                printBoard();
                 for(const auto& fig : figuresToRemove){
-
+                    cout << "Removing " << endl;
+                    m_board->printSelection(fig.points());
                     //invoke remove animation, then fill gaps immediately after the animation
                     for(const QPoint& diamondPos: fig.points()){
-                        if(m_board->diamond(diamondPos)->isJolly()){
-                            removeJolly(diamondPos);
-                        }
-                        else {
-                            removeDiamond(diamondPos);
+                        if(m_board->hasDiamond(diamondPos)){ //potrebbe essere (casi rari) che era già stato scoppiato
+                            if(m_board->diamond(diamondPos)->isJolly()){
+                                removeJolly(diamondPos);
+                            }
+                            else {
+                                removeDiamond(diamondPos);
+                            }
                         }
                     }
                 }
 
                 //Creo i Jolly
+                cout<<"### Creating Jollies" << endl;
+                printBoard();
                 for(int i = 0; i < jPoint.size(); ++i){
                     m_board->rDiamond(jPoint[i]) = m_board->spawnDiamond(jColor[i], jType[i]);
                     cout << "CREATO Jolly: " << int(jType[i]) << " color: " << int(jColor[i])
@@ -270,7 +277,7 @@ bool Game::executeFirstJob(){
 		}
 
 		case Job::FillGapsJob:
-//		cout << "Job::FillGapsJob:" << endl;
+		cout << "Job::FillGapsJob:" << endl;
 			//fill gaps
 			m_board->fillGaps();
 			m_jobQueue.prepend(Job::RemoveFiguresJob); //allow cascades (i.e. clear rows that have been formed by falling diamonds)
@@ -293,17 +300,19 @@ bool Game::executeFirstJob(){
 }
 
 void Game::removeDiamond(const QPoint& point){
+    cout << "SCOPPIO Diamante"  <<" in " << point.x() << " " << point.y() << endl;
     m_gameState->addPoints(1);
     m_board->removeDiamond(point);
+    cout << "SCOPPIATO" << endl;
 }
 
 
 //TODO Inserire busta e cookie
 void Game::removeJolly(const QPoint& point){
+    cout << "SCOPPIO Jolly"  <<" in " << point.x() << " " << point.y() << endl;
     auto jtype = m_board->diamond(point)->jollyType();
     removeDiamond(point);
 
-    cout << "SCOPPIO Jolly " << int(jtype) << " in " << point.x() << " " << point.y() << endl;
 
     //TODO Che succede se incontro un Jolly? Lo esplodo come jolly?
     if(jtype == JollyType::H){

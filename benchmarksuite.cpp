@@ -2,8 +2,8 @@
 
 BenchmarkSuite::BenchmarkSuite(Game* game) : m_game(game){}
 
-BenchmarkResults BenchmarkSuite::testLevel(int level, int niter){
-    Player player(m_game);
+BenchmarkResults BenchmarkSuite::testLevel(int level, int niter, int seed){
+    Player player(m_game, seed);
     BenchmarkResults res;
     res.niter = niter;
     res.level = level;
@@ -11,17 +11,18 @@ BenchmarkResults BenchmarkSuite::testLevel(int level, int niter){
 //        m_game->printParams();
     for(int i = 0; i < niter; i++){
         m_game->startNewGame();
-//        cout << "PARTITA   " << i << endl;
-//        m_game->printBoard();
+        cout << "PARTITA   " << i << endl;
+        m_game->printBoard();
 
 
         int step = 0;
         while(!m_game->isFinished()){
 //            m_game->printState();
-            player.playRandomMove();
+            player.playRandomMove(true); //verbose
             if(!m_game->isWon()){
                 step++;
             }
+            m_game->printBoard();
         }
         res.probWin += m_game->isWon() ? 1 : 0;
         res.aveMoves += step;

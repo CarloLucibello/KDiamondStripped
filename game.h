@@ -145,7 +145,6 @@ public:
         m_gameParams->print();
         cout << endl;
     }
-
 };
 
 
