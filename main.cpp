@@ -19,7 +19,7 @@ int main(int argc, char *argv[]){
     int seedPlayer = atoll(argv[1]);
     int seedGame = atoll(argv[2]);
     
-    ofstream myfile;
+//    ofstream myfile;
 //    myfile.open ("res.txt");
 
     //qi è un numero compreso tra 0 e 1 che indica l'intelligenza del giocatore
