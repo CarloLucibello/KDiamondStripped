@@ -30,9 +30,9 @@ int main(int argc, char *argv[]){
     BenchmarkSuite bench(game);
 
     //questo è per fare una singola partita col giocatore intelligente
-//    bench.singleGame(qi, seedPlayer);
+    bench.singleGame(qi, seedPlayer);
 //
-    auto res = bench.testLevel(0, 1000, seedPlayer);
+//    auto res = bench.testLevel(0, 1000, seedPlayer);
 //
 //    cout <<"######### RESULTS ############" << endl;
 //    cout << "ProbWin  " << res.probWin.mean() << endl;

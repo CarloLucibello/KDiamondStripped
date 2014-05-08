@@ -232,10 +232,10 @@ bool Game::executeFirstJob(){
                         } else if((fig.type() == FigureType::RowV || fig.type() == FigureType::RowH)
                             && fig.size() > 4){
                             type = JollyType::Cookie;
-                            //color=Color::ColorsCount;
+                            color=Color::NoColor;
                         } else if(fig.type() == FigureType::LT){
                             type = JollyType::Bag;
-                            //color=Color::ColorsCount;
+                            color=Color::NoColor;
                         }
                         jPoint += point;
                         jType += type;
@@ -307,7 +307,7 @@ void Game::removeDiamond(const QPoint& point){
 }
 
 
-//TODO Inserire busta e cookie
+//TODO Inserire cookie
 void Game::removeJolly(const QPoint& point){
     cout << "SCOPPIO Jolly"  <<" in " << point.x() << " " << point.y() << endl;
     auto jtype = m_board->diamond(point)->jollyType();
@@ -315,19 +315,54 @@ void Game::removeJolly(const QPoint& point){
 
 
     //TODO Che succede se incontro un Jolly? Lo esplodo come jolly?
+    
+    //direi di si
     if(jtype == JollyType::H){
         int y = point.y();
         for(int x = 0; x < m_board->gridSize(); ++x) {
-            removeDiamond({x,y});
+            
+            //alcuni diamanti della linea potremmo averli già cancellati
+            if (m_board->hasDiamond({x,y})){
+                if (m_board->diamond({x,y})->isJolly()) removeJolly({x,y});
+                else removeDiamond({x,y});
+            }
+            
+        }
+    }
+    
+    if(jtype == JollyType::V){
+        int x = point.x();
+        for(int y = 0; y < m_board->gridSize(); ++y) {
+            
+            //alcuni diamanti della linea potremmo averli già cancellati
+            if (m_board->hasDiamond({x,y})){
+                if (m_board->diamond({x,y})->isJolly()) removeJolly({x,y});
+                else removeDiamond({x,y});
+            }
+            
         }
     }
 
-   if(jtype == JollyType::V){
-        int x = point.y();
-        for(int y = 0; y < m_board->gridSize(); ++y) {
-            removeDiamond({x,y});
+    //Inserisco lo scoppiaggio di una busta
+    if(jtype == JollyType::Bag){
+        int px = point.x();
+        int py = point.y();
+        for(int y = py - 1; y <= py + 1; ++y) {
+            for(int x = px - 1; x <= px + 1; ++x) {
+                
+                //alcuni diamanti del quadrato 3*3 potremmo averli già cancellati
+                if (m_board->hasDiamond({x,y})){
+                    if (m_board->diamond({x,y})->isJolly()) removeJolly({x,y});
+                    else removeDiamond({x,y});
+                }
+                
+            }
         }
     }
+    
+    
+    
+    
 }
 
 
@@ -358,6 +393,23 @@ QVector<Figure> Game::findFigures(){
         }
 	}
 
+    /*
+    for (auto fig : diamonds){
+        
+        cout << "FIGURA: " << endl;
+        
+        for (QPoint point; point.y() < gridSize; ++point.ry()){
+            for (point.rx() = 0; point.x() < gridSize ; ++point.rx()){
+                
+                cout << (fig.points().contains(point) && inFigure[point.x() + gridSize * point.y()]) << "   ";
+            }
+            cout << endl;
+        }
+        
+    }
+    */
+    
+    
 	return diamonds;
 }
 

@@ -105,7 +105,7 @@ public:
                 if(hasDiamond(point)){
                     diamond(point)->print();
                 } else {
-                    cout << "-  ";
+                    cout << "-   ";
                 }
             }
             cout << endl;
@@ -127,7 +127,7 @@ public:
                 if(hasDiamond(point) && points.contains(point)){
                     diamond(point)->print();
                 } else {
-                    cout << "-  ";
+                    cout << "-   ";
                 }
             }
             cout << endl;
