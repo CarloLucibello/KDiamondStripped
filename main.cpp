@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include "benchmarksuite.h"
 #include "game.h"
 #include "player.h"
@@ -17,6 +18,9 @@ int main(int argc, char *argv[]){
 
     int seedPlayer = atoll(argv[1]);
     int seedGame = atoll(argv[2]);
+    
+    ofstream myfile;
+    myfile.open ("res.txt");
 
     //qi è un numero compreso tra 0 e 1 che indica l'intelligenza del giocatore
     //qi=1 -> giocatore sceglie sempre la mossa migliore da fare
