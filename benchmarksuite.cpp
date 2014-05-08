@@ -2,6 +2,15 @@
 
 BenchmarkSuite::BenchmarkSuite(Game* game) : m_game(game){}
 
+void BenchmarkResults::print(ostream& fout){
+
+    fout <<"######### RESULTS ############" << endl;
+    fout << "ProbWin  " << probWin.mean() << endl;
+    fout << "AveMoves  " << aveMoves.mean() << " " << aveMoves.stdDev() << endl;
+    fout << "AvePoints  " << avePoints.mean() << " " << avePoints.stdDev() << endl;
+
+}
+
 BenchmarkResults BenchmarkSuite::testLevel(int level, int niter, int seed){
     Player player(m_game, seed);
     BenchmarkResults res;
