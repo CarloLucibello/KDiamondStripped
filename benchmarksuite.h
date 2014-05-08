@@ -14,6 +14,10 @@ public:
     Observable probWin;  //probabilità di superare il livello
     Observable aveMoves;  //numero medio di passi che ci voglio a raggiungere l'obiettivo punteggio
     Observable avePoints;  //puteggio medio ottenuto nel numero di mosse concesso
+    
+    
+    void print(ostream& fout);
+
 };
 
 class BenchmarkSuite{
