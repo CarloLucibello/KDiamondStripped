@@ -29,7 +29,7 @@ enum class FigureType {
 
 class Figure{
 public:
-    
+
     FigureType m_type;
     QVector<QPoint> m_points;
 
@@ -98,6 +98,9 @@ public:
     int points() const;
     bool isFinished() const;
     bool isWon() const;
+    void removeDiamond(const QPoint& point);
+    void removeJolly(const QPoint& point);
+
 //  private:
 //    QList<QPoint> findCompletedRows();
     QVector<Figure> findFigures();

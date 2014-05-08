@@ -163,7 +163,7 @@ bool Game::executeFirstJob(){
 		} //fall through
 
 		case Job::RevokeSwapDiamondsJob:
-//		cout<<"Job::RevokeSwapDiamondsJob" << endl;
+		cout<<"Job::RevokeSwapDiamondsJob" << endl;
 			//invoke movement
 			m_board->swapDiamonds(m_swappingDiamonds[0], m_swappingDiamonds[1]);
 			break;
@@ -201,7 +201,6 @@ bool Game::executeFirstJob(){
                     m_board->clearSelection();
 				}
 
-
 //				/** Annoto i jolly che devo inserire
                 QVector<QPoint> jPoint;
                 QVector<JollyType> jType;
@@ -238,7 +237,6 @@ bool Game::executeFirstJob(){
                             type = JollyType::Bag;
                             //color=Color::ColorsCount;
                         }
-                        cout << "type Jolly: " << int(type) << " color: " << int(color) << endl;
                         jPoint += point;
                         jType += type;
                         jColor += color;
@@ -247,23 +245,26 @@ bool Game::executeFirstJob(){
 
                 //Segno i punti ed elimino le figure
                 for(const auto& fig : figuresToRemove){
-                    m_gameState->addPoints(fig.size());//TODO cambiare addPoints per accettare una figura
+
                     //invoke remove animation, then fill gaps immediately after the animation
-                    for(const QPoint& diamondPos: fig.points())
-                        m_board->removeDiamond(diamondPos);
+                    for(const QPoint& diamondPos: fig.points()){
+                        if(m_board->diamond(diamondPos)->isJolly()){
+                            removeJolly(diamondPos);
+                        }
+                        else {
+                            removeDiamond(diamondPos);
+                        }
+                    }
                 }
 
                 //Creo i Jolly
                 for(int i = 0; i < jPoint.size(); ++i){
                     m_board->rDiamond(jPoint[i]) = m_board->spawnDiamond(jColor[i], jType[i]);
+                    cout << "CREATO Jolly: " << int(jType[i]) << " color: " << int(jColor[i])
+                        << " in " << jPoint[i].x() << " " << jPoint[i].y() << endl;
                 }
-
 				m_jobQueue.prepend(Job::FillGapsJob);
 //				printBoard();
-
-
-
-
 			}
 			break;
 		}
@@ -291,6 +292,37 @@ bool Game::executeFirstJob(){
 	return true;
 }
 
+void Game::removeDiamond(const QPoint& point){
+    m_gameState->addPoints(1);
+    m_board->removeDiamond(point);
+}
+
+
+//TODO Inserire busta e cookie
+void Game::removeJolly(const QPoint& point){
+    auto jtype = m_board->diamond(point)->jollyType();
+    removeDiamond(point);
+
+    cout << "SCOPPIO Jolly " << int(jtype) << " in " << point.x() << " " << point.y() << endl;
+
+    //TODO Che succede se incontro un Jolly? Lo esplodo come jolly?
+    if(jtype == JollyType::H){
+        int y = point.y();
+        for(int x = 0; x < m_board->gridSize(); ++x) {
+            removeDiamond({x,y});
+        }
+    }
+
+   if(jtype == JollyType::V){
+        int x = point.y();
+        for(int y = 0; y < m_board->gridSize(); ++y) {
+            removeDiamond({x,y});
+        }
+    }
+}
+
+
+
 void Game::executeJobs(){
     bool nonEmptyList = true;
     while(nonEmptyList){
@@ -310,9 +342,7 @@ QVector<Figure> Game::findFigures(){
                 for(auto& p : figure.points()){
                     inFigure[p.x() + gridSize * p.y()] = true;
                 }
-
                 if (figure.size() > 0){
-                    cout << "------------tipo di figura: " << int(figure.type()) << " in " << point.x() << " " << point.y() << endl;
                     diamonds += figure;
                 }
             }
