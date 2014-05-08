@@ -20,7 +20,7 @@ int main(int argc, char *argv[]){
     int seedGame = atoll(argv[2]);
     
     ofstream myfile;
-    myfile.open ("res.txt");
+//    myfile.open ("res.txt");
 
     //qi è un numero compreso tra 0 e 1 che indica l'intelligenza del giocatore
     //qi=1 -> giocatore sceglie sempre la mossa migliore da fare
@@ -42,7 +42,8 @@ int main(int argc, char *argv[]){
 //    cout << "ProbWin  " << res.probWin.mean() << endl;
 //    cout << "AveMoves  " << res.aveMoves.mean() << " " << res.aveMoves.stdDev() << endl;
 //    cout << "AvePoints  " << res.avePoints.mean() << " " << res.avePoints.stdDev() << endl;
-
+//    res.print(myfile);
+//    myfile.close();
 
     return 0;
 }
