@@ -107,6 +107,7 @@ public:
     Figure findFigure(QPoint point);
     QVector<QPoint> findRowH(const QPoint& point);
     QVector<QPoint> findRowV(const QPoint& point);
+    QVector<QPoint> findDiamonds(Color color);
 
     void getMoves();
     const QVector<Move>& availMoves() const;
@@ -114,10 +115,10 @@ public:
     QList<Job> m_jobQueue;
     QVector<Move> m_availableMoves;
     QList<QPoint> m_swappingDiamonds;
-    
+
     //salvo i punti swappati perché devo usarli in removeJolly
     QList<QPoint> puntiSwappati = m_swappingDiamonds;
-    
+
     Board* m_board;
     GameState* m_gameState;
     GameParams* m_gameParams;

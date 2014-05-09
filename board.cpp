@@ -165,7 +165,6 @@ void Board::removeDiamond(const QPoint& point){
 	Diamond* diamond = this->diamond(point);
 	//può capitare che la funzione possa essere chiamate più volte nello stesso punto
 	// se il diamante appartiene a più figure da scoppiare
-    cout << diamond << endl;
 	if(diamond != 0) {
         m_colorCount[int(diamond->color())]--;
         delete diamond;
@@ -241,7 +240,6 @@ void Board::clearDiamonds(){
     for (QPoint point; point.x() < m_size; point.rx()++)
 		for (point.ry() = 0; point.y() < m_size; point.ry()++)
             if(hasDiamond(point)){
-                cout << "has diamond "<< endl;
                 removeDiamond(point);
             }
 }

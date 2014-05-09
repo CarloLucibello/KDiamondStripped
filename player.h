@@ -7,7 +7,6 @@
 
 
 class Player{
-    double qi;
 public:
     Game * m_game;
     LinCongRNG rng;
