@@ -114,6 +114,10 @@ public:
     QList<Job> m_jobQueue;
     QVector<Move> m_availableMoves;
     QList<QPoint> m_swappingDiamonds;
+    
+    //salvo i punti swappati perché devo usarli in removeJolly
+    QList<QPoint> puntiSwappati = m_swappingDiamonds;
+    
     Board* m_board;
     GameState* m_gameState;
     GameParams* m_gameParams;

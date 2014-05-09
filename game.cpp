@@ -193,7 +193,7 @@ bool Game::executeFirstJob(){
 				}
 				//Controllo se sto swappando e dato che lo swap ha avuto successo
                 //salvo i punti swappati perché mi serviranno
-                auto puntiSwappati = m_swappingDiamonds;
+                puntiSwappati = m_swappingDiamonds;
                 // incremento il numero di mosse ed elimino la selezione
 				if(!m_swappingDiamonds.isEmpty()){
                     m_gameState->updateMovesLeft();
@@ -359,6 +359,59 @@ void Game::removeJolly(const QPoint& point){
             }
         }
     }
+    
+    //Inserisco lo scoppiaggio di un cookie
+    
+    if(jtype == JollyType::Cookie){
+        
+        cout << "*******************************************" << endl;
+        
+        int px = point.x();
+        int py = point.y();
+        
+        QPoint daScoppiare;
+        
+        QPoint pp0 = puntiSwappati[0];
+        QPoint pp1 = puntiSwappati[1];
+                
+        //il cookie ha effetto se viene usato in una mossa, e fa scoppiare
+        //la caramella con cui abbiamo fatto lo scambio;
+        //altrimenti, viene sprecato
+        
+        if (!puntiSwappati.isEmpty() && (pp0 == point || pp1 == point)){
+            
+            
+            
+             cout << "*******************************************" << endl;
+             cout << "OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO" << endl;
+             cout << "*******************************************" << endl;
+            
+            
+            if (pp0 == point) daScoppiare=pp1;
+            else daScoppiare=pp0;
+            
+            Color coloreDaScoppiare = m_board->diamond(daScoppiare)->color();
+            
+            //cerco tutti le caramelle uguali a coloreDaScoppiare
+            
+            for(int y = 0; y < m_board->gridSize(); ++y) {
+                for(int x = 0; x < m_board->gridSize(); ++x) {
+                    
+                    Color colorePoint = m_board->diamond({x,y})->color();
+                    
+                    //alcuni diamanti potremmo averli già cancellati
+                    if (m_board->hasDiamond({x,y}) && colorePoint == coloreDaScoppiare){
+                        if (m_board->diamond({x,y})->isJolly()) removeJolly({x,y});
+                        else removeDiamond({x,y});
+                    }
+                }
+            }
+            
+            
+        }
+        else removeDiamond({px,py});
+    }
+
     
     
     
