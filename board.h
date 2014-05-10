@@ -97,6 +97,7 @@ public:
     QVector<CellMask> m_mask;
     QVector<double> m_colorCount;
     RandomColor * m_randcol;
+    bool m_verbose;
 
 //DEBUG FUNCTONS
     void print() const{

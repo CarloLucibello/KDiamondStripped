@@ -23,9 +23,9 @@ public:
 
 private:
     //i parametri predefiniti per i vari livelli
-    const vector<int> boardSizes = {8, 12, 10, 8, 8}; //il primo 'e per test
-    const vector<int> numColors = {6, 5, 5, 5, 6};
-    const vector<int> numMoves = {40, 30, 20, 10, 10};
+    const vector<int> boardSizes = {6, 12, 10, 8, 8}; //il primo 'e per test
+    const vector<int> numColors = {5, 5, 5, 5, 6};
+    const vector<int> numMoves = {10, 30, 20, 10, 10};
     const vector<int> pointsToReach = {70, 30, 20, 10, 10};
     const vector<bool> isDiamondGeneratorBiased = {true, false, false, false, false};
     const vector<double> biasDiamondGenerator = {0.1, 0, 0, 0, 0};

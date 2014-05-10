@@ -229,9 +229,6 @@ void Board::fillGaps(){
 			if (diamond || mask(QPoint(x, y)) == CellMask::WALL)
 				continue; //inside of diamond stack - no gaps to fill
 			diamond = spawnDiamond(m_randcol->gen());
-
-            cout << "creato diamante di colore: " << int(diamond->color()) << " in " << x<< " " << y << endl;
-
 		}
 	}
 }

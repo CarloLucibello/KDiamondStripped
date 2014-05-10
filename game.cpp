@@ -3,10 +3,11 @@
 #include <cassert>
 using namespace std;
 
-Game::Game(int seed)
+Game::Game(int seed, bool verbose)
 	: m_gameState(new GameState)
 	, m_gameParams(new GameParams)
-	, m_board(new Board(seed)){}
+	, m_board(new Board(seed))
+	, m_verbose(verbose){}
 
 Game::~Game(){
     delete m_board;
@@ -164,25 +165,31 @@ bool Game::executeFirstJob(){
 	const Job job = m_jobQueue.takeFirst();
 	switch (job){
 		case Job::SwapDiamondsJob: {
-		cout <<"Job::SwapDiamondsJob" << endl;
+            if(m_verbose) cout <<"**** SWAPPING **** Job::SwapDiamondsJob" << endl;
+
 			assert(m_board->selections().count() == 2);
 			const QList<QPoint> points = m_board->selections();
 			m_swappingDiamonds = points;
+            if(m_verbose){
+                printSelection({m_swappingDiamonds[0], m_swappingDiamonds[1]});
+            }
             m_board->swapDiamonds(points[0], points[1]);
 			m_jobQueue << Job::RemoveFiguresJob; //We already insert this here to avoid another conditional statement.
             break;
 		} //fall through
 
 		case Job::RevokeSwapDiamondsJob:
-		cout<<"Job::RevokeSwapDiamondsJob" << endl;
+            if(m_verbose) {
+                cout<<"***** Job::RevokeSwapDiamondsJob " << endl;
+            }
 			//invoke movement
+
 			m_board->swapDiamonds(m_swappingDiamonds[0], m_swappingDiamonds[1]);
 			break;
 
 		case Job::RemoveFiguresJob: {
-        cout<<"Job::RemoveRowJob" << endl;
+            if(m_verbose) cout<<"Job::RemoveFiguresJob" << endl;
 			QVector<Figure> figuresToRemove = findFigures();
-            cout<<"Num figures to remove =" << figuresToRemove.size() << endl;
 
 			//Controllo la presenza di Cookie e casomai aggiungo tutti i punti di un colore
 			// a figureToRemove
@@ -190,13 +197,13 @@ bool Game::executeFirstJob(){
                 auto d1 = m_board->diamond(m_swappingDiamonds[0]);
                 auto d2 = m_board->diamond(m_swappingDiamonds[1]);
                 if(d1->jollyType() == JollyType::Cookie && !(d2->jollyType() == JollyType::Cookie)){
-                cout << "***************************************  COOOKIE" << endl;
+                    if(m_verbose) cout << "*** Swapping  COOOKIE" << endl;
                     figuresToRemove += Figure(findDiamonds(d2->color()), FigureType::None);
                     // aggiungo anche il cookie alle figure da rimuovere
                     figuresToRemove += Figure({m_swappingDiamonds[0]}, FigureType::None);
                  }
                 else if(d2->jollyType() == JollyType::Cookie && !(d1->jollyType() == JollyType::Cookie)){
-                cout << "***************************************  COOOKIE" << endl;
+                    if(m_verbose) cout << "*** Swapping  COOOKIE" << endl;
                     figuresToRemove += Figure(findDiamonds(d1->color()), FigureType::None);
                     // aggiungo anche il cookie alle figure da rimuovere
                     figuresToRemove += Figure({m_swappingDiamonds[1]}, FigureType::None);
@@ -224,12 +231,9 @@ bool Game::executeFirstJob(){
 					m_availableMoves.clear();
 				}
 				//Controllo se sto swappando e dato che lo swap ha avuto successo
-                //salvo i punti swappati perché mi serviranno
-                puntiSwappati = m_swappingDiamonds;
                 // incremento il numero di mosse ed elimino la selezione
 				if(!m_swappingDiamonds.isEmpty()){
                     m_gameState->updateMovesLeft();
-                    m_swappingDiamonds.clear();
                     m_board->clearSelection();
 				}
 
@@ -243,15 +247,15 @@ bool Game::executeFirstJob(){
                         // se creo un jolly durante una valanga lo
                         // creo nell'ultimo punto di points
                         QPoint point = fig.points().last(); //assegnazione di default
-                        if (!puntiSwappati.isEmpty()){
+                        if (!m_swappingDiamonds.isEmpty()){
                             //Se ho appena fatto la mossa la figura contenerra'
                             // sicuramente uno e un solo punto swappato
                             //assert(fig.points().contains(puntiSwappati[0])|| fig.points().contains(puntiSwappati[1]));
-                            if(fig.points().contains(puntiSwappati[0])){
-                                point = puntiSwappati[0];
+                            if(fig.points().contains(m_swappingDiamonds[0])){
+                                point = m_swappingDiamonds[0];
                             }
                             else {
-                                point = puntiSwappati[1];
+                                point = m_swappingDiamonds[1];
                             }
                         }
 
@@ -276,11 +280,15 @@ bool Game::executeFirstJob(){
                 }
 
                 //Segno i punti ed elimino le figure
-                cout<<"### Removing Figures" << endl;
-                printBoard();
+                if(m_verbose) {
+                    printBoard();
+                    cout<<"### Removing " << figuresToRemove.size() <<" Figures" << endl;
+                }
                 for(const auto& fig : figuresToRemove){
-                    cout << "Removing " << endl;
-                    m_board->printSelection(fig.points());
+                    if(m_verbose) {
+                        cout << "### Removing " << endl;
+                        m_board->printSelection(fig.points());
+                    }
                     //invoke remove animation, then fill gaps immediately after the animation
                     for(const QPoint& diamondPos: fig.points()){
                         if(m_board->hasDiamond(diamondPos)){ //potrebbe essere (casi rari) che era già stato scoppiato
@@ -294,37 +302,43 @@ bool Game::executeFirstJob(){
                     }
                 }
 
-                //Creo i Jolly
-//                cout<<"### Creating Jollies" << endl;
-                printBoard();
+
                 for(int i = 0; i < jPoint.size(); ++i){
                     m_board->rDiamond(jPoint[i]) = m_board->spawnDiamond(jColor[i], jType[i]);
-                    cout << "CREATO Jolly: " << int(jType[i]) << " color: " << int(jColor[i])
-                        << " in " << jPoint[i].x() << " " << jPoint[i].y() << endl;
+                    if(m_verbose){
+                        cout    << "CREATO Jolly: " << int(jType[i]) << " color: " << int(jColor[i])
+                                << " in " << jPoint[i].x() << " " << jPoint[i].y() << endl;
+                    }
                 }
 				m_jobQueue.prepend(Job::FillGapsJob);
-//				printBoard();
-                puntiSwappati.clear();
+                if(m_verbose) printBoard();
+
+                // lo ripulisco alla fine perché prima mi serve
+                m_swappingDiamonds.clear();
 			}
 			break;
 		}
 
 		case Job::FillGapsJob:
-		cout << "Job::FillGapsJob:" << endl;
+             if(m_verbose) cout << "Job::FillGapsJob:" << endl;
 			//fill gaps
 			m_board->fillGaps();
+            if(m_verbose) printBoard();
 			m_jobQueue.prepend(Job::RemoveFiguresJob); //allow cascades (i.e. clear rows that have been formed by falling diamonds)
 //			printBoard();
 			break;
 
 		case Job::UpdateAvailableMovesJob:
-//		cout <<"Job::UpdateAvailableMovesJob:" << endl;
+            if(m_verbose) {
+                cout <<"Job::UpdateAvailableMovesJob:" << endl;
+                printState();
+            }
 			if (m_gameState->state() != State::Finished)
 				getMoves();
 			break;
 
 		case Job::EndGameJob:
-//		cout <<"Job::EndGameJob" << endl;
+            if(m_verbose)cout <<"Job::EndGameJob" << endl;
             m_gameState->setState(State::Finished);
 			break;
 	}
@@ -349,14 +363,14 @@ QVector<QPoint> Game::findDiamonds(Color color){
 }
 
 void Game::removeDiamond(const QPoint& point){
-    cout << "SCOPPIO Diamante"  <<" in " << point.x() << " " << point.y() << endl;
+    if(m_verbose) cout << "rimuovo diamante"  <<" in " << point.x() << " " << point.y() << endl;
     m_gameState->addPoints(1);
     m_board->removeDiamond(point);
 }
 
 //TODO Inserire cookie
 void Game::removeJolly(const QPoint& point){
-    cout << "++++++++++++++++++++++++++++++++++++++++++  SCOPPIO Jolly"  <<" in " << point.x() << " " << point.y() << endl;
+    if(m_verbose) cout << "SCOPPIO Jolly"  <<" in " << point.x() << " " << point.y() << endl;
     auto jtype = m_board->diamond(point)->jollyType();
     removeDiamond(point);
 
@@ -411,7 +425,7 @@ void Game::removeJolly(const QPoint& point){
     //scoppiata dallo scoppiaggio di una riga intera o di un quadrato,
     //quindi viene sprecato
     if(jtype == JollyType::Cookie){
-        cout <<"**************************** "<< endl;
+        if(m_verbose) cout <<"****** sprecato cookie "<< endl;
         removeDiamond(point);
     }
 }
@@ -443,24 +457,17 @@ QVector<Figure> Game::findFigures(){
             }
         }
 	}
-
     /*
     for (auto fig : diamonds){
-
         cout << "FIGURA: " << endl;
-
         for (QPoint point; point.y() < gridSize; ++point.ry()){
             for (point.rx() = 0; point.x() < gridSize ; ++point.rx()){
-
                 cout << (fig.points().contains(point) && inFigure[point.x() + gridSize * point.y()]) << "   ";
             }
             cout << endl;
         }
-
     }
     */
-
-
 	return diamonds;
 }
 

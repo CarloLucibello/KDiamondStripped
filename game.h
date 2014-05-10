@@ -86,7 +86,7 @@ private:
 
 class Game{
 public:
-    Game(int seed);
+    Game(int seed = -1, bool verbose = false);
     ~Game();
     void startNewGame();
     void setMode(const Mode mode);
@@ -116,18 +116,21 @@ public:
     QVector<Move> m_availableMoves;
     QList<QPoint> m_swappingDiamonds;
 
-    //salvo i punti swappati perché devo usarli in removeJolly
-    QList<QPoint> puntiSwappati = m_swappingDiamonds;
-
     Board* m_board;
     GameState* m_gameState;
     GameParams* m_gameParams;
+    bool m_verbose;
 
 
 //DEBUG FUNCTIONS
     void printBoard(){
         cout << "### BOARD ####" << endl;
         m_board->print();
+        cout << endl;
+    }
+
+    void printSelection(const QVector<QPoint>& points){
+        m_board->printSelection(points);
         cout << endl;
     }
 

@@ -12,13 +12,13 @@ int main(int argc, char *argv[]){
         fprintf(stderr, "\nSyntax:\nInserisci il seedPlayer il seedGame e il qi\n");
         cout << "il qi e' un numero tra 0 e 1 che indica l'intelligenza del giocatore; " << endl;
         cout << "se qi=1, il giocatore sceglie sempre la migliore mossa possibile. " << endl;
-
         return 1;
     }
 
     int seedPlayer = atoll(argv[1]);
     int seedGame = atoll(argv[2]);
-    
+    bool verbose = true;
+
 //    ofstream myfile;
 //    myfile.open ("res.txt");
 
@@ -30,11 +30,11 @@ int main(int argc, char *argv[]){
 
     double qi = atof(argv[3]);
 
-    Game * game = new Game(seedGame);
+    Game * game = new Game(seedGame, verbose);
     BenchmarkSuite bench(game);
 
     //questo è per fare una singola partita col giocatore intelligente
-    bench.singleGame(qi, seedPlayer);
+    bench.singleGame(qi, seedPlayer, false);
 //
 //    auto res = bench.testLevel(0, 1000, seedPlayer);
 //
