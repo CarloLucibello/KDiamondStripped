@@ -14,8 +14,8 @@ public:
     Observable probWin;  //probabilità di superare il livello
     Observable aveMoves;  //numero medio di passi che ci voglio a raggiungere l'obiettivo punteggio
     Observable avePoints;  //puteggio medio ottenuto nel numero di mosse concesso
-    
-    
+
+
     void print(ostream& fout);
 
 };
@@ -23,8 +23,8 @@ public:
 class BenchmarkSuite{
 public:
     BenchmarkSuite(Game* game);
-    BenchmarkResults testLevel(int level, int niter = 1000, int seed = -1);
-    void singleGame(double qi, int seedPlayer = -1, bool verbose = true);
+    BenchmarkResults testLevel(int level, int niter = 1000, int seed = -1, bool verbose = false);
+    void singleGame(double qi, int seedPlayer = -1, bool verbose = false);  //verbose si potrebbe eliminare da qua
 
 
 private:

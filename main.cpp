@@ -3,47 +3,44 @@
 #include "benchmarksuite.h"
 #include "game.h"
 #include "player.h"
+#include "options.h"
 
 using namespace std;
 
 int main(int argc, char *argv[]){
+    //Valori di defailt degli argomenti opzionali
+    int seedPlayer = -1;
+    int seedGame = -1;
+	string work = "play";     // "play", "test"
+	bool verbose = true;
+	double qi = 1;
+	string outPath = "res.txt";
+	options::Opt opt = {seedPlayer, seedGame, work, verbose, qi, outPath};
+	opt.parseOptions(argc, argv);
 
-    if (argc!=4){
-        fprintf(stderr, "\nSyntax:\nInserisci il seedPlayer il seedGame e il qi\n");
-        cout << "il qi e' un numero tra 0 e 1 che indica l'intelligenza del giocatore; " << endl;
-        cout << "se qi=1, il giocatore sceglie sempre la migliore mossa possibile. " << endl;
-        return 1;
-    }
 
-    int seedPlayer = atoll(argv[1]);
-    int seedGame = atoll(argv[2]);
-    bool verbose = true;
-
-//    ofstream myfile;
-//    myfile.open ("res.txt");
-
-    //qi è un numero compreso tra 0 e 1 che indica l'intelligenza del giocatore
-    //qi=1 -> giocatore sceglie sempre la mossa migliore da fare
-    //qi=0 -> giocatore sceglie sempre una mossa random
-    //in questo caso, i metodi playRandomMove() e playSmartRandomMove() sono
-    //equivalenti
-
-    double qi = atof(argv[3]);
 
     Game * game = new Game(seedGame, verbose);
     BenchmarkSuite bench(game);
 
-    //questo è per fare una singola partita col giocatore intelligente
-    bench.singleGame(qi, seedPlayer, false);
-//
-//    auto res = bench.testLevel(0, 1000, seedPlayer);
-//
-//    cout <<"######### RESULTS ############" << endl;
-//    cout << "ProbWin  " << res.probWin.mean() << endl;
-//    cout << "AveMoves  " << res.aveMoves.mean() << " " << res.aveMoves.stdDev() << endl;
-//    cout << "AvePoints  " << res.avePoints.mean() << " " << res.avePoints.stdDev() << endl;
-//    res.print(myfile);
-//    myfile.close();
+    if(work == "play"){
+        //questo è per fare una singola partita col giocatore intelligente
+        bench.singleGame(qi, seedPlayer, verbose);
+    }
+
+     if(work == "test"){
+        ofstream myfile(outPath);
+
+        auto res = bench.testLevel(0, 1000, seedPlayer, true);
+
+        cout <<"######### RESULTS ############" << endl;
+        cout << "ProbWin  " << res.probWin.mean() << endl;
+        cout << "AveMoves  " << res.aveMoves.mean() << " " << res.aveMoves.stdDev() << endl;
+        cout << "AvePoints  " << res.avePoints.mean() << " " << res.avePoints.stdDev() << endl;
+        res.print(myfile);
+        myfile.close();
+    }
+
 
     return 0;
 }

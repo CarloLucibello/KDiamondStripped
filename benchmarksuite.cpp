@@ -10,7 +10,7 @@ void BenchmarkResults::print(ostream& fout){
 
 }
 
-BenchmarkResults BenchmarkSuite::testLevel(int level, int niter, int seed){
+BenchmarkResults BenchmarkSuite::testLevel(int level, int niter, int seed, bool verbose){
     Player player(m_game, seed);
     BenchmarkResults res;
     res.niter = niter;
@@ -19,18 +19,17 @@ BenchmarkResults BenchmarkSuite::testLevel(int level, int niter, int seed){
 //        m_game->printParams();
     for(int i = 0; i < niter; i++){
         m_game->startNewGame();
-        cout << "PARTITA   " << i << endl;
-        m_game->printBoard();
-
+        if(verbose){
+            cout << "PARTITA   " << i << endl;
+        }
 
         int step = 0;
         while(!m_game->isFinished()){
 //            m_game->printState();
-            player.playRandomMove(true); //verbose
+            player.playRandomMove();
             if(!m_game->isWon()){
                 step++;
             }
-            m_game->printBoard();
         }
         res.probWin += m_game->isWon() ? 1 : 0;
         res.aveMoves += step;
@@ -45,17 +44,9 @@ void BenchmarkSuite::singleGame(double qi,  int seedPlayer, bool verbose){
     Player* player = new Player(m_game, seedPlayer);
     m_game->setLevel(0);  //from 0 to 4
     m_game->startNewGame();
-    if(verbose){
-        m_game->printParams();
-        m_game->printState();
-        m_game->printBoard();
-    }
+
     while(!m_game->isFinished()){
-        if(verbose){
-            cout << "numero di mosse possibili: " << m_game->availMoves().size() << endl;
-            cout << endl;
-            m_game->printMoves();
-        }
+
         player->playSmartRandomMove(qi, verbose);
         if(verbose){
             m_game->printBoard();

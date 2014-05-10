@@ -340,6 +340,7 @@ bool Game::executeFirstJob(){
 		case Job::EndGameJob:
             if(m_verbose)cout <<"Job::EndGameJob" << endl;
             m_gameState->setState(State::Finished);
+            if(m_verbose) printState();
 			break;
 	}
 

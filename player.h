@@ -20,7 +20,7 @@ public:
         playMove(rng.unifInt(moves.size()), verbose);
     }
 
-    void playMove(int i, bool verbose){
+    void playMove(int i, bool verbose = false){
         const auto& moves = m_game->availMoves();
         auto m = moves[i % moves.size()];
         if(verbose){
