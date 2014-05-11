@@ -18,20 +18,18 @@ int main(int argc, char *argv[]){
 	options::Opt opt = {seedPlayer, seedGame, work, verbose, qi, outPath};
 	opt.parseOptions(argc, argv);
 
-
-
     Game * game = new Game(seedGame, verbose);
     BenchmarkSuite bench(game);
 
     if(work == "play"){
         //questo è per fare una singola partita col giocatore intelligente
-        bench.singleGame(qi, seedPlayer, verbose);
+        bench.singleGame(1, qi, seedPlayer, verbose);
     }
 
      if(work == "test"){
         ofstream myfile(outPath);
 
-        auto res = bench.testLevel(0, 1000, seedPlayer, true);
+        auto res = bench.testLevel(1, 1000, seedPlayer, true);
 
         cout <<"######### RESULTS ############" << endl;
         cout << "ProbWin  " << res.probWin.mean() << endl;

@@ -24,7 +24,7 @@ class BenchmarkSuite{
 public:
     BenchmarkSuite(Game* game);
     BenchmarkResults testLevel(int level, int niter = 1000, int seed = -1, bool verbose = false);
-    void singleGame(double qi, int seedPlayer = -1, bool verbose = false);  //verbose si potrebbe eliminare da qua
+    void singleGame(int level, double qi, int seedPlayer = -1, bool verbose = false);  //verbose si potrebbe eliminare da qua
 
 
 private:

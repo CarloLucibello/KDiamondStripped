@@ -40,9 +40,10 @@ BenchmarkResults BenchmarkSuite::testLevel(int level, int niter, int seed, bool 
 }
 
 
-void BenchmarkSuite::singleGame(double qi,  int seedPlayer, bool verbose){
+void BenchmarkSuite::singleGame(int level, double qi,  int seedPlayer, bool verbose){
     Player* player = new Player(m_game, seedPlayer);
-    m_game->setLevel(0);  //from 0 to 4
+    m_game->setLevel(level);  //from 1 to N
+    m_game->printParams();
     m_game->startNewGame();
 
     while(!m_game->isFinished()){

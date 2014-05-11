@@ -23,11 +23,6 @@ void Game::startNewGame(){
     executeJobs();
 }
 
-//Funzione attualmente inutile
-void Game::setMode(const Mode mode){
-    m_gameState->setMode(mode);
-}
-
 void Game::setLevel(const int level){
     m_gameParams->setLevel(level);
 }
@@ -492,7 +487,7 @@ Figure Game::findFigure(QPoint point){
                 type = FigureType::LT;
                 //ATTENZIONE si possono avere più file verticali o posso
                 //mettere un break?
-                //direi che non si possono avere più righe verticali: al massimo
+                //direi che non si possono avere più righe verticali: al simo
                 //se ne forma una
                 break;
             }

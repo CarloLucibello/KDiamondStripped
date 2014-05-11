@@ -29,6 +29,11 @@ int GameParams::colorCount() const {
     return m_colors;
 }
 
+
+int GameParams::mask() const {
+    return m_mask;
+}
+
 bool GameParams::isDiamGenBiased() const {
     return m_isDiamGenBiased;
 }
@@ -39,11 +44,22 @@ double GameParams::biasDiamGen() const{
 }
 
 void GameParams::setLevel(int level){
+    ifstream fparams(m_paramsPath);
+
+    string line;
+    for(int i = 0; i <= level; i++){
+        getline(fparams, line);
+        cout << line << endl;
+    }
+    stringstream stream(line);
+
     m_level = level;
-    m_size = boardSizes[level];
-    m_colors = numColors[level];
-    m_moves = numMoves[level];
-    m_points = pointsToReach[level];
+    stream >> m_mask;
+    stream >> m_colors;
+    stream >> m_moves;
+    stream >> m_points;
+
+    //TODO inserire anche questi nel file
     m_isDiamGenBiased = isDiamondGeneratorBiased[level];
     m_biasDiamGen = biasDiamondGenerator[level];
 }

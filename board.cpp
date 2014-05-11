@@ -12,7 +12,7 @@ void Board::setParams(const GameParams * gameParams){
 	m_numColors = gameParams->colorCount();
 	m_colorCount.fill(0, m_numColors + 1); // i colori cominciano da 1
 	m_diamonds.fill(0, m_size * m_size);
-	setMask(gameParams->level());
+    setMask(gameParams->mask());
 
 	//Scelgo il generatore di colori appropriato ai parametri
 	RandomColor * randcol;
@@ -25,20 +25,24 @@ void Board::setParams(const GameParams * gameParams){
 	randcol->copyStateRNG(m_randcol);
 	delete m_randcol;
 	m_randcol = randcol;
+
 }
 
-//bisognerebbe includere la maschera in GameParams
-void Board::setMask(int level){
-    m_mask.fill(CellMask::BLANK, m_size * m_size);
-    switch(level){
-        case 0: // toglie i quattro angoli
-            rMask({0, 0}) = CellMask::WALL;
-            rMask({0, m_size - 1}) = CellMask::WALL;
-            rMask({m_size - 1, 0}) = CellMask::WALL;
-            rMask({m_size - 1, m_size - 1}) = CellMask::WALL;
-            break;
+void Board::setMask(int mask){
+    string maskPath("../levels/masks/mask-");
+    maskPath += to_string(mask) + ".txt";
+    ifstream fmask(maskPath);
+    m_mask.resize(m_size * m_size);
+    for(int y = 0; y < m_size; ++y){
+        for(int x = 0; x < m_size; ++x){
+            int m;
+            fmask >> m;
+            rMask({x, y}) = CellMask(m);
+        }
     }
+    fmask.close();
 }
+
 
 CellMask& Board::rMask(const QPoint& point){
 	return m_mask[point.x() + point.y() * m_size];

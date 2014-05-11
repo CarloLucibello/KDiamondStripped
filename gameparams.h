@@ -3,6 +3,9 @@
 
 #include <vector>
 #include <iostream>
+#include <string>
+#include <fstream>
+#include <sstream>
 using namespace std;
 
 
@@ -17,27 +20,27 @@ public:
     int moves() const;
     int level() const;    // from 0 to 4
     int points() const;    // from 0 to 4
+    int mask() const;
     bool isDiamGenBiased() const;
     double biasDiamGen() const;
     void setLevel(int level);    // from 0 to 4
 
 private:
-    //i parametri predefiniti per i vari livelli
-    const vector<int> boardSizes = {6, 12, 10, 8, 8}; //il primo 'e per test
-    const vector<int> numColors = {5, 5, 5, 5, 6};
-    const vector<int> numMoves = {10, 30, 20, 10, 10};
-    const vector<int> pointsToReach = {70, 30, 20, 10, 10};
+
+    //Devo ancora implementare il gen biased
     const vector<bool> isDiamondGeneratorBiased = {true, false, false, false, false};
     const vector<double> biasDiamondGenerator = {0.1, 0, 0, 0, 0};
 
     // i parametri attuali
     int m_colors;
-    int m_size;
+    int m_mask;
     int m_level;
     int m_moves;
     int m_points;
     bool m_isDiamGenBiased;
     double m_biasDiamGen;
+    const int m_size = 9; //TODO per ora la fisso a 9, in futuro sara´ data dalla mask
+    string m_paramsPath = "../levels/params.txt";
 
 public:
     void print(){
