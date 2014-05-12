@@ -8,6 +8,7 @@ set(kdiamond_SRCS
 	game.cpp
 	board.cpp
 	diamond.cpp
+        randomcolor.cpp
 )
 
 find_package(Qt4 4.4.3 REQUIRED)

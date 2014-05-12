@@ -2,6 +2,7 @@
 #define _RAND_H
 
 #include <fstream>
+#include <iostream>
 
 class LinCongRNG {
 public:
@@ -41,7 +42,7 @@ private:
 
     UInt8 randomSeed(){
         int rdm;
-        std::ifstream urandom("/dev/urandom", ios::in|ios::binary);
+        std::ifstream urandom("/dev/urandom", std::ios::in | std::ios::binary);
         urandom.read((char*)&rdm, 4);
         urandom.close();
 

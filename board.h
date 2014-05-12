@@ -1,9 +1,9 @@
 #ifndef BOARD_H
 #define BOARD_H
 
+#include "randomcolor.h"
 #include "diamond.h"
 #include "gameparams.h"
-#include "rand.h"
 
 #include <QVector>
 
@@ -14,39 +14,6 @@ using namespace std;
 enum class CellMask {
     BLANK,  //normal cell
     WALL
-};
-
-class RandomColor{
-public:
-    RandomColor(int numColors)
-        : m_numColors(numColors){}
-
-    virtual void setSeed(int seed){
-        m_rng.setSeed(seed);
-    }
-
-    virtual void copyStateRNG(const RandomColor * randcol){
-        m_rng = randcol->m_rng;
-    }
-
-    virtual Color gen(){
-        return Color(1 + m_rng.unifInt(m_numColors));
-    }
-
-
-private:
-    LinCongRNG m_rng;
-    int m_numColors;
-};
-
-class BiasedRandomColor : public RandomColor {
-public:
-    BiasedRandomColor(int numColors, double bias)
-        : RandomColor(numColors)
-        , m_bias(bias){}
-
-//private:
-    double m_bias;
 };
 
 class Board {

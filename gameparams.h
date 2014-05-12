@@ -26,11 +26,6 @@ public:
     void setLevel(int level);    // from 0 to 4
 
 private:
-
-    //Devo ancora implementare il gen biased
-    const vector<bool> isDiamondGeneratorBiased = {true, false, false, false, false};
-    const vector<double> biasDiamondGenerator = {0.1, 0, 0, 0, 0};
-
     // i parametri attuali
     int m_colors;
     int m_mask;

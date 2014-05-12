@@ -19,8 +19,9 @@ int main(int argc, char *argv[]){
 	opt.parseOptions(argc, argv);
 
     Game * game = new Game(seedGame, verbose);
-    BenchmarkSuite bench(game);
 
+
+    BenchmarkSuite bench(game);
     if(work == "play"){
         //questo è per fare una singola partita col giocatore intelligente
         bench.singleGame(1, qi, seedPlayer, verbose);

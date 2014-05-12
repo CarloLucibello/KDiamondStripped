@@ -3,7 +3,7 @@
 Board::Board(int seed)
     : m_numDiamonds(0)
     {
-        m_randcol = new RandomColor(0); //tanto non verrà mai usato
+        m_randcol = new RandomColor(this); //tanto non verrà mai usato
         m_randcol->setSeed(seed);
     }
 
@@ -13,19 +13,14 @@ void Board::setParams(const GameParams * gameParams){
 	m_colorCount.fill(0, m_numColors + 1); // i colori cominciano da 1
 	m_diamonds.fill(0, m_size * m_size);
     setMask(gameParams->mask());
-
+    cout << "NUM COL " << m_numColors << endl;
 	//Scelgo il generatore di colori appropriato ai parametri
-	RandomColor * randcol;
-	if(gameParams->isDiamGenBiased()){
-        randcol = new BiasedRandomColor(m_numColors, gameParams->biasDiamGen());
-	} else {
-        randcol = new RandomColor(m_numColors);
-	}
-	//Aggiorno m_randcol copiando lo stato del vecchio generatore
-	randcol->copyStateRNG(m_randcol);
-	delete m_randcol;
-	m_randcol = randcol;
+    RandomColor * randcol = new RandomColor(this, gameParams->isDiamGenBiased(), gameParams->biasDiamGen());
 
+	//Aggiorno m_randcol copiando lo stato del vecchio generatore
+    randcol->copyStateRNG(m_randcol);
+	delete m_randcol;
+    m_randcol = randcol;
 }
 
 void Board::setMask(int mask){
@@ -61,7 +56,12 @@ void Board::startNewGame(){
             if(isOccupable(point)){ //potenzialmente la cella può contenere un diamante
                 Color color;
                 while (true){ //genera un colore finchè non si formano triplette
-                     color = m_randcol->gen();
+                    cout << "FIN W" << endl;
+
+                    color = m_randcol->gen(point.x());
+                    cout << int(color) << endl;
+                    cout << "FIN W" << endl;
+
 
                     const QPoint dispY1(0, -1), dispY2(0, -2);
                     const QPoint dispX1(-1, 0), dispX2(-2, 0);
@@ -232,7 +232,7 @@ void Board::fillGaps(){
 			Diamond*& diamond = this->rDiamond(QPoint(x, y));
 			if (diamond || mask(QPoint(x, y)) == CellMask::WALL)
 				continue; //inside of diamond stack - no gaps to fill
-			diamond = spawnDiamond(m_randcol->gen());
+            diamond = spawnDiamond(m_randcol->gen(x));
 		}
 	}
 }

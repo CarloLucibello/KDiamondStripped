@@ -7,7 +7,9 @@ Game::Game(int seed, bool verbose)
 	: m_gameState(new GameState)
 	, m_gameParams(new GameParams)
 	, m_board(new Board(seed))
-	, m_verbose(verbose){}
+    , m_verbose(verbose){
+    cout << "LI " << endl;
+}
 
 Game::~Game(){
     delete m_board;
@@ -16,11 +18,17 @@ Game::~Game(){
 }
 
 void Game::startNewGame(){
+    if(m_verbose){
+        cout << "Starting new game ...." << endl;
+    }
     m_gameState->startNewGame(m_gameParams);
     m_board->setParams(m_gameParams);
     m_board->startNewGame();
     m_jobQueue << Job::UpdateAvailableMovesJob;
     executeJobs();
+    if(m_verbose)
+        cout << "....done!"  << endl;
+
 }
 
 void Game::setLevel(const int level){

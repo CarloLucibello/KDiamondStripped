@@ -279,6 +279,30 @@ main.cpp.s:
 	$(MAKE) -f CMakeFiles/kdiamond-stripped.dir/build.make CMakeFiles/kdiamond-stripped.dir/main.cpp.s
 .PHONY : main.cpp.s
 
+randomcolor.o: randomcolor.cpp.o
+.PHONY : randomcolor.o
+
+# target to build an object file
+randomcolor.cpp.o:
+	$(MAKE) -f CMakeFiles/kdiamond-stripped.dir/build.make CMakeFiles/kdiamond-stripped.dir/randomcolor.cpp.o
+.PHONY : randomcolor.cpp.o
+
+randomcolor.i: randomcolor.cpp.i
+.PHONY : randomcolor.i
+
+# target to preprocess a source file
+randomcolor.cpp.i:
+	$(MAKE) -f CMakeFiles/kdiamond-stripped.dir/build.make CMakeFiles/kdiamond-stripped.dir/randomcolor.cpp.i
+.PHONY : randomcolor.cpp.i
+
+randomcolor.s: randomcolor.cpp.s
+.PHONY : randomcolor.s
+
+# target to generate assembly for a file
+randomcolor.cpp.s:
+	$(MAKE) -f CMakeFiles/kdiamond-stripped.dir/build.make CMakeFiles/kdiamond-stripped.dir/randomcolor.cpp.s
+.PHONY : randomcolor.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -309,6 +333,9 @@ help:
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
+	@echo "... randomcolor.o"
+	@echo "... randomcolor.i"
+	@echo "... randomcolor.s"
 .PHONY : help
 
 

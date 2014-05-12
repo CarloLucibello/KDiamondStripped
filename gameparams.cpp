@@ -1,7 +1,7 @@
 #include "gameparams.h"
 
 GameParams::GameParams(){
-    setLevel(0);
+    setLevel(1);
 }
 
 GameParams::~GameParams(){
@@ -49,7 +49,6 @@ void GameParams::setLevel(int level){
     string line;
     for(int i = 0; i <= level; i++){
         getline(fparams, line);
-        cout << line << endl;
     }
     stringstream stream(line);
 
@@ -58,8 +57,6 @@ void GameParams::setLevel(int level){
     stream >> m_colors;
     stream >> m_moves;
     stream >> m_points;
-
-    //TODO inserire anche questi nel file
-    m_isDiamGenBiased = isDiamondGeneratorBiased[level];
-    m_biasDiamGen = biasDiamondGenerator[level];
+    stream >> m_isDiamGenBiased;
+    stream >> m_biasDiamGen;
 }
