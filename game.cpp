@@ -23,6 +23,11 @@ void Game::startNewGame(){
     m_gameState->startNewGame(m_gameParams);
     m_board->setParams(m_gameParams);
     m_board->startNewGame();
+    if(m_verbose){
+        printBoard();
+        cout << endl;
+    }
+
     m_jobQueue << Job::UpdateAvailableMovesJob;
     executeJobs();
     if(m_verbose)

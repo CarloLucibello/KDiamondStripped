@@ -10,7 +10,7 @@ void BenchmarkResults::print(ostream& fout){
 
 }
 
-BenchmarkResults BenchmarkSuite::testLevel(int level, int niter, int seed, bool verbose){
+BenchmarkResults BenchmarkSuite::testLevel(int level, double qi, int niter, int seed, bool verbose){
     Player player(m_game, seed);
     BenchmarkResults res;
     res.niter = niter;
@@ -26,7 +26,8 @@ BenchmarkResults BenchmarkSuite::testLevel(int level, int niter, int seed, bool 
         int step = 0;
         while(!m_game->isFinished()){
 //            m_game->printState();
-            player.playRandomMove();
+            //player.playRandomMove();
+            player.playSmartRandomMove(qi);
             if(!m_game->isWon()){
                 step++;
             }
