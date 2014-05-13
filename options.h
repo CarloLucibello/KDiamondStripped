@@ -81,6 +81,10 @@ public:
             case OUTPATH:
                 outPath = opt.arg;
                 break;
+
+            case QI:
+                qi = atof(opt.arg);
+                break;
 	    }
 	  }
 
