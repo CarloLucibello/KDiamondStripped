@@ -23,8 +23,12 @@ int main(int argc, char *argv[]){
 
     BenchmarkSuite bench(game);
     if(work == "play"){
+        int level = 1;
         //questo è per fare una singola partita col giocatore intelligente
-        bench.singleGame(1, qi, seedPlayer, verbose);
+        bench.singleGame(level, qi, seedPlayer, verbose);
+
+        //questo è per fare una singola mossa col giocatore intelligente
+//        bench.singleMove(level, qi, seedPlayer, verbose);
     }
 
      if(work == "test"){

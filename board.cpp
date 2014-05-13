@@ -13,18 +13,14 @@ void Board::setParams(const GameParams * gameParams){
 	m_colorCount.fill(0, m_numColors + 1); // i colori cominciano da 1
 	m_diamonds.fill(0, m_size * m_size);
     setMask(gameParams->mask());
-    cout << "NUM COL " << m_numColors << endl;
+    m_isDiamGenBiased = gameParams->isDiamGenBiased();
+    m_biasDiamGen = gameParams->biasDiamGen();
 	//Scelgo il generatore di colori appropriato ai parametri
-    RandomColor * randcol = new RandomColor(this, gameParams->isDiamGenBiased(), gameParams->biasDiamGen());
-
-	//Aggiorno m_randcol copiando lo stato del vecchio generatore
-    randcol->copyStateRNG(m_randcol);
-	delete m_randcol;
-    m_randcol = randcol;
+    m_randcol->init();
 }
 
 void Board::setMask(int mask){
-    string maskPath("../levels/masks/mask-");
+    string maskPath("levels/masks/mask-");
     maskPath += to_string(mask) + ".txt";
     ifstream fmask(maskPath);
     m_mask.resize(m_size * m_size);
@@ -56,12 +52,7 @@ void Board::startNewGame(){
             if(isOccupable(point)){ //potenzialmente la cella può contenere un diamante
                 Color color;
                 while (true){ //genera un colore finchè non si formano triplette
-                    cout << "FIN W" << endl;
-
-                    color = m_randcol->gen(point.x());
-                    cout << int(color) << endl;
-                    cout << "FIN W" << endl;
-
+                    color = m_randcol->unif(); // genero un colore uniformemente a caso
 
                     const QPoint dispY1(0, -1), dispY2(0, -2);
                     const QPoint dispX1(-1, 0), dispX2(-2, 0);
@@ -232,7 +223,8 @@ void Board::fillGaps(){
 			Diamond*& diamond = this->rDiamond(QPoint(x, y));
 			if (diamond || mask(QPoint(x, y)) == CellMask::WALL)
 				continue; //inside of diamond stack - no gaps to fill
-            diamond = spawnDiamond(m_randcol->gen(x));
+            auto color = m_isDiamGenBiased ? m_randcol->biased(x, m_biasDiamGen) : m_randcol->unif();
+            diamond = spawnDiamond(color);
 		}
 	}
 }

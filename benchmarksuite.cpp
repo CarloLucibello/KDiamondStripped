@@ -57,4 +57,17 @@ void BenchmarkSuite::singleGame(int level, double qi,  int seedPlayer, bool verb
 
 }
 
+void BenchmarkSuite::singleMove(int level, double qi,  int seedPlayer, bool verbose){
+    Player* player = new Player(m_game, seedPlayer);
+    m_game->setLevel(level);  //from 1 to N
+    m_game->printParams();
+    m_game->startNewGame();
+
+    player->playSmartRandomMove(qi, verbose);
+    if(verbose){
+        m_game->printBoard();
+        m_game->printState();
+    }
+}
+
 

@@ -8,7 +8,6 @@ Game::Game(int seed, bool verbose)
 	, m_gameParams(new GameParams)
 	, m_board(new Board(seed))
     , m_verbose(verbose){
-    cout << "LI " << endl;
 }
 
 Game::~Game(){

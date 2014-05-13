@@ -9,16 +9,16 @@ class Board;
 
 class RandomColor{
 public:
-    RandomColor(Board * board, bool isBiased = false, double bias = 0);
+    RandomColor(Board * board);
     void setSeed(int seed);
-    void copyStateRNG(const RandomColor * randcol);
-    Color gen(int x);
+//    void copyStateRNG(const RandomColor * randcol);
+    Color biased(int x, double bias);
+    Color unif();
+    void init();
 
 private:
     LinCongRNG m_rng;
     int m_numColors;
-    bool m_isBiased;
-    double m_bias;
     Board * m_board;
 };
 

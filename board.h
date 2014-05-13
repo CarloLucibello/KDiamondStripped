@@ -65,6 +65,8 @@ public:
     QVector<double> m_colorCount;
     RandomColor * m_randcol;
     bool m_verbose;
+    bool m_isDiamGenBiased;
+    double m_biasDiamGen;
 
 //DEBUG FUNCTONS
     void print() const{
