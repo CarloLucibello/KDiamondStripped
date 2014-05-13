@@ -173,7 +173,11 @@ bool Game::executeFirstJob(){
 			const QList<QPoint> points = m_board->selections();
 			m_swappingDiamonds = points;
             if(m_verbose){
-                printSelection({m_swappingDiamonds[0], m_swappingDiamonds[1]});
+                //printSelection({m_swappingDiamonds[0], m_swappingDiamonds[1]});
+                QVector<QPoint> m_swappingDiamonds_vec;
+                m_swappingDiamonds_vec.append(m_swappingDiamonds[0]);
+                m_swappingDiamonds_vec.append(m_swappingDiamonds[1]);
+                printSelection(m_swappingDiamonds_vec);
             }
             m_board->swapDiamonds(points[0], points[1]);
 			m_jobQueue << Job::RemoveFiguresJob; //We already insert this here to avoid another conditional statement.
@@ -202,13 +206,17 @@ bool Game::executeFirstJob(){
                     if(m_verbose) cout << "*** Swapping  COOOKIE" << endl;
                     figuresToRemove += Figure(findDiamonds(d2->color()), FigureType::None);
                     // aggiungo anche il cookie alle figure da rimuovere
-                    figuresToRemove += Figure({m_swappingDiamonds[0]}, FigureType::None);
+                    QVector <QPoint> m_swappingDiamonds_vec;
+                    m_swappingDiamonds_vec.append(m_swappingDiamonds[0]);
+                    figuresToRemove += Figure(m_swappingDiamonds_vec, FigureType::None);
                  }
                 else if(d2->jollyType() == JollyType::Cookie && !(d1->jollyType() == JollyType::Cookie)){
                     if(m_verbose) cout << "*** Swapping  COOOKIE" << endl;
                     figuresToRemove += Figure(findDiamonds(d1->color()), FigureType::None);
                     // aggiungo anche il cookie alle figure da rimuovere
-                    figuresToRemove += Figure({m_swappingDiamonds[1]}, FigureType::None);
+                    QVector <QPoint> m_swappingDiamonds_vec;
+                    m_swappingDiamonds_vec.append(m_swappingDiamonds[1]);
+                    figuresToRemove += Figure(m_swappingDiamonds_vec, FigureType::None);
                  }
 			}
 

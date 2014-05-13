@@ -45,7 +45,10 @@ public:
 		argc -= mand + 1; argv += mand + 1;
 //		argc-= mc; argv += mv; // skip program name argv[0] if present
 	  option::Stats stats(usage, argc, argv);
-	  option::Option options[stats.options_max], buffer[stats.buffer_max];
+//	  option::Option options[stats.options_max], buffer[stats.buffer_max];
+//    questi numeri, 100 e 10 sono un po' a cazzo. se ci sono dei problemi,
+//    è meglio riusare l'opzione di sopra su linux
+        option::Option options[100], buffer[10];
 	  option::Parser parse(usage, argc, argv, options, buffer);
 
 	  if (parse.error())
