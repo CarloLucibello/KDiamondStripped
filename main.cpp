@@ -15,7 +15,8 @@ int main(int argc, char *argv[]){
 	bool verbose = true;
 	double qi = 1;
 	string outPath = "res.txt";
-	options::Opt opt = {seedPlayer, seedGame, work, verbose, qi, outPath};
+    int level = 1;
+    options::Opt opt = {seedPlayer, seedGame, work, verbose, qi, outPath, level};
 	opt.parseOptions(argc, argv);
 
     Game * game = new Game(seedGame, verbose);
@@ -23,7 +24,6 @@ int main(int argc, char *argv[]){
 
     BenchmarkSuite bench(game);
     if(work == "play"){
-        int level = 1;
         //questo è per fare una singola partita col giocatore intelligente
         bench.singleGame(level, qi, seedPlayer, verbose);
 
@@ -33,8 +33,9 @@ int main(int argc, char *argv[]){
 
      if(work == "test"){
         ofstream myfile(outPath);
+        int niter = 1000;
 
-        auto res = bench.testLevel(1, 1000, seedPlayer, true);
+        auto res = bench.testLevel(level, qi, niter, seedPlayer, true);
 
         cout <<"######### RESULTS ############" << endl;
         cout << "ProbWin  " << res.probWin.mean() << endl;

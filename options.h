@@ -5,7 +5,7 @@
 
 namespace options{
 
-enum  optionIndex { UNKNOWN, SEEDP, SEEDG, WORK, QI, HELP, VERBOSE, OUTPATH};
+enum  optionIndex { UNKNOWN, SEEDP, SEEDG, WORK, QI, HELP, VERBOSE, OUTPATH, LEVEL};
 const option::Descriptor usage[] = {
 { UNKNOWN, 0,"", "", MyArg::Unknown, "USAGE: myprog [options]\n\n"
                                           "Options:" },
@@ -21,6 +21,8 @@ const option::Descriptor usage[] = {
                                             "\t Intelligenza del giocatore random. Deve essere compresa in [0,1]." },
 { OUTPATH, 0,"o","out", MyArg::NonEmpty, "  -o <path>, \t--out=<path>  "
 											"\tOutput path." },
+{ LEVEL, 0,"l","level", MyArg::Numeric, "  -l <num>, \t--level=<num>  "
+                                            "\t Setta il livello del gioco (deve essere l>=1)." },
 
 { HELP,    0,"h", "help", MyArg::None,    " -h , \t--help  \tPrint usage and exit." },
 
@@ -38,6 +40,7 @@ public:
 	bool& verbose;
 	double& qi;
 	string& outPath;
+    int& level;
 
 
 	int parseOptions(int argc, char* argv[]){
@@ -87,6 +90,10 @@ public:
 
             case QI:
                 qi = atof(opt.arg);
+                break;
+
+            case LEVEL:
+                level = atoi(opt.arg);
                 break;
 	    }
 	  }
