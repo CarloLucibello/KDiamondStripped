@@ -6,7 +6,6 @@
 #include "board.h"
 #include "gamestate.h"
 #include "gameparams.h"
-
 #include <utility>
 using namespace std;
 

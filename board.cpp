@@ -12,35 +12,20 @@ void Board::setParams(const GameParams * gameParams){
 	m_numColors = gameParams->colorCount();
 	m_colorCount.fill(0, m_numColors + 1); // i colori cominciano da 1
 	m_diamonds.fill(0, m_size * m_size);
-    setMask(gameParams->mask());
+    m_mask.set(gameParams->mask());
     m_isDiamGenBiased = gameParams->isDiamGenBiased();
     m_biasDiamGen = gameParams->biasDiamGen();
 	//Scelgo il generatore di colori appropriato ai parametri
     m_randcol->init();
 }
 
-void Board::setMask(int mask){
-    string maskPath("levels/masks/mask-");
-    maskPath += to_string(mask) + ".txt";
-    ifstream fmask(maskPath);
-    m_mask.resize(m_size * m_size);
-    for(int y = 0; y < m_size; ++y){
-        for(int x = 0; x < m_size; ++x){
-            int m;
-            fmask >> m;
-            rMask({x, y}) = CellMask(m);
-        }
-    }
-    fmask.close();
-}
-
 
 CellMask& Board::rMask(const QPoint& point){
-	return m_mask[point.x() + point.y() * m_size];
+    return m_mask.rCell(point);
 }
 
 CellMask Board::mask(const QPoint& point) const{
-	return m_mask[point.x() + point.y() * m_size];
+    return m_mask.cell(point);
 }
 
 void Board::startNewGame(){
@@ -107,7 +92,7 @@ int Board::gridSize() const{
 
 bool Board::isOccupable(const QPoint& point) const{
     bool isInBoard = 0 <= point.x() && point.x() < m_size && 0 <= point.y() && point.y() < m_size;
-	return isInBoard && mask(point) == CellMask::BLANK;
+    return isInBoard && (mask(point) != CellMask::WALL) ;
 }
 
 
@@ -166,6 +151,15 @@ void Board::removeDiamond(const QPoint& point){
         rDiamond(point) = 0;
         m_numDiamonds--;
 	}
+    if(mask(point) == CellMask::GELATINA){
+        breakGelatina(point);
+    }
+}
+
+
+//il controllo se c´e´ una gelatina viene effettuato a monte
+void Board::breakGelatina(const QPoint& point){
+    rMask(point) = CellMask::BLANK;
 }
 
 

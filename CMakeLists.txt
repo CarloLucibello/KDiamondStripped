@@ -9,6 +9,7 @@ set(kdiamond_SRCS
 	board.cpp
 	diamond.cpp
         randomcolor.cpp
+        mask.cpp
 )
 
 find_package(Qt4 4.4.3 REQUIRED)

@@ -1,5 +1,5 @@
-### $1=Mask $2=NumColors $3=NumMoves $4=PointsToReach  $5=IsBiased $5=Biased
-1 5 10 70 0 0.10
-1 6 10 70 0 0.00
-2 6 10 70 0 0.00 
+### $1=Mask $2=NumColors $3=NumMoves $4=PointsToReach  $5=IsBiased  $6=Bias  $7=TargetGelatina
+1 5 10 70 0 0.10 1
+1 6 10 70 0 0.00 1
+2 6 10 70 0 0.00 1
 

@@ -34,6 +34,7 @@ private:
     int m_points;
     bool m_isDiamGenBiased;
     double m_biasDiamGen;
+    bool m_targetGelatina;
     const int m_size = 9; //TODO per ora la fisso a 9, in futuro sara´ data dalla mask
     string m_paramsPath = "levels/params.txt";
 

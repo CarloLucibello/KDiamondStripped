@@ -59,4 +59,5 @@ void GameParams::setLevel(int level){
     stream >> m_points;
     stream >> m_isDiamGenBiased;
     stream >> m_biasDiamGen;
+    stream >> m_targetGelatina;
 }

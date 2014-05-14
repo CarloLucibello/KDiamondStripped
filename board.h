@@ -4,17 +4,13 @@
 #include "randomcolor.h"
 #include "diamond.h"
 #include "gameparams.h"
+#include "mask.h"
 
 #include <QVector>
 
 #include <vector>
 #include <iostream>  //DEBUG
 using namespace std;
-
-enum class CellMask {
-    BLANK,  //normal cell
-    WALL
-};
 
 class Board {
 public:
@@ -38,6 +34,7 @@ public:
     void clearSelection();
 
     void removeDiamond(const QPoint& point);
+    void breakGelatina(const QPoint& point);
     void swapDiamonds(const QPoint& point1, const QPoint& point2);
     void fillGaps();
 
@@ -61,7 +58,7 @@ public:
     QVector<Diamond*> m_diamonds;
     QList<Diamond*> m_activeSelectors;
     QList<Diamond*>  m_inactiveSelectors;
-    QVector<CellMask> m_mask;
+    Mask m_mask;
     QVector<double> m_colorCount;
     RandomColor * m_randcol;
     bool m_verbose;
@@ -72,12 +69,29 @@ public:
     void print() const{
         for(QPoint point; point.y() < m_size; point.ry()++){
             for(point.rx() = 0; point.x() < m_size; point.rx()++){
+
+                //stampa il diamante
                 if(hasDiamond(point)){
                     diamond(point)->print();
                 } else {
-                    cout << "-   ";
+                    cout << "-";
                 }
+
+                //stampa la topologia
+                auto cell = mask(point);
+                if(cell == CellMask::WALL){
+                    cout << "-";
+                }
+                else if(cell == CellMask::GELATINA){
+                    cout << "G";
+                } else{ //caso CellMask::Blank
+                    cout << "";
+                }
+
+                //lascio uno spazio
+                cout << "\t";
             }
+            cout << endl;
             cout << endl;
         }
     }
@@ -99,7 +113,11 @@ public:
                 } else {
                     cout << "-   ";
                 }
+
+                //lascio uno spazio
+                cout << "\t";
             }
+            cout << endl;
             cout << endl;
         }
     }

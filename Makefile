@@ -279,6 +279,30 @@ main.cpp.s:
 	$(MAKE) -f CMakeFiles/kdiamond-stripped.dir/build.make CMakeFiles/kdiamond-stripped.dir/main.cpp.s
 .PHONY : main.cpp.s
 
+mask.o: mask.cpp.o
+.PHONY : mask.o
+
+# target to build an object file
+mask.cpp.o:
+	$(MAKE) -f CMakeFiles/kdiamond-stripped.dir/build.make CMakeFiles/kdiamond-stripped.dir/mask.cpp.o
+.PHONY : mask.cpp.o
+
+mask.i: mask.cpp.i
+.PHONY : mask.i
+
+# target to preprocess a source file
+mask.cpp.i:
+	$(MAKE) -f CMakeFiles/kdiamond-stripped.dir/build.make CMakeFiles/kdiamond-stripped.dir/mask.cpp.i
+.PHONY : mask.cpp.i
+
+mask.s: mask.cpp.s
+.PHONY : mask.s
+
+# target to generate assembly for a file
+mask.cpp.s:
+	$(MAKE) -f CMakeFiles/kdiamond-stripped.dir/build.make CMakeFiles/kdiamond-stripped.dir/mask.cpp.s
+.PHONY : mask.cpp.s
+
 randomcolor.o: randomcolor.cpp.o
 .PHONY : randomcolor.o
 
@@ -333,6 +357,9 @@ help:
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
+	@echo "... mask.o"
+	@echo "... mask.i"
+	@echo "... mask.s"
 	@echo "... randomcolor.o"
 	@echo "... randomcolor.i"
 	@echo "... randomcolor.s"

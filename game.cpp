@@ -60,6 +60,7 @@ void Game::getMoves(){
                         Move mov(point, dest);
                         mov.m_toDelete = figCookie.points();
                         m_availableMoves.append(mov);
+                        m_board->swapDiamonds(point, dest); //riswappo indietro
                         continue; // non c'è bisogno di guardare se faccio figure
                     }
 
@@ -73,7 +74,7 @@ void Game::getMoves(){
                         m_availableMoves.append(mov);
                     }
 
-                    m_board->swapDiamonds(point, dest); //ATTENZIONE questo swap non deve produrre animazioni
+                    m_board->swapDiamonds(point, dest); //riswappo indietro
                 }
             }
         }
@@ -216,6 +217,7 @@ bool Game::executeFirstJob(){
 			if(!m_swappingDiamonds.isEmpty()){
                 auto fig = findFigureCookie(m_swappingDiamonds[0], m_swappingDiamonds[1]);
                 if(!fig.isEmpty()){
+                    if(m_verbose) cout << "**** Swappo Cookie" << endl;
                     figuresToRemove += fig;
                 }
 			}
@@ -554,14 +556,12 @@ Figure Game::findFigureCookie(QPoint p1, QPoint p2){
     auto d2 = m_board->diamond(p2);
 
     if(d1->jollyType() == JollyType::Cookie && !(d2->jollyType() == JollyType::Cookie)){
-        if(m_verbose) cout << "*** Swapping  COOOKIE" << endl;
         auto pointsToRem = findDiamonds(d2->color());
         pointsToRem.append(p1); //aggiungo il cookie
         fig = Figure(pointsToRem, FigureType::None); //La figura deve essere di typo None altrimente poi si crea un jolly
 
     }
     else if(d2->jollyType() == JollyType::Cookie && !(d1->jollyType() == JollyType::Cookie)){
-        if(m_verbose) cout << "*** Swapping  COOOKIE" << endl;
         auto pointsToRem = findDiamonds(d1->color());
         pointsToRem.append(p2); //aggiungo il cookie
         fig = Figure(pointsToRem, FigureType::None); //La figura deve essere di typo None altrimente poi si crea un jolly

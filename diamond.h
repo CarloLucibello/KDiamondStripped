@@ -19,7 +19,6 @@ enum class Color{
     OrangeDiamond,
     //VioletDiamond,
     //LightBlueDiamond,
-    //Jolly,
     ColorsCount
 };
 
@@ -38,13 +37,12 @@ public:
 
     void print(){
         if(isJolly()){
-            if (jollyType() == JollyType::H) cout << "H" << int(color()) << "  ";
-            if (jollyType() == JollyType::V) cout << "V" << int(color()) << "  ";
-            if (jollyType() == JollyType::Bag) cout << "B" << int(color()) << " ";
-            if (jollyType() == JollyType::Cookie) cout << "*" << int(color()) << " ";
+            if (jollyType() == JollyType::H) cout << "H" << int(color());
+            if (jollyType() == JollyType::V) cout << "V" << int(color());
+            if (jollyType() == JollyType::Bag) cout << "B ";
+            if (jollyType() == JollyType::Cookie) cout << "* ";
         }
-        else cout << int(color()) << "   ";
-
+        else cout << int(color()) << " ";
     }
 
 private:
