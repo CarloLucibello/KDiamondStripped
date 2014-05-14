@@ -35,6 +35,7 @@ public:
 
     void removeDiamond(const QPoint& point);
     void breakGelatina(const QPoint& point);
+    void breakLiquirizia(const QPoint& point);
     void swapDiamonds(const QPoint& point1, const QPoint& point2);
     void fillGaps();
 
@@ -84,6 +85,9 @@ public:
                 }
                 else if(cell == CellMask::GELATINA){
                     cout << "G";
+                }
+                else if(cell == CellMask::LIQUIRIZIA){
+                    cout << "L";
                 } else{ //caso CellMask::Blank
                     cout << "";
                 }

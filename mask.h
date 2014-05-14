@@ -12,7 +12,8 @@ using namespace  std;
 enum class CellMask {
     BLANK,  //normal cell
     WALL,
-    GELATINA
+    GELATINA,
+    LIQUIRIZIA
 };
 
 class Mask{

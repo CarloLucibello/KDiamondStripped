@@ -153,6 +153,8 @@ void Board::removeDiamond(const QPoint& point){
 	}
     if(mask(point) == CellMask::GELATINA){
         breakGelatina(point);
+    } else if(mask(point) == CellMask::LIQUIRIZIA){
+        breakLiquirizia(point);
     }
 }
 
@@ -162,8 +164,14 @@ void Board::breakGelatina(const QPoint& point){
     rMask(point) = CellMask::BLANK;
 }
 
+//il controllo se c´e´ una gelatina viene effettuato a monte
+void Board::breakLiquirizia(const QPoint& point){
+    rMask(point) = CellMask::BLANK;
+}
 
 void Board::swapDiamonds(const QPoint& point1, const QPoint& point2){
+    //Non posso swappare se c'è una liquirizia sotto
+    if(mask(point1) == CellMask::LIQUIRIZIA || mask(point2) == CellMask::LIQUIRIZIA ) return;
 	//swap diamonds in internal representation
 	Diamond* diamond1 = this->diamond(point1);
 	Diamond* diamond2 = this->diamond(point2);
