@@ -75,11 +75,6 @@ void BenchmarkSuite::singleMove(int level, double qi,  int seedPlayer, bool verb
         m_game->printBoard();
         m_game->printState();
     }
-    player->playSmartRandomMove(qi, verbose);
-    if(verbose){
-        m_game->printBoard();
-        m_game->printState();
-    }
 
 }
 

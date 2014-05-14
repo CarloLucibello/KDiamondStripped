@@ -65,19 +65,18 @@ void Game::getMoves(){
 
                     auto figure1 = findFigure(point);
                     auto figure2 = findFigure(dest);
-                    //se la mossa ha successo
+
+                    //se la mossa crea figure
                     if(!(figure1.isEmpty() && figure2.isEmpty())){
                         Move mov(point, dest);
-                        mov.m_toDelete = figure1.points() + figure2.points();
+                        mov.m_toDelete += figure1.points() + figure2.points();
                         m_availableMoves.append(mov);
                     }
+
+                    m_board->swapDiamonds(point, dest); //ATTENZIONE questo swap non deve produrre animazioni
                 }
             }
         }
-    }
-    printMoves();
-    for(auto mov : m_availableMoves){
-        printSelection(mov.m_toDelete);
     }
     if (m_availableMoves.isEmpty()){
 		m_board->clearSelection();
