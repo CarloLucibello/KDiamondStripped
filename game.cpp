@@ -54,73 +54,31 @@ void Game::getMoves(){
             for(auto dest : destinations){
                 if(m_board->hasDiamond(dest)){
                     m_board->swapDiamonds(point, dest); //ATTENZIONE questo swap non deve produrre animazioni
-                    auto figure1 = findFigure(point).points();
-                    auto figure2 = findFigure(dest).points();
+
+                    auto figCookie = findFigureCookie(point, dest);
+                    if(!figCookie.isEmpty()){
+                        Move mov(point, dest);
+                        mov.m_toDelete = figCookie.points();
+                        m_availableMoves.append(mov);
+                        continue; // non c'è bisogno di guardare se faccio figure
+                    }
+
+                    auto figure1 = findFigure(point);
+                    auto figure2 = findFigure(dest);
                     //se la mossa ha successo
                     if(!(figure1.isEmpty() && figure2.isEmpty())){
                         Move mov(point, dest);
-                        mov.m_toDelete = figure1 + figure2;
+                        mov.m_toDelete = figure1.points() + figure2.points();
                         m_availableMoves.append(mov);
                     }
-                    
-                    //-----aggiungo mosse che coinvolgono il cookie
-                    
-                    //se nel punto c'è un cookie e in dest non c'è
-                    if (m_board->diamond(point)->jollyType() == JollyType::Cookie && !(m_board->diamond(dest)->jollyType() == JollyType::Cookie)){
-                        //se non ho già preso la mossa
-                        if ((figure1.isEmpty() && figure2.isEmpty())){
-                            
-                            cout << "---------------------------------------AGGIUNGO MOSSA CON COOKIE" << endl;
-                            
-                            Move mov(point, dest);
-                            auto pointsToRemove=findDiamonds(m_board->diamond(dest)->color());
-                            // aggiungo anche il cookie alle figure da rimuovere
-                            QVector<QPoint> point_cookie;
-                            point_cookie.append(point);
-                            mov.m_toDelete = pointsToRemove + point_cookie;
-                            m_availableMoves.append(mov);
-                        }
-                    }
-                    
-                    
-                    //se nel punto non c'è un cookie e in dest c'è
-                    if (m_board->diamond(dest)->jollyType() == JollyType::Cookie && !(m_board->diamond(point)->jollyType() == JollyType::Cookie)){
-                        //se non ho già preso la mossa
-                        if ((figure1.isEmpty() && figure2.isEmpty())){
-                            
-                            cout << "---------------------------------------AGGIUNGO MOSSA CON COOKIE" << endl;
-                            
-                            
-                            Move mov(point, dest);
-                            auto pointsToRemove=findDiamonds(m_board->diamond(point)->color());
-                            // aggiungo anche il cookie alle figure da rimuovere
-                            QVector<QPoint> point_cookie;
-                            point_cookie.append(dest);
-                            mov.m_toDelete = pointsToRemove + point_cookie;
-                            m_availableMoves.append(mov);
-                            
-                            /*
-                            Move mov(point, dest);
-                            auto colorsToRemove = Figure(findDiamonds(m_board->diamond(point)->color()), FigureType::None);
-                            // aggiungo anche il cookie alle figure da rimuovere
-                            QVector<QPoint> point_cookie;
-                            point_cookie.append(dest);
-                            mov.m_toDelete = colorsToRemove.points() + point_cookie;
-                            m_availableMoves.append(mov);
-                            */
-                        }
-                    }
-
-                    
-                    
-                    
-                    
-                    m_board->swapDiamonds(point, dest); //riswappo indietro
                 }
             }
         }
     }
-
+    printMoves();
+    for(auto mov : m_availableMoves){
+        printSelection(mov.m_toDelete);
+    }
     if (m_availableMoves.isEmpty()){
 		m_board->clearSelection();
 		m_gameState->setState(State::Finished); //TODO, forse va agginto un EndGameJob
@@ -255,57 +213,12 @@ bool Game::executeFirstJob(){
             if(m_verbose) cout<<"Job::RemoveFiguresJob" << endl;
 			QVector<Figure> figuresToRemove = findFigures();
 
-			//Controllo la presenza di Cookie e casomai aggiungo tutti i punti di un colore
-			// a figureToRemove
+            //Controllo se ho swappato un Cookie
 			if(!m_swappingDiamonds.isEmpty()){
-                auto d1 = m_board->diamond(m_swappingDiamonds[0]);
-                auto d2 = m_board->diamond(m_swappingDiamonds[1]);
-                if(d1->jollyType() == JollyType::Cookie && !(d2->jollyType() == JollyType::Cookie)){
-                    if(m_verbose) cout << "*** Swapping  COOOKIE" << endl;
-                    
-                    //è meglio fare tante figure di un solo punto, che
-                    //una che contiene tanti punti sparpagliati sulla
-                    //matrice. il motivo è che nel secondo caso, la size
-                    //della figura cancellata è molto grande, maggiore di tre
-                    //nella maggior parte dei casi, e quindi viene associato
-                    //un jolly senza alcun significato a questo scoppiaggio
-                    //di una figura di tanti punti.
-                    
-                    auto pointsToRem = findDiamonds(d2->color());
-                    int size = pointsToRem.size();
-                    
-                    for (int i=0; i<size; ++i){
-                        QVector<QPoint> point;
-                        point.append(pointsToRem[i]);
-                        figuresToRemove += Figure(point, FigureType::None);
-                    }
-                    
-                    //figuresToRemove += Figure(findDiamonds(d2->color()), FigureType::None);
-                    
-                    // aggiungo anche il cookie alle figure da rimuovere
-                    QVector <QPoint> m_swappingDiamonds_vec;
-                    m_swappingDiamonds_vec.append(m_swappingDiamonds[0]);
-                    figuresToRemove += Figure(m_swappingDiamonds_vec, FigureType::None);
-                 }
-                else if(d2->jollyType() == JollyType::Cookie && !(d1->jollyType() == JollyType::Cookie)){
-                    if(m_verbose) cout << "*** Swapping  COOOKIE" << endl;
-                    
-                    auto pointsToRem = findDiamonds(d1->color());
-                    int size = pointsToRem.size();
-                    
-                    for (int i=0; i<size; ++i){
-                        QVector<QPoint> point;
-                        point.append(pointsToRem[i]);
-                        figuresToRemove += Figure(point, FigureType::None);
-                    }
-                    
-                    //figuresToRemove += Figure(findDiamonds(d1->color()), FigureType::None);
-                    
-                    // aggiungo anche il cookie alle figure da rimuovere
-                    QVector <QPoint> m_swappingDiamonds_vec;
-                    m_swappingDiamonds_vec.append(m_swappingDiamonds[1]);
-                    figuresToRemove += Figure(m_swappingDiamonds_vec, FigureType::None);
-                 }
+                auto fig = findFigureCookie(m_swappingDiamonds[0], m_swappingDiamonds[1]);
+                if(!fig.isEmpty()){
+                    figuresToRemove += fig;
+                }
 			}
 
 
@@ -340,7 +253,7 @@ bool Game::executeFirstJob(){
                 QVector<JollyType> jType;
                 QVector<Color> jColor;
                 for(const auto& fig : figuresToRemove){
-                    if(fig.size() > 3){
+                    if(fig.size() > 3 && fig.type() != FigureType::None){//la figura None non produce Jolly (è il caso del Cookie)
                         //cout << "-------------------------------------SIZE DELLA FIGURA CHE SCOPPIO: " << fig.size() << endl;
                         
                         // creo il jolly nel punto in cui sposto il diamante
@@ -351,12 +264,8 @@ bool Game::executeFirstJob(){
                             //Se ho appena fatto la mossa la figura contenerra'
                             // sicuramente uno e un solo punto swappato
                             //assert(fig.points().contains(puntiSwappati[0])|| fig.points().contains(puntiSwappati[1]));
-                            if(fig.points().contains(m_swappingDiamonds[0])){
-                                point = m_swappingDiamonds[0];
-                            }
-                            else {
-                                point = m_swappingDiamonds[1];
-                            }
+                            point = fig.points().contains(m_swappingDiamonds[0]) ? m_swappingDiamonds[0] : m_swappingDiamonds[1];
+
                         }
 
                         auto color = m_board->diamond(point)->color();
@@ -368,11 +277,12 @@ bool Game::executeFirstJob(){
                         } else if((fig.type() == FigureType::RowV || fig.type() == FigureType::RowH)
                             && fig.size() > 4){
                             type = JollyType::Cookie;
-                            color=Color::NoColor;
+                            color = Color::NoColor;
                         } else if(fig.type() == FigureType::LT){
                             type = JollyType::Bag;
-                            color=Color::NoColor;
+                            color = Color::NoColor;
                         }
+                        //ATTENZIONE che si ricada sempre in una delle condizioni precedenti TODO mettere un assert
                         jPoint += point;
                         jType += type;
                         jColor += color;
@@ -401,7 +311,6 @@ bool Game::executeFirstJob(){
                         }
                     }
                 }
-
 
                 for(int i = 0; i < jPoint.size(); ++i){
                     m_board->rDiamond(jPoint[i]) = m_board->spawnDiamond(jColor[i], jType[i]);
@@ -469,7 +378,7 @@ void Game::removeDiamond(const QPoint& point){
     m_board->removeDiamond(point);
 }
 
-//TODO Inserire cookie
+
 void Game::removeJolly(const QPoint& point){
     if(m_verbose) cout << "SCOPPIO Jolly"  <<" in " << point.x() << " " << point.y() << endl;
     auto jtype = m_board->diamond(point)->jollyType();
@@ -557,18 +466,7 @@ QVector<Figure> Game::findFigures(){
                 }
             }
         }
-	}
-    /*
-    for (auto fig : diamonds){
-        cout << "FIGURA: " << endl;
-        for (QPoint point; point.y() < gridSize; ++point.ry()){
-            for (point.rx() = 0; point.x() < gridSize ; ++point.rx()){
-                cout << (fig.points().contains(point) && inFigure[point.x() + gridSize * point.y()]) << "   ";
-            }
-            cout << endl;
-        }
     }
-    */
 	return diamonds;
 }
 
@@ -647,3 +545,31 @@ bool Game::isWon() const {
 int Game::points() const {
     return m_gameState->points();
 }
+
+//Controlla se in dei due punti c'è un cookie e in caso
+//restituisce una figura con il cookie + tutti i diamanti del
+//colore dell'altro punto. In caso contrario restituisc una figura vuota;
+Figure Game::findFigureCookie(QPoint p1, QPoint p2){
+    Figure fig;
+    auto d1 = m_board->diamond(p1);
+    auto d2 = m_board->diamond(p2);
+
+    if(d1->jollyType() == JollyType::Cookie && !(d2->jollyType() == JollyType::Cookie)){
+        if(m_verbose) cout << "*** Swapping  COOOKIE" << endl;
+        auto pointsToRem = findDiamonds(d2->color());
+        pointsToRem.append(p1); //aggiungo il cookie
+        fig = Figure(pointsToRem, FigureType::None); //La figura deve essere di typo None altrimente poi si crea un jolly
+
+    }
+    else if(d2->jollyType() == JollyType::Cookie && !(d1->jollyType() == JollyType::Cookie)){
+        if(m_verbose) cout << "*** Swapping  COOOKIE" << endl;
+        auto pointsToRem = findDiamonds(d1->color());
+        pointsToRem.append(p2); //aggiungo il cookie
+        fig = Figure(pointsToRem, FigureType::None); //La figura deve essere di typo None altrimente poi si crea un jolly
+    }
+
+    return fig;
+}
+
+
+

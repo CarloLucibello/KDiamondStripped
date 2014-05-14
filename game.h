@@ -50,6 +50,10 @@ public:
     int size() const {
         return m_points.size();
     }
+
+    bool isEmpty() const {
+        return m_points.isEmpty();
+    }
 };
 
 class Move{
@@ -108,6 +112,7 @@ public:
     QVector<QPoint> findRowH(const QPoint& point);
     QVector<QPoint> findRowV(const QPoint& point);
     QVector<QPoint> findDiamonds(Color color);
+    Figure findFigureCookie(QPoint p1, QPoint p2);
 
     void getMoves();
     const QVector<Move>& availMoves() const;
