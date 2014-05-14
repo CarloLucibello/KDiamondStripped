@@ -62,6 +62,48 @@ void Game::getMoves(){
                         mov.m_toDelete = figure1 + figure2;
                         m_availableMoves.append(mov);
                     }
+                    
+                    //-----aggiungo mosse che coinvolgono il cookie
+                    
+                    //se nel punto c'è un cookie e in dest non c'è
+                    if (m_board->diamond(point)->jollyType() == JollyType::Cookie && !(m_board->diamond(dest)->jollyType() == JollyType::Cookie)){
+                        //se non ho già preso la mossa
+                        if ((figure1.isEmpty() && figure2.isEmpty())){
+                            
+                            cout << "---------------------------------------AGGIUNGO MOSSA CON COOKIE" << endl;
+                            
+                            Move mov(point, dest);
+                            auto colorsToRemove = Figure(findDiamonds(m_board->diamond(dest)->color()), FigureType::None);
+                            // aggiungo anche il cookie alle figure da rimuovere
+                            QVector<QPoint> point_cookie;
+                            point_cookie.append(point);
+                            mov.m_toDelete = colorsToRemove.points() + point_cookie;
+                            m_availableMoves.append(mov);
+                        }
+                    }
+                    
+                    
+                    //se nel punto non c'è un cookie e in dest c'è
+                    if (m_board->diamond(dest)->jollyType() == JollyType::Cookie && !(m_board->diamond(point)->jollyType() == JollyType::Cookie)){
+                        //se non ho già preso la mossa
+                        if ((figure1.isEmpty() && figure2.isEmpty())){
+                            
+                            cout << "---------------------------------------AGGIUNGO MOSSA CON COOKIE" << endl;
+                            
+                            Move mov(point, dest);
+                            auto colorsToRemove = Figure(findDiamonds(m_board->diamond(point)->color()), FigureType::None);
+                            // aggiungo anche il cookie alle figure da rimuovere
+                            QVector<QPoint> point_cookie;
+                            point_cookie.append(dest);
+                            mov.m_toDelete = colorsToRemove.points() + point_cookie;
+                            m_availableMoves.append(mov);
+                        }
+                    }
+
+                    
+                    
+                    
+                    
                     m_board->swapDiamonds(point, dest); //riswappo indietro
                 }
             }

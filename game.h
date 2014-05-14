@@ -137,7 +137,7 @@ public:
     void printMoves(){
         cout << "### MOVES ####" << endl;
         for(auto& m : m_availableMoves){
-            cout << m.from().x() << "  " << m.from().y() << " --> " << m.to().x() << "  " << m.to().y() <<  endl;
+            cout << m.from().x() << "  " << m.from().y() << " <--> " << m.to().x() << "  " << m.to().y() <<  endl;
         }
         cout << endl;
     }

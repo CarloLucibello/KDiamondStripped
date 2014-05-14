@@ -17,7 +17,9 @@ enum class Color{
     WhiteDiamond,
     BlackDiamond,
     OrangeDiamond,
-    Jolly,
+    //VioletDiamond,
+    //LightBlueDiamond,
+    //Jolly,
     ColorsCount
 };
 

@@ -24,7 +24,7 @@ public:
         const auto& moves = m_game->availMoves();
         auto m = moves[i % moves.size()];
         if(verbose){
-            cout << "MOVING : " << m.from().x() << " " << m.from().y() << " --> " << m.to().x() << " " << m.to().y() << endl;
+            cout << "MOVING : " << m.from().x() << " " << m.from().y() << " <--> " << m.to().x() << " " << m.to().y() << endl;
             cout << endl;
         }
         m_game->clickDiamond(m.from());
