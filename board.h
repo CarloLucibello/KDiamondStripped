@@ -38,6 +38,7 @@ public:
     void breakLiquirizia(const QPoint& point);
     void swapDiamonds(const QPoint& point1, const QPoint& point2);
     void fillGaps();
+    int count(CellMask cell) const;
 
     void clicked(const QPoint& point);
     void dragged(const QPoint& point, const QPoint& direction);

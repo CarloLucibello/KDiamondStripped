@@ -540,7 +540,10 @@ bool Game::isFinished() const{
 }
 
 bool Game::isWon() const {
-    return m_gameState->points() >= m_gameParams->points();
+    bool targetPoints = m_gameState->points() >= m_gameParams->points();
+    bool targetGelatina = m_board->count(CellMask::GELATINA);
+    bool targetLiquirizia = m_gameParams->targetLiquirizia() ? m_board->count(CellMask::LIQUIRIZIA) == 0 : true;
+    return targetPoints && targetLiquirizia && targetGelatina;
 }
 
 int Game::points() const {

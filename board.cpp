@@ -239,3 +239,13 @@ void Board::clearDiamonds(){
             }
 }
 
+int Board::count(CellMask cell) const{
+    int sum = 0;
+    for (QPoint point; point.x() < m_size; point.rx()++)
+        for (point.ry() = 0; point.y() < m_size; point.ry()++)
+            if(mask(point) == cell)
+                   sum++;
+    return sum;
+}
+
+

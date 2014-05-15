@@ -39,6 +39,12 @@ bool GameParams::isDiamGenBiased() const {
 }
 
 
+bool GameParams::targetLiquirizia() const {
+    return m_targetLiquirizia;
+}
+
+
+
 double GameParams::biasDiamGen() const{
     return m_biasDiamGen;
 }
@@ -59,5 +65,5 @@ void GameParams::setLevel(int level){
     stream >> m_points;
     stream >> m_isDiamGenBiased;
     stream >> m_biasDiamGen;
-    stream >> m_targetGelatina;
+    stream >> m_targetLiquirizia;
 }
