@@ -26,6 +26,11 @@ int main(int argc, char *argv[]){
     if(work == "play"){
         //questo è per fare una singola partita col giocatore intelligente
         bench.singleGame(level, qi, seedPlayer, verbose);
+        if(game->isWon()){
+            cout << "Partita Vinta!!!! " << endl;
+        } else {
+            cout << "Partita Persa :( " << endl;
+        }
 
         //questo è per fare una singola mossa col giocatore intelligente
 //        bench.singleMove(level, qi, seedPlayer, verbose);

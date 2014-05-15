@@ -21,14 +21,13 @@ void Game::startNewGame(){
         cout << "Starting new game ...." << endl;
     }
     m_gameState->startNewGame(m_gameParams);
-    m_board->setParams(m_gameParams);
-    m_board->startNewGame();
+    m_board->startNewGame(m_gameParams);
     if(m_verbose){
         printBoard();
         cout << endl;
     }
 
-    m_jobQueue << Job::UpdateAvailableMovesJob;
+    m_jobQueue << Job::UpdateAvailableMoves;
     executeJobs();
     if(m_verbose)
         cout << "....done!"  << endl;
@@ -80,8 +79,7 @@ void Game::getMoves(){
         }
     }
     if (m_availableMoves.isEmpty()){
-		m_board->clearSelection();
-		m_gameState->setState(State::Finished); //TODO, forse va agginto un EndGameJob
+        m_jobQueue.prepend(Job::NoMoves);
 	}
 }
 
@@ -155,7 +153,7 @@ void Game::clickDiamond(const QPoint& point){
 	//toggle selection state
 	m_board->setSelection(point, !isSelected);
 	if (m_board->selections().count() == 2){
-		m_jobQueue << Job::SwapDiamondsJob;
+        m_jobQueue << Job::SwapDiamonds;
 		executeJobs();
     }
 }
@@ -171,7 +169,7 @@ void Game::dragDiamond(const QPoint& point, const QPoint& direction){
 		m_board->clearSelection();
 		m_board->setSelection(point, true);
 		m_board->setSelection(point2, true);
-		m_jobQueue << Job::SwapDiamondsJob;
+        m_jobQueue << Job::SwapDiamonds;
 	}
 }
 
@@ -182,8 +180,8 @@ bool Game::executeFirstJob(){
 	//execute next job in queue
 	const Job job = m_jobQueue.takeFirst();
 	switch (job){
-		case Job::SwapDiamondsJob: {
-            if(m_verbose) cout <<"**** SWAPPING **** Job::SwapDiamondsJob" << endl;
+        case Job::SwapDiamonds: {
+            if(m_verbose) cout <<"**** SWAPPING **** Job::SwapDiamonds" << endl;
 
 			assert(m_board->selections().count() == 2);
 			const QList<QPoint> points = m_board->selections();
@@ -196,21 +194,21 @@ bool Game::executeFirstJob(){
                 printSelection(m_swappingDiamonds_vec);
             }
             m_board->swapDiamonds(points[0], points[1]);
-			m_jobQueue << Job::RemoveFiguresJob; //We already insert this here to avoid another conditional statement.
+            m_jobQueue << Job::RemoveFigures; //We already insert this here to avoid another conditional statement.
             break;
 		} //fall through
 
-		case Job::RevokeSwapDiamondsJob:
+        case Job::RevokeSwapDiamonds:
             if(m_verbose) {
-                cout<<"***** Job::RevokeSwapDiamondsJob " << endl;
+                cout<<"***** Job::RevokeSwapDiamonds" << endl;
             }
 			//invoke movement
 
 			m_board->swapDiamonds(m_swappingDiamonds[0], m_swappingDiamonds[1]);
 			break;
 
-		case Job::RemoveFiguresJob: {
-            if(m_verbose) cout<<"Job::RemoveFiguresJob" << endl;
+        case Job::RemoveFigures: {
+            if(m_verbose) cout<<"Job::RemoveFigures" << endl;
 			QVector<Figure> figuresToRemove = findFigures();
 
             //Controllo se ho swappato un Cookie
@@ -226,13 +224,13 @@ bool Game::executeFirstJob(){
 			if (figuresToRemove.isEmpty()){
 				//no diamond rows were formed by the last move -> revoke movement (unless we are in a cascade)
 				if (!m_swappingDiamonds.isEmpty()){
-					m_jobQueue.prepend(Job::RevokeSwapDiamondsJob);
+                    m_jobQueue.prepend(Job::RevokeSwapDiamonds);
 				}
 				else {
                     if(m_gameState->movesLeft() == 0){
-                        m_jobQueue << Job::EndGameJob;
+                        m_jobQueue << Job::EndGame;
                     } else {
-                        m_jobQueue << Job::UpdateAvailableMovesJob;
+                        m_jobQueue << Job::UpdateAvailableMoves;
                     }
                 }
 			}
@@ -320,7 +318,7 @@ bool Game::executeFirstJob(){
                                 << " in " << jPoint[i].x() << " " << jPoint[i].y() << endl;
                     }
                 }
-				m_jobQueue.prepend(Job::FillGapsJob);
+                m_jobQueue.prepend(Job::FillGaps);
                 if(m_verbose) printBoard();
 
                 // lo ripulisco alla fine perché prima mi serve
@@ -329,29 +327,35 @@ bool Game::executeFirstJob(){
 			break;
 		}
 
-		case Job::FillGapsJob:
-             if(m_verbose) cout << "Job::FillGapsJob:" << endl;
+        case Job::FillGaps:
+             if(m_verbose) cout << "Job::FillGaps:" << endl;
 			//fill gaps
 			m_board->fillGaps();
             if(m_verbose) printBoard();
-			m_jobQueue.prepend(Job::RemoveFiguresJob); //allow cascades (i.e. clear rows that have been formed by falling diamonds)
+            m_jobQueue.prepend(Job::RemoveFigures); //allow cascades (i.e. clear rows that have been formed by falling diamonds)
 //			printBoard();
 			break;
 
-		case Job::UpdateAvailableMovesJob:
+        case Job::UpdateAvailableMoves:
             if(m_verbose) {
-                cout <<"Job::UpdateAvailableMovesJob:" << endl;
+                cout <<"Job::UpdateAvailableMoves:" << endl;
                 printState();
             }
 			if (m_gameState->state() != State::Finished)
 				getMoves();
 			break;
 
-		case Job::EndGameJob:
-            if(m_verbose)cout <<"Job::EndGameJob" << endl;
+        case Job::EndGame:
+            if(m_verbose)cout <<"Job::EndGame" << endl;
             m_gameState->setState(State::Finished);
             if(m_verbose) printState();
 			break;
+
+        case Job::NoMoves:
+            if(m_verbose)
+                cout <<"***  Job::NoMoves *** Respawning Diamonds" << endl;
+            m_board->spawnDiamonds();
+            break;
 	}
 
 	return true;

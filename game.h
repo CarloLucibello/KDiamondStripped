@@ -11,12 +11,14 @@ using namespace std;
 
 //jobs to be done during the board update
 enum class Job {
-    SwapDiamondsJob = 1, //swap selected diamonds
-    RemoveFiguresJob, //remove complete rows of diamonds and add points
-    RevokeSwapDiamondsJob, //revoke swapping of diamonds (will be requested by the RemoveRowsJob if no rows have been formed)
-    FillGapsJob,
-    UpdateAvailableMovesJob, //find and count available moves after the board has been changed
-    EndGameJob //announce end of game
+    SwapDiamonds = 1, //swap selected diamonds
+    RemoveFigures, //remove complete rows of diamonds and add points
+    RevokeSwapDiamonds, //revoke swapping of diamonds (will be requested by the RemoveRowsJob if no rows have been formed)
+    FillGaps,
+    UpdateAvailableMoves, //find and count available moves after the board has been changed
+    EndGame, //announce end of game
+    NoMoves //respawn the diamons
+
 };
 
 enum class FigureType {

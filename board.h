@@ -15,8 +15,7 @@ using namespace std;
 class Board {
 public:
     Board(int seed);
-    void setParams(const GameParams* gameParams);
-    void startNewGame();
+    void startNewGame(const GameParams* gameParams);
 
     void setMask(int level);
     CellMask mask(const QPoint& point) const;
@@ -50,6 +49,8 @@ public:
     QPoint findDiamond(Diamond* diamond) const;
     Diamond*& rDiamond(const QPoint& point);
     Diamond* spawnDiamond(Color color, JollyType jtype = JollyType::None);
+    void spawnDiamonds();
+
 
     void clearDiamonds();
 

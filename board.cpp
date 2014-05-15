@@ -7,19 +7,6 @@ Board::Board(int seed)
         m_randcol->setSeed(seed);
     }
 
-void Board::setParams(const GameParams * gameParams){
-	m_size = gameParams->boardSize();
-	m_numColors = gameParams->colorCount();
-	m_colorCount.fill(0, m_numColors + 1); // i colori cominciano da 1
-	m_diamonds.fill(0, m_size * m_size);
-    m_mask.set(gameParams->mask());
-    m_isDiamGenBiased = gameParams->isDiamGenBiased();
-    m_biasDiamGen = gameParams->biasDiamGen();
-	//Scelgo il generatore di colori appropriato ai parametri
-    m_randcol->init();
-}
-
-
 CellMask& Board::rMask(const QPoint& point){
     return m_mask.rCell(point);
 }
@@ -28,7 +15,21 @@ CellMask Board::mask(const QPoint& point) const{
     return m_mask.cell(point);
 }
 
-void Board::startNewGame(){
+void Board::startNewGame(const GameParams * gameParams){
+    m_size = gameParams->boardSize();
+    m_numColors = gameParams->colorCount();
+    m_colorCount.fill(0, m_numColors + 1); // i colori cominciano da 1
+    m_diamonds.fill(0, m_size * m_size);
+    m_mask.set(gameParams->mask());
+    m_isDiamGenBiased = gameParams->isDiamGenBiased();
+    m_biasDiamGen = gameParams->biasDiamGen();
+    //Scelgo il generatore di colori appropriato ai parametri
+    m_randcol->init();
+    spawnDiamonds();
+}
+
+void Board::spawnDiamonds(){
+    clearSelection();
     clearDiamonds();
     for (QPoint point; point.x() < m_size; ++point.rx()){
         for (point.ry() = 0; point.y() < m_size; ++point.ry()){
