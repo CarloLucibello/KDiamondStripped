@@ -54,22 +54,39 @@ void Game::getMoves(){
                 if(m_board->hasDiamond(dest)){
                     m_board->swapDiamonds(point, dest); //ATTENZIONE questo swap non deve produrre animazioni
 
+
+                    QVector<QPoint> excludedPoints; //punti esclusi da findJollies
+                    excludedPoints.append(point);
+                    excludedPoints.append(dest);
+
+                    //TODO qua non ancora non aggiungo i jolly a Move
                     auto figCookie = findFigureCookie(point, dest);
                     if(!figCookie.isEmpty()){
                         Move mov(point, dest);
                         mov.m_toDelete = figCookie.points();
+
+                        QVector<JollyType> jollies;
+                        getJollies(figCookie, jollies, excludedPoints);
+                        mov.m_jollies = jollies;
+
                         m_availableMoves.append(mov);
+
                         m_board->swapDiamonds(point, dest); //riswappo indietro
                         continue; // non c'è bisogno di guardare se faccio figure
                     }
 
                     auto figure1 = findFigure(point);
                     auto figure2 = findFigure(dest);
-
                     //se la mossa crea figure
                     if(!(figure1.isEmpty() && figure2.isEmpty())){
                         Move mov(point, dest);
                         mov.m_toDelete += figure1.points() + figure2.points();
+
+                        QVector<JollyType> jollies;
+                        getJollies(figure1, jollies, excludedPoints);
+                        getJollies(figure2, jollies, excludedPoints);
+                        mov.m_jollies = jollies;
+
                         m_availableMoves.append(mov);
                     }
 
@@ -575,6 +592,17 @@ Figure Game::findFigureCookie(QPoint p1, QPoint p2){
     }
 
     return fig;
+}
+
+void Game::getJollies(const Figure& fig, QVector<JollyType>& jtypes, QVector<QPoint> excludedPoints) const{
+    for(auto& p : fig.points()){
+        if(!excludedPoints.contains(p)){
+            auto d = m_board->diamond(p);
+            if(d->isJolly()){
+                jtypes.append(d->jollyType());
+            }
+        }
+    }
 }
 
 

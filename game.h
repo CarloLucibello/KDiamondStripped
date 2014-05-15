@@ -7,6 +7,7 @@
 #include "gamestate.h"
 #include "gameparams.h"
 #include <utility>
+#include "figure.h"
 using namespace std;
 
 //jobs to be done during the board update
@@ -19,42 +20,6 @@ enum class Job {
     EndGame, //announce end of game
     NoMoves //respawn the diamons
 
-};
-
-enum class FigureType {
-    None,
-    RowH = 1,
-    RowV,
-    LT
-};
-
-class Figure{
-public:
-
-    FigureType m_type;
-    QVector<QPoint> m_points;
-
-    Figure() {}
-
-    Figure(QVector<QPoint> points, FigureType type)
-        : m_points(points)
-        , m_type(type) {}
-
-    QVector<QPoint> points() const{
-        return m_points;
-    }
-
-    FigureType type() const {
-        return m_type;
-    }
-
-    int size() const {
-        return m_points.size();
-    }
-
-    bool isEmpty() const {
-        return m_points.isEmpty();
-    }
 };
 
 class Move{
@@ -86,7 +51,8 @@ public:
 private:
     QPoint m_from;
     QPoint m_to;
-    QVector<QPoint> m_toDelete;
+    QVector<QPoint> m_toDelete;     //TODO in realta´ uso solo il numero
+    QVector<JollyType> m_jollies; //i tipi di jolly che trovo nelle figure
 };
 
 class Game{
@@ -105,6 +71,9 @@ public:
     bool isWon() const;
     void removeDiamond(const QPoint& point);
     void removeJolly(const QPoint& point);
+    void getJollies(const Figure& fig, QVector<JollyType>& jtypes,
+                   QVector<QPoint> excludedPoints = QVector<QPoint>()) const;
+
 
 //  private:
 //    QList<QPoint> findCompletedRows();
