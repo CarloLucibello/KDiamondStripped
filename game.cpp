@@ -55,18 +55,16 @@ void Game::getMoves(){
                     m_board->swapDiamonds(point, dest); //ATTENZIONE questo swap non deve produrre animazioni
 
 
-                    QVector<QPoint> excludedPoints; //punti esclusi da findJollies
-                    excludedPoints.append(point);
-                    excludedPoints.append(dest);
-
-                    //TODO qua non ancora non aggiungo i jolly a Move
                     auto figCookie = findFigureCookie(point, dest);
                     if(!figCookie.isEmpty()){
                         Move mov(point, dest);
                         mov.m_toDelete = figCookie.points();
 
+                        QVector<QPoint> excludedPoints; //punti esclusi da findJollies
+                        excludedPoints.append(point);
+                        excludedPoints.append(dest);
                         QVector<JollyType> jollies;
-                        getJollies(figCookie, jollies, excludedPoints);
+                        getJollies(figCookie, jollies, excludedPoints); //qui non voglio contare il cookie perch`e non va sprecato
                         mov.m_jollies = jollies;
 
                         m_availableMoves.append(mov);
@@ -83,8 +81,8 @@ void Game::getMoves(){
                         mov.m_toDelete += figure1.points() + figure2.points();
 
                         QVector<JollyType> jollies;
-                        getJollies(figure1, jollies, excludedPoints);
-                        getJollies(figure2, jollies, excludedPoints);
+                        getJollies(figure1, jollies); //non escludo nessun punto
+                        getJollies(figure2, jollies);
                         mov.m_jollies = jollies;
 
                         m_availableMoves.append(mov);
@@ -562,7 +560,7 @@ bool Game::isFinished() const{
 
 bool Game::isWon() const {
     bool targetPoints = m_gameState->points() >= m_gameParams->points();
-    bool targetGelatina = m_board->count(CellMask::GELATINA);
+    bool targetGelatina = m_board->count(CellMask::GELATINA) == 0;
     bool targetLiquirizia = m_gameParams->targetLiquirizia() ? m_board->count(CellMask::LIQUIRIZIA) == 0 : true;
     return targetPoints && targetLiquirizia && targetGelatina;
 }

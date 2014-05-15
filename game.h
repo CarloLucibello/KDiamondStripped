@@ -39,7 +39,7 @@ public:
         return m_to;
     }
 
-    const QVector<QPoint>& toDelete(){
+    const QVector<QPoint>& toDelete() const{
         return m_toDelete;
     }
 
@@ -47,6 +47,13 @@ public:
         return m_toDelete.size();
     }
 
+    bool contains(const JollyType& jolly) const{
+        return m_jollies.contains(jolly);
+    }
+
+    int numJollies() const{
+        return m_jollies.size();
+    }
 
 private:
     QPoint m_from;

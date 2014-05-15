@@ -26,8 +26,7 @@ BenchmarkResults BenchmarkSuite::testLevel(int level, double qi, int niter, int 
         int step = 0;
         while(!m_game->isFinished()){
 //            m_game->printState();
-            //player.playRandomMove();
-            player.playSmartRandomMove(qi);
+            player.playFuzzyMove(qi);
             if(!m_game->isWon()){
                 step++;
             }
@@ -55,7 +54,7 @@ void BenchmarkSuite::singleGame(int level, double qi,  int seedPlayer, bool verb
             m_game->printMoves();
         }
         
-        player->playSmartRandomMove(qi, verbose);
+        player->playFuzzyMove(qi, verbose);
         if(verbose){
             m_game->printBoard();
             m_game->printState();
@@ -70,7 +69,7 @@ void BenchmarkSuite::singleMove(int level, double qi,  int seedPlayer, bool verb
     m_game->printParams();
     m_game->startNewGame();
 
-    player->playSmartRandomMove(qi, verbose);
+    player->playFuzzyMove(qi, verbose);
     if(verbose){
         m_game->printBoard();
         m_game->printState();
