@@ -4,8 +4,9 @@ BenchmarkSuite::BenchmarkSuite(Game* game) : m_game(game){}
 
 void BenchmarkResults::print(ostream& fout){
 
-    fout <<  fixed << setprecision(2) << showpoint << probWin.mean()  << \
-    "\t" << aveMoves.mean() <<  "\t" << aveMoves.stdDev() <<  "\t" << avePoints.mean() <<  "\t" << avePoints.stdDev() << endl;
+    fout <<  fixed << setprecision(2) << showpoint << probWin.mean()  << "\t" << \
+    aveMoves.mean() <<  "\t" << aveMoves.stdDev() <<  "\t" << \
+    avePoints.mean() <<  "\t" << avePoints.stdDev() << endl;
 
 }
 
