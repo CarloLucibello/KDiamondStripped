@@ -389,13 +389,11 @@ void Game::removeJolly(const QPoint& point){
         int py = point.y();
         for(int y = py - 1; y <= py + 1; ++y) {
             for(int x = px - 1; x <= px + 1; ++x) {
-
                 //alcuni diamanti del quadrato 3*3 potremmo averli già cancellati
                 if (m_board->hasDiamond({x,y})){
                     if (m_board->diamond({x,y})->isJolly()) removeJolly({x,y});
                     else removeDiamond({x,y});
                 }
-
             }
         }
     }
@@ -428,7 +426,6 @@ void Game::removeFigures(const QVector<Figure>& figuresToRemove){
                 // sicuramente uno e un solo punto swappato
                 //assert(fig.points().contains(puntiSwappati[0])|| fig.points().contains(puntiSwappati[1]));
                 point = fig.points().contains(m_swappingDiamonds[0]) ? m_swappingDiamonds[0] : m_swappingDiamonds[1];
-
             }
 
             auto color = m_board->diamond(point)->color();

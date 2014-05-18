@@ -5,7 +5,7 @@
 
 namespace options{
 
-enum  optionIndex { UNKNOWN, SEEDP, SEEDG, WORK, QI, HELP, VERBOSE, OUTPATH, LEVEL};
+enum  optionIndex { UNKNOWN, SEEDP, SEEDG, WORK, QI, HELP, VERBOSE, OUTPATH, LEVEL, NITER};
 const option::Descriptor usage[] = {
 { UNKNOWN, 0,"", "", MyArg::Unknown, "USAGE: myprog [options]\n\n"
                                           "Options:" },
@@ -23,6 +23,8 @@ const option::Descriptor usage[] = {
 											"\tOutput path." },
 { LEVEL, 0,"l","level", MyArg::Numeric, "  -l <num>, \t--level=<num>  "
                                             "\t Setta il livello del gioco (deve essere l>=1)." },
+{ NITER, 0,"i","iter", MyArg::Numeric, "  -i <num>, \t--iter=<num>  "
+                                            "\t Numero di iterazioni nei test." },
 
 { HELP,    0,"h", "help", MyArg::None,    " -h , \t--help  \tPrint usage and exit." },
 
@@ -41,6 +43,7 @@ public:
 	double& qi;
 	string& outPath;
     int& level;
+    int& niter;
 
 
 	int parseOptions(int argc, char* argv[]){
@@ -94,6 +97,10 @@ public:
 
             case LEVEL:
                 level = atoi(opt.arg);
+                break;
+
+            case NITER:
+                niter = atoi(opt.arg);
                 break;
 	    }
 	  }

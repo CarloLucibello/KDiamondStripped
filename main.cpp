@@ -16,7 +16,8 @@ int main(int argc, char *argv[]){
 	double qi = 1;
 	string outPath = "res.txt";
     int level = 1;
-    options::Opt opt = {seedPlayer, seedGame, work, verbose, qi, outPath, level};
+    int niter = 1000;  //da usare nei test
+    options::Opt opt = {seedPlayer, seedGame, work, verbose, qi, outPath, level, niter};
 	opt.parseOptions(argc, argv);
 
     Game * game = new Game(seedGame, verbose);
@@ -38,7 +39,6 @@ int main(int argc, char *argv[]){
 
      if(work == "test"){
         ofstream myfile(outPath);
-        int niter = 1000;
 
         auto res = bench.testLevel(level, qi, niter, seedPlayer, true);
 
