@@ -1,7 +1,6 @@
 #include "board.h"
 
 Board::Board(int seed)
-    : m_numDiamonds(0)
     {
         m_randcol = new RandomColor(this); //tanto non verrà mai usato
         m_randcol->setSeed(seed);
@@ -18,7 +17,6 @@ CellMask Board::mask(const QPoint& point) const{
 void Board::startNewGame(const GameParams * gameParams){
     m_size = gameParams->boardSize();
     m_numColors = gameParams->colorCount();
-    m_colorCount.fill(0, m_numColors + 1); // i colori cominciano da 1
     m_diamonds.fill(0, m_size * m_size);
     m_mask.set(gameParams->mask());
     m_isDiamGenBiased = gameParams->isDiamGenBiased();
@@ -66,8 +64,6 @@ void Board::spawnDiamonds(){
 
 Diamond* Board::spawnDiamond(Color color, JollyType jtype){
 	Diamond* diamond = new Diamond(color, jtype);
-    m_numDiamonds++;
-    m_colorCount[int(color)]++;
 	return diamond;
 }
 
@@ -147,10 +143,8 @@ void Board::removeDiamond(const QPoint& point){
 	//può capitare che la funzione possa essere chiamate più volte nello stesso punto
 	// se il diamante appartiene a più figure da scoppiare
 	if(diamond != 0) {
-        m_colorCount[int(diamond->color())]--;
         delete diamond;
         rDiamond(point) = 0;
-        m_numDiamonds--;
 	}
     if(mask(point) == CellMask::GELATINA){
         breakGelatina(point);
@@ -247,6 +241,41 @@ int Board::count(CellMask cell) const{
             if(mask(point) == cell)
                    sum++;
     return sum;
+}
+
+Board& Board::operator=(const Board& b){
+    m_size = b.m_size;
+    m_mask = b.m_mask;
+    m_numColors = b.m_numColors;
+    m_verbose = b.m_verbose;
+    m_isDiamGenBiased = b.m_isDiamGenBiased;
+    m_biasDiamGen = b.m_biasDiamGen;
+
+    //ATTENZIONE, assumo che i diamanti esistano gia´ e siano nelle stesse posizioni
+    for (QPoint point; point.x() < m_size; ++point.rx()){
+        for (point.ry() = 0; point.y() < m_size; ++point.ry()){
+            if(b.hasDiamond(point)){
+                if(!this->hasDiamond(point)){
+                    rDiamond(point) = spawnDiamond();
+                }
+                *diamond(point) = *(b.diamond(point));
+            }
+            if(!b.hasDiamond(point) && this->hasDiamond(point)){
+                removeDiamond(point);
+            }
+
+        }
+    }
+
+//ATTENZIONE a copiarlo perch´e contiene un puntatore alla Board
+//    *m_randcol = b.m_randcol;
+
+   // QList<QPoint> m_selections;
+//    QList<Diamond*> m_activeSelectors;
+//    QList<Diamond*>  m_inactiveSelectors;
+
+
+    return *this;
 }
 
 

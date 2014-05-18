@@ -23,7 +23,7 @@ public:
     void set(int nmask);
     CellMask& rCell(const QPoint& point);
     CellMask cell(const QPoint& point) const;
-
+    Mask& operator=(const Mask& mask);
 
     QVector<CellMask> m_cells;
     const int m_size = 9; //ATTENZIONE in futuro andrà estratto dal file

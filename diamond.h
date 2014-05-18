@@ -26,7 +26,7 @@ enum class JollyType {None = 0, H, V, Cookie, Bag};
 
 class Diamond{
 public:
-    Diamond(Color color, JollyType jollyType = JollyType::None);
+    Diamond(Color color = Color::NoColor, JollyType jollyType = JollyType::None);
 
     Color color() const;
     void clicked();

@@ -32,26 +32,24 @@ public:
     }
 
     // va adattata di volta in volta alle regole del gioco
-    // TODO: dirgli di scoppiare preferibilmente le gelatine e le liquirizie
     void playSmartestMove( bool verbose = false){
         const auto& moves = m_game->availMoves();
         int chosen = -1;
-        int numDel = 0;
-        int numJollies = 0;
+        int numGelAndLiq = 0;
+        int points = 0;
 
         for(int i = 0; i < moves.size(); ++i){
             const auto& m = moves[i];
-            if(!m.contains(JollyType::Cookie)){ //non lo voglio esplodere inutilmente
-                if(m.numJollies() > numJollies){
-                    numDel = m.numToDelete();
-                    numJollies = m.numJollies();
-                    chosen = i;
-                }
-                else if(m.numJollies() == numJollies
-                        && m.numToDelete() > numDel){
-                    numDel = m.numToDelete();
-                    chosen = i;
-                }
+
+            if(m.gelatine() + m.liquirizie() > numGelAndLiq){ //massimizzo sempre sulle gelatine e liquirizie scoppiate
+                numGelAndLiq = m.gelatine() + m.liquirizie();
+                points = m.points();
+                chosen = i;
+            }
+            else if(m.gelatine() + m.liquirizie() == numGelAndLiq
+                    && m.points() > points){ // e a parita´ di condizioni guardo i jolly
+                points = m.points();
+                chosen = i;
             }
         }
 

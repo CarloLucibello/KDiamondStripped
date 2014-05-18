@@ -26,3 +26,8 @@ CellMask Mask::cell(const QPoint& point) const {
     return m_cells[point.x() + point.y() * m_size];
 }
 
+Mask& Mask::operator=(const Mask& mask){
+    m_cells = mask.m_cells;
+    return *this;
+}
+

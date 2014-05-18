@@ -15,21 +15,9 @@ enum class State{
     Finished
 };
 
-class GameStatePrivate{
-    public:
-        GameStatePrivate();
-        ~GameStatePrivate();
-
-        Mode m_mode;
-        State m_state;
-        int m_points;
-        int m_movesLeft;
-};
-
 class GameState{
     public:
         GameState();
-        ~GameState();
         Mode mode() const;
         int points() const;
         State state() const;
@@ -42,12 +30,15 @@ class GameState{
         void removePoints(int points);
         void startNewGame(const GameParams * gameParams);
 //    private:
-        GameStatePrivate* p;
+        Mode m_mode;
+        State m_state;
+        int m_points;
+        int m_movesLeft;
 
         void print(){
-            cout << "state \t" << int(p->m_state) <<  endl;
+            cout << "state \t" << int(m_state) <<  endl;
             cout << "points \t" << points() <<  endl;
-            cout << "movesLeft \t" << p->m_movesLeft <<  endl;
+            cout << "movesLeft \t" << movesLeft() <<  endl;
         }
 };
 

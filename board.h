@@ -14,7 +14,7 @@ using namespace std;
 
 class Board {
 public:
-    Board(int seed);
+    Board(int seed = -1);
     void startNewGame(const GameParams* gameParams);
 
     void setMask(int level);
@@ -48,21 +48,20 @@ public:
 //private:
     QPoint findDiamond(Diamond* diamond) const;
     Diamond*& rDiamond(const QPoint& point);
-    Diamond* spawnDiamond(Color color, JollyType jtype = JollyType::None);
+    Diamond* spawnDiamond(Color color = Color::NoColor, JollyType jtype = JollyType::None);
     void spawnDiamonds();
 
 
     void clearDiamonds();
 
+    Board& operator=(const Board& b); //ATTENZIONE aggiornare se si aggiungono nuovi membri
     int m_size;
     int m_numColors;
-    int m_numDiamonds;
     QList<QPoint> m_selections;
     QVector<Diamond*> m_diamonds;
     QList<Diamond*> m_activeSelectors;
     QList<Diamond*>  m_inactiveSelectors;
     Mask m_mask;
-    QVector<double> m_colorCount;
     RandomColor * m_randcol;
     bool m_verbose;
     bool m_isDiamGenBiased;

@@ -15,6 +15,7 @@ public:
     Color biased(int x, double bias);
     Color unif();
     void init();
+    RandomColor& operator=(const RandomColor rcol);
 
 private:
     LinCongRNG m_rng;

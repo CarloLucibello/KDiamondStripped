@@ -39,27 +39,24 @@ public:
         return m_to;
     }
 
-    const QVector<QPoint>& toDelete() const{
-        return m_toDelete;
+    int points() const{
+        return m_points;
     }
 
-    int numToDelete() const{
-        return m_toDelete.size();
+    int liquirizie() const{
+        return m_liquirizie;
     }
 
-    bool contains(const JollyType& jolly) const{
-        return m_jollies.contains(jolly);
-    }
-
-    int numJollies() const{
-        return m_jollies.size();
+    bool gelatine() const{
+        return m_gelatine;
     }
 
 private:
     QPoint m_from;
     QPoint m_to;
-    QVector<QPoint> m_toDelete;     //TODO in realta´ uso solo il numero
-    QVector<JollyType> m_jollies; //i tipi di jolly che trovo nelle figure
+    int m_points;
+    int m_liquirizie;
+    int m_gelatine;
 };
 
 class Game{
@@ -78,6 +75,8 @@ public:
     bool isWon() const;
     void removeDiamond(const QPoint& point);
     void removeJolly(const QPoint& point);
+    void removeFigures(const QVector<Figure>& figuresToRemove);
+
     void getJollies(const Figure& fig, QVector<JollyType>& jtypes,
                    QVector<QPoint> excludedPoints = QVector<QPoint>()) const;
 
@@ -92,13 +91,18 @@ public:
     Figure findFigureCookie(QPoint p1, QPoint p2);
 
     void getMoves();
+
     const QVector<Move>& availMoves() const;
 
     QList<Job> m_jobQueue;
     QVector<Move> m_availableMoves;
     QList<QPoint> m_swappingDiamonds;
 
-    Board* m_board;
+    Board * m_board;
+
+    Board * m_testBoard; //per testare le mosse;
+    GameState* m_testState;
+
     GameState* m_gameState;
     GameParams* m_gameParams;
     bool m_verbose;

@@ -57,4 +57,3 @@ Color RandomColor::biased(int x, double bias){
     }
     return Color(i);
 }
-
