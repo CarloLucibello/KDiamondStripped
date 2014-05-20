@@ -38,7 +38,7 @@ int main(int argc, char *argv[]){
     }
 
      if(work == "test"){
-         string paramsPath = "experiment/exp1.txt";
+         string paramsPath = "exp1.txt";
          bench.fullTestLevel( qi, niter, seedPlayer, verbose, paramsPath, outPath);
     }
 
