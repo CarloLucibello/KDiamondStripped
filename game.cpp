@@ -41,6 +41,11 @@ void Game::startNewGame(){
 
 }
 
+void Game::setParamsPath(string paramsPath){
+        m_gameParams->setParamsPath(paramsPath);
+}
+
+
 void Game::setLevel(const int level){
     m_gameParams->setLevel(level);
 }
