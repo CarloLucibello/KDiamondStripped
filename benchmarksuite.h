@@ -5,6 +5,7 @@
 #include "player.h"
 #include "observable.h"
 
+
 class BenchmarkResults{
 public:
     int level;
@@ -23,9 +24,11 @@ public:
 class BenchmarkSuite{
 public:
     BenchmarkSuite(Game* game);
-    BenchmarkResults testLevel(int level, double qi, int niter = 1000, int seed = -1, bool verbose = false);
+    BenchmarkResults testLevel(int level, double qi, int niter = 1000, int seed = -1, bool verbose = false, string paramsPath = "levels/params.txt");
     void singleGame(int level, double qi, int seedPlayer = -1, bool verbose = false);  //verbose si potrebbe eliminare da qua
     void singleMove(int level, double qi, int seedPlayer = -1, bool verbose = false);  //verbose si potrebbe eliminare da qua
+    
+    void fullTestLevel( double qi, int niter, int seed, bool verbose, string paramsPath, string outPath);
 
 
 
