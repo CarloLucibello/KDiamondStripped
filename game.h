@@ -66,6 +66,7 @@ public:
     void startNewGame();
     void setMode(const Mode mode);
     void setLevel(const int level);
+    void setParamsPath(string paramsPath);
     void clickDiamond(const QPoint& point);
     void dragDiamond(const QPoint& point, const QPoint& direction);
     void executeJobs();
