@@ -183,6 +183,30 @@ diamond.cpp.s:
 	$(MAKE) -f CMakeFiles/kdiamond-stripped.dir/build.make CMakeFiles/kdiamond-stripped.dir/diamond.cpp.s
 .PHONY : diamond.cpp.s
 
+figure.o: figure.cpp.o
+.PHONY : figure.o
+
+# target to build an object file
+figure.cpp.o:
+	$(MAKE) -f CMakeFiles/kdiamond-stripped.dir/build.make CMakeFiles/kdiamond-stripped.dir/figure.cpp.o
+.PHONY : figure.cpp.o
+
+figure.i: figure.cpp.i
+.PHONY : figure.i
+
+# target to preprocess a source file
+figure.cpp.i:
+	$(MAKE) -f CMakeFiles/kdiamond-stripped.dir/build.make CMakeFiles/kdiamond-stripped.dir/figure.cpp.i
+.PHONY : figure.cpp.i
+
+figure.s: figure.cpp.s
+.PHONY : figure.s
+
+# target to generate assembly for a file
+figure.cpp.s:
+	$(MAKE) -f CMakeFiles/kdiamond-stripped.dir/build.make CMakeFiles/kdiamond-stripped.dir/figure.cpp.s
+.PHONY : figure.cpp.s
+
 game.o: game.cpp.o
 .PHONY : game.o
 
@@ -345,6 +369,9 @@ help:
 	@echo "... diamond.o"
 	@echo "... diamond.i"
 	@echo "... diamond.s"
+	@echo "... figure.o"
+	@echo "... figure.i"
+	@echo "... figure.s"
 	@echo "... game.o"
 	@echo "... game.i"
 	@echo "... game.s"
