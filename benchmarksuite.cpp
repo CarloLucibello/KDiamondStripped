@@ -2,21 +2,44 @@
 
 BenchmarkSuite::BenchmarkSuite(Game* game) : m_game(game){}
 
+void BenchmarkSuite::fullTestLevel( double qi, int niter, int seed, bool verbose, string paramsPath, string outPath){
+    
+    int level;
+    int numLines = 0;
+    ifstream fin(paramsPath);
+    ofstream fout(outPath);
+    string unused;
+    
+    while ( std::getline(fin, unused) )  ++numLines;
+    
+
+    for (level=1; level< numLines; ++level) {
+        cout << "level " << level << endl ;
+        auto res = testLevel(level, qi, niter, seed, verbose, paramsPath);
+        res.print(fout);
+
+    }
+   fout.close();
+}
+
 void BenchmarkResults::print(ostream& fout){
 
-    fout <<  fixed << setprecision(2) << showpoint << probWin.mean()  << "\t" << \
-    aveMoves.mean() <<  "\t" << aveMoves.stdDev() <<  "\t" << \
+    fout <<  fixed << setprecision(3) << showpoint << probWin.mean()  << "\t" << \
+    aveMoves.mean() <<  "\t" << aveMoves.stdDev()  << \
     avePoints.mean() <<  "\t" << avePoints.stdDev() << endl;
 
 }
 
-BenchmarkResults BenchmarkSuite::testLevel(int level, double qi, int niter, int seed, bool verbose){
+BenchmarkResults BenchmarkSuite::testLevel(int level, double qi, int niter, int seed, bool verbose, string paramsPath){
     Player player(m_game, seed);
     BenchmarkResults res;
     res.niter = niter;
     res.level = level;
+
+    m_game->setParamsPath(paramsPath);
     m_game->setLevel(level);
 //        m_game->printParams();
+    
     for(int i = 0; i < niter; i++){
         m_game->startNewGame();
         if(verbose){
