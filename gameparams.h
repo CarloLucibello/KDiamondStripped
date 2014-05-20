@@ -21,9 +21,12 @@ public:
     int level() const;    // from 0 to 4
     int points() const;    // from 0 to 4
     int mask() const;
+    string m_paramsPath = "levels/params.txt";
+    
     bool isDiamGenBiased() const;
     double biasDiamGen() const;
     bool targetLiquirizia() const;
+    void setParamsPath(string paramsPath);
     void setLevel(int level);    // from 0 to 4
 
 private:
@@ -37,7 +40,6 @@ private:
     double m_biasDiamGen;
     bool m_targetLiquirizia;
     const int m_size = 9; //TODO per ora la fisso a 9, in futuro sara´ data dalla mask
-    string m_paramsPath = "levels/params.txt";
 
 public:
     void print(){
