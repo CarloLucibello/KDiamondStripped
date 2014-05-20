@@ -38,16 +38,8 @@ int main(int argc, char *argv[]){
     }
 
      if(work == "test"){
-        ofstream myfile(outPath);
-
-        auto res = bench.testLevel(level, qi, niter, seedPlayer, true);
-
-        cout <<"######### RESULTS ############" << endl;
-        cout << "ProbWin  " << res.probWin.mean() << endl;
-        cout << "AveMoves  " << res.aveMoves.mean() << " " << res.aveMoves.stdDev() << endl;
-        cout << "AvePoints  " << res.avePoints.mean() << " " << res.avePoints.stdDev() << endl;
-        res.print(myfile);
-        myfile.close();
+         string paramsPath = "params.txt";
+         bench.fullTestLevel( qi, niter, seedPlayer, verbose, paramsPath, outPath);
     }
 
     return 0;
