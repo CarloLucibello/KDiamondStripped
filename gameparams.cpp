@@ -49,6 +49,10 @@ double GameParams::biasDiamGen() const{
     return m_biasDiamGen;
 }
 
+void GameParams::setParamsPath(string paramsPath){
+        m_paramsPath = paramsPath;
+}
+
 void GameParams::setLevel(int level){
     ifstream fparams(m_paramsPath);
 
