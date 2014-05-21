@@ -30,7 +30,7 @@ public:
     
     void fullTestLevel( double qi, int niter, int seed, bool verbose, string paramsPath, string outPath);
 
-
+    void testParam(string paramName, string levelPath, string expPath);
 
 private:
     Game * m_game;
