@@ -39,6 +39,7 @@ int main(int argc, char *argv[]){
 
      if(work == "test"){
          string paramsPath = "exp1.txt";
+         bench.testParam( "mask", "levels/params.txt", paramsPath);
          bench.fullTestLevel( qi, niter, seedPlayer, verbose, paramsPath, outPath);
     }
 
