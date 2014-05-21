@@ -2,6 +2,47 @@
 
 BenchmarkSuite::BenchmarkSuite(Game* game) : m_game(game){}
 
+void BenchmarkSuite::testParam( string paramName, string levelPath, string expPath){
+    
+    int m_colors;
+    int m_mask;
+    int m_level;
+    int m_moves;
+    int m_points;
+    bool m_isDiamGenBiased;
+    double m_biasDiamGen;
+    bool m_targetLiquirizia;
+    ifstream fparams(levelPath);
+    ofstream fout(expPath);
+    
+    string line;
+    for(int i = 0; i <= 1; i++){
+        getline(fparams, line);
+    }
+    stringstream stream(line);
+    
+    m_level = 1;
+    stream >> m_mask;
+    stream >> m_colors;
+    stream >> m_moves;
+    stream >> m_points;
+    stream >> m_isDiamGenBiased;
+    stream >> m_biasDiamGen;
+    stream >> m_targetLiquirizia;
+    
+    if (paramName== "mask") {
+        int k;
+        int kMax = 18;
+        fout << "### $1=Mask $2=NumColors $3=NumMoves $4=PointsToReach  $5=IsBiased  $6=Bias  $7=TargetLiquirizia" << endl;
+        for (k=0; k<= kMax; k++) {
+            fout << m_mask + k << "\t" << m_colors << "\t" << m_moves << "\t" << m_points << "\t" \
+            << m_isDiamGenBiased << "\t" << m_biasDiamGen << "\t"<< m_targetLiquirizia << endl;
+        }
+        fout.close();
+    }
+    
+}
+
 void BenchmarkSuite::fullTestLevel( double qi, int niter, int seed, bool verbose, string paramsPath, string outPath){
     
     int level;
