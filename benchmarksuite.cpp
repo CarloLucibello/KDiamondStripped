@@ -6,15 +6,21 @@ void BenchmarkSuite::fullTestLevel( double qi, int niter, int seed, bool verbose
     
     int level;
     int numLines = 0;
+    string unused;
+    string outParamPath = "simParam.txt";
     ifstream fin(paramsPath);
     ofstream fout(outPath);
-    string unused;
+    ofstream foutParam(outParamPath);
+    
+    foutParam << "qi \t niter \t seed" << endl;
+    foutParam << qi << "\t" << niter << "\t" << seed << "\t" << endl;
+    foutParam.close();
     
     while ( std::getline(fin, unused) )  ++numLines;
     
 
     for (level=1; level< numLines; ++level) {
-        cout << "level " << level << endl ;
+        cout << "line " << level << endl ;
         auto res = testLevel(level, qi, niter, seed, verbose, paramsPath);
         res.print(fout);
 
