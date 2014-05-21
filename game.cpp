@@ -299,7 +299,7 @@ bool Game::executeFirstJob(){
         case Job::FillGaps:
             if(m_verbose) cout << "Job::FillGaps:" << endl;
             
-            cout << "sono quaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" << Bag2attiva << endl;
+            //cout << "sono quaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" << Bag2attiva << endl;
             
             // prima di far scendere le caramelle creo Bag2, nel punto più alto disponibile
             if (Bag2attiva>=0){
@@ -394,9 +394,17 @@ QVector<QPoint> Game::findDiamonds(Color color){
 void Game::removeDiamond(const QPoint& point){
     if(m_verbose) cout << "rimuovo diamante"  <<" in " << point.x() << " " << point.y() << endl;
     
-    auto jtype = m_board->diamond(point)->jollyType();
-    if (jtype == JollyType::Bag) Bag2attiva=point.x();
-    if (jtype == JollyType::Bag2) Bag2attiva=-1;
+    //questo if non dovrebbe essere superfluo?
+    //io direi di si, ma se non ce lo metto a volte becco segmentation for
+    //prova a toglierlo e usare i semi:
+    //./kdiamond-stripped -p 10 -g 14 -q 1
+    //mettendocelo dovrebbe stare tutto a posto ma dovremmo guardare meglio questa cosa.
+    
+    if (m_board->hasDiamond(point)){
+        auto jtype = m_board->diamond(point)->jollyType();
+        if (jtype == JollyType::Bag) Bag2attiva=point.x();
+        if (jtype == JollyType::Bag2) Bag2attiva=-1;
+    }
     
     m_gameState->addPoints(1);
     m_board->removeDiamond(point);
@@ -446,7 +454,7 @@ void Game::removeJolly(const QPoint& point){
         //eppure già conosce il valore di Bag2attiva, che fisso solo quando rimuovo la Bag
         //questa cosa non mi da problemi, solo che non la capisco.
         
-        cout << "cazzoooooooooooooooooooooooooooooooooooooooooooooooooo " << Bag2attiva << endl;
+        //cout << "cazzoooooooooooooooooooooooooooooooooooooooooooooooooo " << Bag2attiva << endl;
         
         
         int px = point.x();
