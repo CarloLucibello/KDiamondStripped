@@ -9,7 +9,7 @@ Game::Game(int seed, bool verbose)
 	, m_board(new Board(seed))
     , m_verbose(verbose)
     , m_testBoard(new Board(seed))
-    , m_testState(new GameState){}
+    , m_testState(new GameState){Bag2attiva=-1;}
 
 Game::~Game(){
     delete m_board;
@@ -297,12 +297,57 @@ bool Game::executeFirstJob(){
 		}
 
         case Job::FillGaps:
-             if(m_verbose) cout << "Job::FillGaps:" << endl;
+            if(m_verbose) cout << "Job::FillGaps:" << endl;
+            
+            cout << "sono quaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" << Bag2attiva << endl;
+            
+            // prima di far scendere le caramelle creo Bag2, nel punto più alto disponibile
+            if (Bag2attiva>=0){
+                for(int y = 0; y < m_board->gridSize(); ++y) {
+                    int x=Bag2attiva;
+                    if (!m_board->hasDiamond({x,y})){
+                        m_board->rDiamond({x,y}) = m_board->spawnDiamond(Color::NoColor, JollyType::Bag2);
+                        if(m_verbose){
+                            cout    << "CREATO Bag2 in " << x << " " << y << " B2: " << Bag2attiva << endl;
+                        }
+                        break;
+                    }
+                }
+            }
+            
+            
 			//fill gaps
 			m_board->fillGaps();
             if(m_verbose) printBoard();
             m_jobQueue.prepend(Job::RemoveFigures); //allow cascades (i.e. clear rows that have been formed by falling diamonds)
 //			printBoard();
+            
+            
+            //se ho scoppiato una busta, viene creata la Bag2, e bisogna andare a
+            //scoppiare anche lei.
+            //nel frattempo, lo scoppiaggio della prima busta ha fatto esplodere un quadrato 3 per 3 intorno
+            //a lei, e tutte le caramelle, compresa la Bag2 appena creata, sono già scese visto che
+            //ho appena usato fillGaps.
+            if (Bag2attiva>=0){
+                
+                // dopo aver fatto scendere le caramelle non so più dove sta Bag2, quindi vado a cercarla
+                for(int y = 0; y < m_board->gridSize(); ++y) {
+                    int x=Bag2attiva;
+                    //alcuni diamanti della linea potremmo averli già cancellati
+                    if (m_board->hasDiamond({x,y})){
+                        auto jtype = m_board->diamond({x,y})->jollyType();
+                        if (jtype==JollyType::Bag2) removeJolly({x,y});
+                    }
+                }
+                
+                //cout << "sono quaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa sono dentroooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo" << Bag2attiva << endl;
+                
+                m_jobQueue.prepend(Job::FillGaps);
+                if(m_verbose) printBoard();
+                
+            }
+
+            
 			break;
 
         case Job::UpdateAvailableMoves:
@@ -348,6 +393,11 @@ QVector<QPoint> Game::findDiamonds(Color color){
 
 void Game::removeDiamond(const QPoint& point){
     if(m_verbose) cout << "rimuovo diamante"  <<" in " << point.x() << " " << point.y() << endl;
+    
+    auto jtype = m_board->diamond(point)->jollyType();
+    if (jtype == JollyType::Bag) Bag2attiva=point.x();
+    if (jtype == JollyType::Bag2) Bag2attiva=-1;
+    
     m_gameState->addPoints(1);
     m_board->removeDiamond(point);
 }
@@ -389,7 +439,16 @@ void Game::removeJolly(const QPoint& point){
     }
 
     //Inserisco lo scoppiaggio di una busta
-    if(jtype == JollyType::Bag){
+    if(jtype == JollyType::Bag || jtype == JollyType::Bag2){
+        
+        //non capisco come faccia a entrare qua dentro anche nel momento in cui sceglie la mossa da fare,
+        //ma non rimuove i diamanti.
+        //eppure già conosce il valore di Bag2attiva, che fisso solo quando rimuovo la Bag
+        //questa cosa non mi da problemi, solo che non la capisco.
+        
+        cout << "cazzoooooooooooooooooooooooooooooooooooooooooooooooooo " << Bag2attiva << endl;
+        
+        
         int px = point.x();
         int py = point.y();
         for(int y = py - 1; y <= py + 1; ++y) {
@@ -445,7 +504,8 @@ void Game::removeFigures(const QVector<Figure>& figuresToRemove){
                 color = Color::NoColor;
             } else if(fig.type() == FigureType::LT){
                 type = JollyType::Bag;
-                color = Color::NoColor;
+                //il Bag ha un colore!
+                //color = Color::NoColor;
             }
             //ATTENZIONE che si ricada sempre in una delle condizioni precedenti TODO mettere un assert
             jPoint += point;

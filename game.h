@@ -60,6 +60,7 @@ private:
 };
 
 class Game{
+    int Bag2attiva;
 public:
     Game(int seed = -1, bool verbose = false);
     ~Game();

@@ -22,7 +22,7 @@ enum class Color{
     ColorsCount
 };
 
-enum class JollyType {None = 0, H, V, Cookie, Bag};
+enum class JollyType {None = 0, H, V, Cookie, Bag, Bag2};
 
 class Diamond{
 public:
