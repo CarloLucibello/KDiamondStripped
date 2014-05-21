@@ -61,6 +61,10 @@ private:
 
 class Game{
     int Bag2attiva;
+    //questa flag è -1 di default, e solo quando scoppio una busta è messa
+    //uguale alla coordinata x della busta
+    bool uploadingmoves;
+    //questa flag si attiva solo quando sto aggiornando le mosse
 public:
     Game(int seed = -1, bool verbose = false);
     ~Game();

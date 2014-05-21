@@ -53,6 +53,9 @@ void Game::setLevel(const int level){
 
 //Checks amount of possible moves remaining. Questo e` fatto testando l´ effetto di ogni mossa su testBoard
 void Game::getMoves(){
+    
+    uploadingmoves=1;
+    
     m_availableMoves.clear();
 
     int oldPoints = m_gameState->points();
@@ -107,7 +110,7 @@ void Game::getMoves(){
                         m_availableMoves.append(m);
                     }
 
-                    m_board->swapDiamonds(point, dest); //riswappo indietro. devo farlo prim di swappare le board
+                    m_board->swapDiamonds(point, dest); //riswappo indietro. devo farlo prima di swappare le board
                     swap(m_testState, m_gameState);
                     swap(m_testBoard, m_board);
                     swap(verbose, m_verbose);
@@ -115,9 +118,16 @@ void Game::getMoves(){
             }
         }
     }
+    
+    //cout << "size" << endl;
+    
     if (m_availableMoves.isEmpty()){
         m_jobQueue.prepend(Job::NoMoves);
     }
+    
+    uploadingmoves=0;
+
+    
 }
 
 //ritorna la riga verticale contenente il punto (escluso il punto stesso)
@@ -290,6 +300,7 @@ bool Game::executeFirstJob(){
                 m_jobQueue.prepend(Job::FillGaps);
                 if(m_verbose) printBoard();
 
+                
                 // lo ripulisco alla fine perché prima mi serve
                 m_swappingDiamonds.clear();
 			}
@@ -322,7 +333,6 @@ bool Game::executeFirstJob(){
             m_jobQueue.prepend(Job::RemoveFigures); //allow cascades (i.e. clear rows that have been formed by falling diamonds)
 //			printBoard();
             
-            
             //se ho scoppiato una busta, viene creata la Bag2, e bisogna andare a
             //scoppiare anche lei.
             //nel frattempo, lo scoppiaggio della prima busta ha fatto esplodere un quadrato 3 per 3 intorno
@@ -347,8 +357,9 @@ bool Game::executeFirstJob(){
                 
             }
 
-            
-			break;
+
+            break;
+
 
         case Job::UpdateAvailableMoves:
             if(m_verbose) {
@@ -394,17 +405,25 @@ QVector<QPoint> Game::findDiamonds(Color color){
 void Game::removeDiamond(const QPoint& point){
     if(m_verbose) cout << "rimuovo diamante"  <<" in " << point.x() << " " << point.y() << endl;
     
-    //questo if non dovrebbe essere superfluo?
+    //L'if su m_board->hasDiamond(point) non dovrebbe essere superfluo?
     //io direi di si, ma se non ce lo metto a volte becco segmentation for
     //prova a toglierlo e usare i semi:
     //./kdiamond-stripped -p 10 -g 14 -q 1
     //mettendocelo dovrebbe stare tutto a posto ma dovremmo guardare meglio questa cosa.
     
-    if (m_board->hasDiamond(point)){
+    //L'if su uploadingmoves serve a questo:
+    //qui dentro si entra anche nel momento in cui stiamo aggiornando le mosse disponibili
+    //se c'è una mossa in cui si cancella una busta, senza questo if verrebbe attivato Bag2attiva
+    //se ora questa mossa venisse scelta, questo non porterebbe a problemi in fillGaps
+    //se però la mossa non venisse scelta, in resterebbe Bag2attiva >= 0
+    //ma senza nessuna busta cancellata, e in fillGaps resteremmo intrappolati in un ciclo infinito
+    
+    if (m_board->hasDiamond(point) && uploadingmoves == 0){
         auto jtype = m_board->diamond(point)->jollyType();
         if (jtype == JollyType::Bag) Bag2attiva=point.x();
         if (jtype == JollyType::Bag2) Bag2attiva=-1;
     }
+    
     
     m_gameState->addPoints(1);
     m_board->removeDiamond(point);
@@ -454,7 +473,7 @@ void Game::removeJolly(const QPoint& point){
         //eppure già conosce il valore di Bag2attiva, che fisso solo quando rimuovo la Bag
         //questa cosa non mi da problemi, solo che non la capisco.
         
-        //cout << "cazzoooooooooooooooooooooooooooooooooooooooooooooooooo " << Bag2attiva << endl;
+        cout << "cazzoooooooooooooooooooooooooooooooooooooooooooooooooo " << Bag2attiva << endl;
         
         
         int px = point.x();
