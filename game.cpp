@@ -122,6 +122,8 @@ void Game::getMoves(){
     //cout << "size" << endl;
     
     if (m_availableMoves.isEmpty()){
+        cout << "NON CI SONO MOSSE DISPONILIBILI :(" << endl;
+        cout << "CREO UN QUADRO DA CAPO, CONTINUA A GIOCARE :)" << endl;
         m_jobQueue.prepend(Job::NoMoves);
     }
     
@@ -380,6 +382,7 @@ bool Game::executeFirstJob(){
             if(m_verbose)
                 cout <<"***  Job::NoMoves *** Respawning Diamonds" << endl;
             m_board->spawnDiamonds();
+            getMoves();
             break;
 	}
 
