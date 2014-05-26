@@ -137,10 +137,10 @@ void BenchmarkSuite::fullTestLevel( double qi, int niter, int seed, bool verbose
 
 void BenchmarkResults::print(ostream& fout){
 
-    fout <<  fixed << setprecision(3) << showpoint << probWin.mean()  << "\t" << \
-    aveMoves.mean() <<  "\t" << aveMoves.stdDev()  << \
-    avePoints.mean() <<  "\t" << avePoints.stdDev() << endl;
-
+    fout <<  fixed << setprecision(3) << showpoint
+            << probWin.mean()  << "  " << probWin.stdDev() << " \t"
+            << aveMoves.mean() <<  "  " << aveMoves.stdDev()  << " \t"
+            << avePoints.mean() <<  "  " << avePoints.stdDev() << endl;
 }
 
 BenchmarkResults BenchmarkSuite::testLevel(int level, double qi, int niter, int seed, bool verbose, string paramsPath){
