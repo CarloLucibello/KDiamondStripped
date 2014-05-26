@@ -311,9 +311,7 @@ bool Game::executeFirstJob(){
 
         case Job::FillGaps:
             if(m_verbose) cout << "Job::FillGaps:" << endl;
-            
-            //cout << "sono quaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" << Bag2attiva << endl;
-            
+                        
             // prima di far scendere le caramelle creo Bag2, nel punto più alto disponibile
             if (Bag2attiva>=0){
                 for(int y = 0; y < m_board->gridSize(); ++y) {
@@ -351,9 +349,7 @@ bool Game::executeFirstJob(){
                         if (jtype==JollyType::Bag2) removeJolly({x,y});
                     }
                 }
-                
-                //cout << "sono quaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa sono dentroooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo" << Bag2attiva << endl;
-                
+                                
                 m_jobQueue.prepend(Job::FillGaps);
                 if(m_verbose) printBoard();
                 
@@ -475,10 +471,7 @@ void Game::removeJolly(const QPoint& point){
         //ma non rimuove i diamanti.
         //eppure già conosce il valore di Bag2attiva, che fisso solo quando rimuovo la Bag
         //questa cosa non mi da problemi, solo che non la capisco.
-        
-        cout << "cazzoooooooooooooooooooooooooooooooooooooooooooooooooo " << Bag2attiva << endl;
-        
-        
+
         int px = point.x();
         int py = point.y();
         for(int y = py - 1; y <= py + 1; ++y) {

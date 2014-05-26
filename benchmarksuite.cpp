@@ -77,7 +77,6 @@ void BenchmarkSuite::testParam( string paramName, string levelPath, string expPa
             << m_isDiamGenBiased << "\t" << m_biasDiamGen << "\t"<< m_targetLiquirizia << endl;
         }
         fout.close();
-        fout.close();
     }
     
     if (paramName== "moves") {
@@ -113,8 +112,7 @@ void BenchmarkSuite::testParam( string paramName, string levelPath, string expPa
 
 void BenchmarkSuite::fullTestLevel( double qi, int niter, int seed, bool verbose, string paramsPath, string outPath){
     
-    int level;
-    int numLines = 0;
+
     string unused;
     string outParamPath = "simParam.txt";
     ifstream fin(paramsPath);
@@ -125,10 +123,10 @@ void BenchmarkSuite::fullTestLevel( double qi, int niter, int seed, bool verbose
     foutParam << qi << "\t" << niter << "\t" << seed << "\t" << endl;
     foutParam.close();
     
+    int numLines = 0;
     while ( std::getline(fin, unused) )  ++numLines;
-    
 
-    for (level=1; level< numLines; ++level) {
+    for (int level=1; level< numLines; ++level) {
         cout << "line " << level << endl ;
         auto res = testLevel(level, qi, niter, seed, verbose, paramsPath);
         res.print(fout);
