@@ -9,7 +9,7 @@ Game::Game(int seed, bool verbose)
 	, m_board(new Board(seed))
     , m_verbose(verbose)
     , m_testBoard(new Board(seed))
-    , m_testState(new GameState){Bag2attiva=-1;}
+    , m_testState(new GameState){}
 
 Game::~Game(){
     delete m_board;
@@ -51,10 +51,9 @@ void Game::setLevel(const int level){
 }
 
 
-//Checks amount of possible moves remaining. Questo e` fatto testando l´ effetto di ogni mossa su testBoard
+//Checks amount of possible moves remaining. Questo e` fatto testando l´ effetto di ogni mossa su testBoard.
+// Non ha effetti sulla bpard vera, ovvero quella visualizzata. Praticamente simula la mossa.
 void Game::getMoves(){
-    
-    uploadingmoves=1;
     
     m_availableMoves.clear();
 
@@ -122,14 +121,10 @@ void Game::getMoves(){
     //cout << "size" << endl;
     
     if (m_availableMoves.isEmpty()){
-        cout << "NON CI SONO MOSSE DISPONILIBILI :(" << endl;
+        cout << "NON CI SONO MOSSE DISPONIBILI :(" << endl;
         cout << "CREO UN QUADRO DA CAPO, CONTINUA A GIOCARE :)" << endl;
         m_jobQueue.prepend(Job::NoMoves);
-    }
-    
-    uploadingmoves=0;
-
-    
+    }   
 }
 
 //ritorna la riga verticale contenente il punto (escluso il punto stesso)
@@ -310,52 +305,13 @@ bool Game::executeFirstJob(){
 		}
 
         case Job::FillGaps:
-            if(m_verbose) cout << "Job::FillGaps:" << endl;
-                        
-            // prima di far scendere le caramelle creo Bag2, nel punto più alto disponibile
-            if (Bag2attiva>=0){
-                for(int y = 0; y < m_board->gridSize(); ++y) {
-                    int x=Bag2attiva;
-                    if (!m_board->hasDiamond({x,y})){
-                        m_board->rDiamond({x,y}) = m_board->spawnDiamond(Color::NoColor, JollyType::Bag2);
-                        if(m_verbose){
-                            cout    << "CREATO Bag2 in " << x << " " << y << " B2: " << Bag2attiva << endl;
-                        }
-                        break;
-                    }
-                }
-            }
-            
-            
+            if(m_verbose)
+                cout << "Job::FillGaps:" << endl;
 			//fill gaps
 			m_board->fillGaps();
-            if(m_verbose) printBoard();
+            if(m_verbose)
+                printBoard();
             m_jobQueue.prepend(Job::RemoveFigures); //allow cascades (i.e. clear rows that have been formed by falling diamonds)
-//			printBoard();
-            
-            //se ho scoppiato una busta, viene creata la Bag2, e bisogna andare a
-            //scoppiare anche lei.
-            //nel frattempo, lo scoppiaggio della prima busta ha fatto esplodere un quadrato 3 per 3 intorno
-            //a lei, e tutte le caramelle, compresa la Bag2 appena creata, sono già scese visto che
-            //ho appena usato fillGaps.
-            if (Bag2attiva>=0){
-                
-                // dopo aver fatto scendere le caramelle non so più dove sta Bag2, quindi vado a cercarla
-                for(int y = 0; y < m_board->gridSize(); ++y) {
-                    int x=Bag2attiva;
-                    //alcuni diamanti della linea potremmo averli già cancellati
-                    if (m_board->hasDiamond({x,y})){
-                        auto jtype = m_board->diamond({x,y})->jollyType();
-                        if (jtype==JollyType::Bag2) removeJolly({x,y});
-                    }
-                }
-                                
-                m_jobQueue.prepend(Job::FillGaps);
-                if(m_verbose) printBoard();
-                
-            }
-
-
             break;
 
 
@@ -403,27 +359,7 @@ QVector<QPoint> Game::findDiamonds(Color color){
 
 void Game::removeDiamond(const QPoint& point){
     if(m_verbose) cout << "rimuovo diamante"  <<" in " << point.x() << " " << point.y() << endl;
-    
-    //L'if su m_board->hasDiamond(point) non dovrebbe essere superfluo?
-    //io direi di si, ma se non ce lo metto a volte becco segmentation for
-    //prova a toglierlo e usare i semi:
-    //./kdiamond-stripped -p 10 -g 14 -q 1
-    //mettendocelo dovrebbe stare tutto a posto ma dovremmo guardare meglio questa cosa.
-    
-    //L'if su uploadingmoves serve a questo:
-    //qui dentro si entra anche nel momento in cui stiamo aggiornando le mosse disponibili
-    //se c'è una mossa in cui si cancella una busta, senza questo if verrebbe attivato Bag2attiva
-    //se ora questa mossa venisse scelta, questo non porterebbe a problemi in fillGaps
-    //se però la mossa non venisse scelta, in resterebbe Bag2attiva >= 0
-    //ma senza nessuna busta cancellata, e in fillGaps resteremmo intrappolati in un ciclo infinito
-    
-    if (m_board->hasDiamond(point) && uploadingmoves == 0){
-        auto jtype = m_board->diamond(point)->jollyType();
-        if (jtype == JollyType::Bag) Bag2attiva=point.x();
-        if (jtype == JollyType::Bag2) Bag2attiva=-1;
-    }
-    
-    
+
     m_gameState->addPoints(1);
     m_board->removeDiamond(point);
 }
@@ -434,18 +370,16 @@ void Game::removeJolly(const QPoint& point){
     auto jtype = m_board->diamond(point)->jollyType();
     removeDiamond(point);
 
-
-    //TODO Che succede se incontro un Jolly? Lo esplodo come jolly?
-
-    //direi di si
     if(jtype == JollyType::H){
         int y = point.y();
         for(int x = 0; x < m_board->gridSize(); ++x) {
 
             //alcuni diamanti della linea potremmo averli già cancellati
             if (m_board->hasDiamond({x,y})){
-                if (m_board->diamond({x,y})->isJolly()) removeJolly({x,y});
-                else removeDiamond({x,y});
+                if (m_board->diamond({x,y})->isJolly())
+                    removeJolly({x,y});
+                else
+                    removeDiamond({x,y});
             }
 
         }
@@ -457,8 +391,10 @@ void Game::removeJolly(const QPoint& point){
 
             //alcuni diamanti della linea potremmo averli già cancellati
             if (m_board->hasDiamond({x,y})){
-                if (m_board->diamond({x,y})->isJolly()) removeJolly({x,y});
-                else removeDiamond({x,y});
+                if (m_board->diamond({x,y})->isJolly())
+                    removeJolly({x,y});
+                else
+                    removeDiamond({x,y});
             }
 
         }
@@ -466,22 +402,25 @@ void Game::removeJolly(const QPoint& point){
 
     //Inserisco lo scoppiaggio di una busta
     if(jtype == JollyType::Bag || jtype == JollyType::Bag2){
-        
-        //non capisco come faccia a entrare qua dentro anche nel momento in cui sceglie la mossa da fare,
-        //ma non rimuove i diamanti.
-        //eppure già conosce il valore di Bag2attiva, che fisso solo quando rimuovo la Bag
-        //questa cosa non mi da problemi, solo che non la capisco.
-
+        //RIMUOVE I DIAMANTI in unquadrato intorno alla busta
         int px = point.x();
         int py = point.y();
         for(int y = py - 1; y <= py + 1; ++y) {
             for(int x = px - 1; x <= px + 1; ++x) {
                 //alcuni diamanti del quadrato 3*3 potremmo averli già cancellati
                 if (m_board->hasDiamond({x,y})){
-                    if (m_board->diamond({x,y})->isJolly()) removeJolly({x,y});
-                    else removeDiamond({x,y});
+                    if (m_board->diamond({x,y})->isJolly())
+                        removeJolly({x,y});
+                    else
+                        removeDiamond({x,y});
                 }
             }
+        }
+
+        //Creo il secondo stadio della bag.
+        // Sara´ scoppiata automaticamente al prossimo removeFigures
+        if(jtype == JollyType::Bag){
+            m_board->rDiamond(point) = m_board->spawnDiamond(Color::NoColor, JollyType::Bag2);
         }
     }
 
@@ -527,8 +466,6 @@ void Game::removeFigures(const QVector<Figure>& figuresToRemove){
                 color = Color::NoColor;
             } else if(fig.type() == FigureType::LT){
                 type = JollyType::Bag;
-                //il Bag ha un colore!
-                //color = Color::NoColor;
             }
             //ATTENZIONE che si ricada sempre in una delle condizioni precedenti TODO mettere un assert
             jPoint += point;
@@ -599,11 +536,20 @@ QVector<Figure> Game::findFigures(){
 }
 
 Figure Game::findFigure(QPoint point){
+    FigureType type;
+    QVector<QPoint> points;
+
+    //Considero il secondo stadio della busta come una figura perch´e va scoppiato
+    if(m_board->diamond(point)->jollyType() == JollyType::Bag2){
+        type = FigureType::Bag2;
+        points.append(point);
+        return Figure(points, type);
+
+    }
+
     auto rH = findRowH(point);
     auto rV = findRowV(point);
 
-    FigureType type;
-    QVector<QPoint> points;
     //Controllo che figura ho trovato. Si può rendere pìù efficiente
     if(rH.size() >= 2 && rV.size() < 2){
     //riga orizzontale

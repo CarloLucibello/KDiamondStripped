@@ -22,7 +22,12 @@ enum class Color{
     ColorsCount
 };
 
-enum class JollyType {None = 0, H, V, Cookie, Bag, Bag2};
+enum class JollyType {None = 0
+                      , H
+                      , V
+                      , Cookie
+                      , Bag, Bag2   //I due stadi della busta. Il secondo viene scoppiato automaticamente dopo essere caduto
+                     };
 
 class Diamond{
 public:
@@ -39,7 +44,7 @@ public:
         if(isJolly()){
             if (jollyType() == JollyType::H) cout << "H" << int(color());
             if (jollyType() == JollyType::V) cout << "V" << int(color());
-            if (jollyType() == JollyType::Bag) cout << "B" << int(color());
+            if (jollyType() == JollyType::Bag) cout << "B"<< int(color());
             if (jollyType() == JollyType::Bag2) cout << "Bs";
             if (jollyType() == JollyType::Cookie) cout << "* ";
         }

@@ -8,7 +8,8 @@ enum class FigureType {
     None,
     RowH = 1,
     RowV,
-    LT
+    LT,
+    Bag2  // il secondo stadio della Bag, viene scoppiato automaticamente dopo che `e sceso
 };
 
 class Figure{
