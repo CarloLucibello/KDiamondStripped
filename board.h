@@ -36,6 +36,8 @@ public:
     void breakGelatina(const QPoint& point);
     void breakLiquirizia(const QPoint& point);
     void swapDiamonds(const QPoint& point1, const QPoint& point2);
+    void generateFromAbove();
+    void dropDiamonds();
     void fillGaps();
     int count(CellMask cell) const;
 

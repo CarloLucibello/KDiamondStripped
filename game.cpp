@@ -96,7 +96,12 @@ void Game::getMoves(){
                         figuresToRemove.append(figCookie);
 
                     if(!figuresToRemove.isEmpty()){
-                        removeFigures(figuresToRemove);
+                        //vedo tutto quello che succede senza generare nuovi diamanti
+                        while(!figuresToRemove.isEmpty()){
+                            removeFigures(figuresToRemove);
+                            m_board->dropDiamonds(); //uso questa al posto di fillGaps() per non gen nuovi diamanti
+                            figuresToRemove = findFigures();
+                        }
 
                         int newPoints = m_gameState->points();
                         int newLiquirizie = m_board->count(CellMask::LIQUIRIZIA);
@@ -108,6 +113,7 @@ void Game::getMoves(){
                         m.m_liquirizie = oldLiquirizie - newLiquirizie;
                         m_availableMoves.append(m);
                     }
+
 
                     m_board->swapDiamonds(point, dest); //riswappo indietro. devo farlo prima di swappare le board
                     swap(m_testState, m_gameState);

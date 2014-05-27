@@ -142,7 +142,7 @@ void Board::removeDiamond(const QPoint& point){
 	Diamond* diamond = this->diamond(point);
 	//può capitare che la funzione possa essere chiamate più volte nello stesso punto
 	// se il diamante appartiene a più figure da scoppiare
-	if(diamond != 0) {
+    if(diamond != 0) {
         delete diamond;
         rDiamond(point) = 0;
 	}
@@ -175,13 +175,32 @@ void Board::swapDiamonds(const QPoint& point1, const QPoint& point2){
 }
 
 void Board::fillGaps(){
-	//fill gaps
-	for (int x = 0; x < m_size; ++x){
+    dropDiamonds();
+    generateFromAbove();
+}
+
+
+void Board::generateFromAbove(){
+    //fill top rows with new elements
+    for (int x = 0; x < m_size; ++x){
+        for (int y = m_size - 1; y >= 0; --y){
+            Diamond*& diamond = this->rDiamond(QPoint(x, y));
+            if (diamond || mask(QPoint(x, y)) == CellMask::WALL)
+                continue; //inside of diamond stack - no gaps to fill
+            auto color = m_isDiamGenBiased ? m_randcol->biased(x, m_biasDiamGen) : m_randcol->unif();
+            diamond = spawnDiamond(color);
+        }
+    }
+}
+
+//fa cadere i diamanti esistenti
+void Board::dropDiamonds(){
+    for (int x = 0; x < m_size; ++x){
 //		We have to search from the bottom of the column. Exclude the lowest element (x = m_size - 1) because it cannot move down.
-		for (int y = m_size - 2; y >= 0; --y){
-			if (!diamond(QPoint(x, y))) //c'è un gap o un WALL
+        for (int y = m_size - 2; y >= 0; --y){
+            if (!diamond(QPoint(x, y))) //c'è un gap o un WALL
 //				no need to move gaps -> these are moved later
-				continue;
+                continue;
             // I muri devono essere attraversati dai diamanti
             int ys = y + 1; //conterrà la posizione di dove finisce il muro
             while(ys <  m_size && mask(QPoint(x, ys)) == CellMask::WALL){
@@ -189,42 +208,33 @@ void Board::fillGaps(){
             }
             if(ys == m_size) //il muro arriva fino al fondo e blocca il diamante
                 continue;
-			if (diamond(QPoint(x, ys)))
+            if (diamond(QPoint(x, ys)))
 //				there is something right below this diamond -> Do not move.
-				continue;
+                continue;
 //			search for the lowest possible position
-        	int yt = ys; //counters - (x, yt) is the target position of diamond (x,y)
-			while(yt < m_size - 1){
+            int yt = ys; //counters - (x, yt) is the target position of diamond (x,y)
+            while(yt < m_size - 1){
                 ys = yt + 1;
                 while(ys <  m_size && mask(QPoint(x, ys)) == CellMask::WALL){
                     ++ys;
                 }
                 if (ys == m_size) //sono arrivato al muro di fondo
                     break; //yt now holds the lowest possible position
-				if (diamond(QPoint(x, ys)))
-					break; //yt now holds the lowest possible position
+                if (diamond(QPoint(x, ys)))
+                    break; //yt now holds the lowest possible position
                 yt = ys;
-			}
-			rDiamond(QPoint(x, yt)) = diamond(QPoint(x, y));
-			rDiamond(QPoint(x, y)) = 0;
+            }
+            rDiamond(QPoint(x, yt)) = diamond(QPoint(x, y));
+            rDiamond(QPoint(x, y)) = 0;
 //			if this element is selected, move the selection, too
-			const int index = m_selections.indexOf(QPoint(x, y));
-			if (index != -1){
-				m_selections.replace(index, QPoint(x, yt));
-			}
-		}
-	}
-	//fill top rows with new elements
-	for (int x = 0; x < m_size; ++x){
-		for (int y = m_size - 1; y >= 0; --y){
-			Diamond*& diamond = this->rDiamond(QPoint(x, y));
-			if (diamond || mask(QPoint(x, y)) == CellMask::WALL)
-				continue; //inside of diamond stack - no gaps to fill
-            auto color = m_isDiamGenBiased ? m_randcol->biased(x, m_biasDiamGen) : m_randcol->unif();
-            diamond = spawnDiamond(color);
-		}
-	}
+            const int index = m_selections.indexOf(QPoint(x, y));
+            if (index != -1){
+                m_selections.replace(index, QPoint(x, yt));
+            }
+        }
+    }
 }
+
 
 void Board::clearDiamonds(){
     for (QPoint point; point.x() < m_size; point.rx()++)
