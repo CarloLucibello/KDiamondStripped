@@ -4,24 +4,42 @@ BenchmarkSuite::BenchmarkSuite(Game* game) : m_game(game){}
 
 void BenchmarkSuite::fullTestParam(double qi, int niter, int seed, bool verbose){
     
-    const char* const listParams[] = {"mask", "color", "moves", "points"};
-    const int len = 4;
-    int i;
+    const char* const listParams[] = { "color", "moves", "points"};
+    const int len = 3;
     
-    for (i = 0; i < len; ++i) {
-        string currentParam = listParams[i];
-        string paramsPath = currentParam  + "Params.txt";
-        string outPath = currentParam  + "Res.txt";
+    string unused;
+    ifstream fin("levels/params.txt");
+    
+    string currentParam;
+    string paramsPath;
+    string outPath;
+    
+    int numLines = 0;
+    while ( std::getline(fin, unused) )  ++numLines;
+    
+    
+    for (int level = 1; level < numLines; ++level ){
         
+        stringstream ss;
+        ss << level;
+        string str = ss.str();
+        
+        for (int i = 0; i < len; ++i) {
+        currentParam = listParams[i];
+        paramsPath = "l" + str + currentParam  + "Params.txt";
+        outPath = "l" + str + currentParam  + "Res.txt";
+            
+            cout << str << endl;
         cout << currentParam << endl ;
-        testParam( listParams[i], "levels/params.txt", paramsPath);
+        testParam( listParams[i], "levels/params.txt", paramsPath, level);
         fullTestLevel( qi, niter, seed, verbose, paramsPath, outPath);
         
+        }
     }
     
 }
 
-void BenchmarkSuite::testParam( string paramName, string levelPath, string expPath){
+void BenchmarkSuite::testParam( string paramName, string levelPath, string expPath, int k){
     
     int colors;
     int mask;
@@ -35,12 +53,12 @@ void BenchmarkSuite::testParam( string paramName, string levelPath, string expPa
     ofstream fout(expPath);
     
     string line;
-    for(int i = 0; i <= 1; i++){
+    for(int i = 0; i <= k; i++){
         getline(fparams, line);
     }
     stringstream stream(line);
     
-    level = 1;
+    level = k;
     stream >> mask;
     stream >> colors;
     stream >> moves;
@@ -50,60 +68,44 @@ void BenchmarkSuite::testParam( string paramName, string levelPath, string expPa
     stream >> targetLiquirizia;
     
     if (paramName== "mask") {
-        int k;
-        int paramVal;
         
         fout << "### $1=Mask $2=NumColors $3=NumMoves $4=PointsToReach  $5=IsBiased  $6=Bias  $7=TargetLiquirizia" << endl;
-        for (k = m_maskMin; k <=  m_maskMax; k++) {
-            
-            paramVal =  m_maskMin + static_cast<int>(k*(m_maskMax-m_maskMin)/m_maskMax);
-            
-            fout << paramVal << "\t" << colors << "\t" << moves << "\t" << points << "\t" \
+        for (int k = m_maskMin; k <= m_maskMax; k += m_maskStep) {
+    
+            fout << k << "\t" << colors << "\t" << moves << "\t" << points << "\t" \
             << isDiamGenBiased << "\t" << biasDiamGen << "\t"<< targetLiquirizia << endl;
         }
         fout.close();
     }
     
     if (paramName== "color") {
-        int k;
-        int paramVal;
         
         fout << "### $1=Mask $2=NumColors $3=NumMoves $4=PointsToReach  $5=IsBiased  $6=Bias  $7=TargetLiquirizia" << endl;
-        for (k = m_colorMin; k <= m_colorMax; k++) {
+        for (int k=m_colorMin; k<= m_colorMax; k += m_colorStep) {
             
-            paramVal = m_colorMin + static_cast<int>(k*(m_colorMax-m_colorMin)/m_colorMax);
-            
-            fout << mask << "\t" << paramVal << "\t" << moves << "\t" << points << "\t" \
+            fout << mask << "\t" << k << "\t" << moves << "\t" << points << "\t" \
             << isDiamGenBiased << "\t" << biasDiamGen << "\t"<< targetLiquirizia << endl;
         }
         fout.close();
     }
     
     if (paramName== "moves") {
-        int k;
-        int paramVal;
-        
+
         fout << "### $1=Mask $2=NumColors $3=NumMoves $4=PointsToReach  $5=IsBiased  $6=Bias  $7=TargetLiquirizia" << endl;
-        for (k = m_movesMin; k <= m_movesMax; k++) {
+        for (int k=m_movesMin; k<= m_movesMax; k += m_movesStep) {
             
-            paramVal = m_movesMin + static_cast<int>(k*(m_movesMax-m_movesMin)/m_movesMax);
-            
-            fout << mask  << "\t" << colors << "\t" << paramVal << "\t" << points << "\t" \
+            fout << mask  << "\t" << colors << "\t" << k << "\t" << points << "\t" \
             << isDiamGenBiased << "\t" << biasDiamGen << "\t"<< targetLiquirizia << endl;
         }
         fout.close();
     }
     
-    if (paramName == "points") {
-        int k;
-        int paramVal;
+    if (paramName== "points") {
         
         fout << "### $1=Mask $2=NumColors $3=NumMoves $4=PointsToReach  $5=IsBiased  $6=Bias  $7=TargetLiquirizia" << endl;
-        for (k=m_pointsMin; k<= m_pointsMax; k++) {
+        for (int k=m_pointsMin; k<= m_pointsMax; k += m_pointsStep) {
             
-            paramVal = m_pointsMin + static_cast<int>(k*(m_pointsMax-m_pointsMin)/m_pointsMax);
-            
-            fout << mask  << "\t" << colors << "\t" << moves  << "\t" << paramVal  << "\t" \
+            fout << mask  << "\t" << colors << "\t" << moves  << "\t" << k << "\t" \
             << isDiamGenBiased << "\t" << biasDiamGen << "\t"<< targetLiquirizia << endl;
         }
         fout.close();
@@ -211,5 +213,3 @@ void BenchmarkSuite::singleMove(int level, double qi,  int seedPlayer, bool verb
         m_game->printState();
     }
 }
-
-
