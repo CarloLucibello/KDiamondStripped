@@ -38,9 +38,9 @@ int main(int argc, char *argv[]){
     }
 
      if(work == "test"){
-//         bench.fullTestParam(qi, niter, seedPlayer, verbose);
-        auto res = bench.testLevel(level, qi, niter, seedPlayer, verbose);
-        res.print(cout);
+         bench.fullTestParam(qi, niter, seedPlayer, verbose);
+       // auto res = bench.testLevel(level, qi, niter, seedPlayer, verbose);
+      //  res.print(cout);
     }
 
     return 0;
