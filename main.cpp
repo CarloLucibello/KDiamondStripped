@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <sstream> 
 #include "benchmarksuite.h"
 #include "game.h"
 #include "player.h"
@@ -42,6 +43,15 @@ int main(int argc, char *argv[]){
        // auto res = bench.testLevel(level, qi, niter, seedPlayer, verbose);
       //  res.print(cout);
     }
-
+    if(work == "mask"){
+        string paramsPath = "Params.txt";
+        string resPath;
+        
+        paramsPath= "mask" + paramsPath;
+        resPath= "mask" + outPath;
+        
+        bench.testParam( "mask", "levels/params.txt", paramsPath, 1);
+        bench.fullTestLevel( qi, niter, seedPlayer, verbose, paramsPath, resPath);
+    }
     return 0;
 }

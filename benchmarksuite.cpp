@@ -17,6 +17,7 @@ void BenchmarkSuite::fullTestParam(double qi, int niter, int seed, bool verbose)
     int numLines = 0;
     while ( std::getline(fin, unused) )  ++numLines;
     
+    cout << numLines  << endl;
     
     for (int level = 1; level < numLines; ++level ){
         
@@ -29,7 +30,7 @@ void BenchmarkSuite::fullTestParam(double qi, int niter, int seed, bool verbose)
         paramsPath = "l" + str + currentParam  + "Params.txt";
         outPath = "l" + str + currentParam  + "Res.txt";
             
-            cout << str << endl;
+        cout << str << endl;
         cout << currentParam << endl ;
         testParam( listParams[i], "levels/params.txt", paramsPath, level);
         fullTestLevel( qi, niter, seed, verbose, paramsPath, outPath);
@@ -52,6 +53,7 @@ void BenchmarkSuite::testParam( string paramName, string levelPath, string expPa
     ifstream fparams(levelPath);
     ofstream fout(expPath);
     
+    
     string line;
     for(int i = 0; i <= k; i++){
         getline(fparams, line);
@@ -66,6 +68,10 @@ void BenchmarkSuite::testParam( string paramName, string levelPath, string expPa
     stream >> isDiamGenBiased;
     stream >> biasDiamGen;
     stream >> targetLiquirizia;
+    
+    cout << colors << endl;
+    cout << mask << endl;
+    cout << moves << endl;
     
     if (paramName== "mask") {
         
