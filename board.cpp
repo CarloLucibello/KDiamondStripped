@@ -179,7 +179,6 @@ void Board::fillGaps(){
     generateFromAbove();
 }
 
-
 void Board::generateFromAbove(){
     //fill top rows with new elements
     for (int x = 0; x < m_size; ++x){

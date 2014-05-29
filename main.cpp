@@ -23,7 +23,6 @@ int main(int argc, char *argv[]){
 
     Game * game = new Game(seedGame, verbose);
 
-
     BenchmarkSuite bench(game);
     if(work == "play"){
         //questo è per fare una singola partita col giocatore intelligente
