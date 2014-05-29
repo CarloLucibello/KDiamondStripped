@@ -1,7 +1,7 @@
 #ifndef DIAMOND_H
 #define DIAMOND_H
 
-#include <QPoint>
+#include "point.h"
 //registered colors of diamonds
 
 #include <iostream>
@@ -35,7 +35,7 @@ public:
 
     Color color() const;
     void clicked();
-    void dragged(const QPoint& direction);
+    void dragged(const Point& direction);
     bool isJolly() const;
     void setJolly(JollyType type);
     JollyType jollyType() const;

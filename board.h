@@ -5,8 +5,8 @@
 #include "diamond.h"
 #include "gameparams.h"
 #include "mask.h"
-
-#include <QVector>
+#include "point.h"
+#include "utilities.h"
 
 #include <vector>
 #include <iostream>  //DEBUG
@@ -18,38 +18,38 @@ public:
     void startNewGame(const GameParams* gameParams);
 
     void setMask(int level);
-    CellMask mask(const QPoint& point) const;
-    CellMask& rMask(const QPoint& point);
+    CellMask mask(const Point& point) const;
+    CellMask& rMask(const Point& point);
 
     int gridSize() const;
-    Diamond* diamond(const QPoint& point) const;
+    Diamond* diamond(const Point& point) const;
 
-    bool isOccupable(const QPoint& point) const;
-    bool hasDiamond(const QPoint& point) const;
+    bool isOccupable(const Point& point) const;
+    bool hasDiamond(const Point& point) const;
 
-    QList<QPoint> selections() const;
-    bool hasSelection(const QPoint& point) const;
-    void setSelection(const QPoint& point, bool selected);
+    vector<Point> selections() const;
+    bool hasSelection(const Point& point) const;
+    void setSelection(const Point& point, bool selected);
     void clearSelection();
 
-    void removeDiamond(const QPoint& point);
-    void breakGelatina(const QPoint& point);
-    void breakLiquirizia(const QPoint& point);
-    void swapDiamonds(const QPoint& point1, const QPoint& point2);
+    void removeDiamond(const Point& point);
+    void breakGelatina(const Point& point);
+    void breakLiquirizia(const Point& point);
+    void swapDiamonds(const Point& point1, const Point& point2);
     void generateFromAbove();
     void dropDiamonds();
     void fillGaps();
     int count(CellMask cell) const;
 
-    void clicked(const QPoint& point);
-    void dragged(const QPoint& point, const QPoint& direction);
+    void clicked(const Point& point);
+    void dragged(const Point& point, const Point& direction);
 //private://SLOTS
     void slotAnimationFinished();
     void slotClicked();
-    void slotDragged(const QPoint& direction);
+    void slotDragged(const Point& direction);
 //private:
-    QPoint findDiamond(Diamond* diamond) const;
-    Diamond*& rDiamond(const QPoint& point);
+//    Point findDiamond(Diamond* diamond) const;
+    Diamond*& rDiamond(const Point& point);
     Diamond* spawnDiamond(Color color = Color::NoColor, JollyType jtype = JollyType::None);
     void spawnDiamonds();
 
@@ -59,10 +59,10 @@ public:
     Board& operator=(const Board& b); //ATTENZIONE aggiornare se si aggiungono nuovi membri
     int m_size;
     int m_numColors;
-    QList<QPoint> m_selections;
-    QVector<Diamond*> m_diamonds;
-    QList<Diamond*> m_activeSelectors;
-    QList<Diamond*>  m_inactiveSelectors;
+    vector<Point> m_selections;
+    vector<Diamond*> m_diamonds;
+    vector<Diamond*> m_activeSelectors;
+    vector<Diamond*>  m_inactiveSelectors;
     Mask m_mask;
     RandomColor * m_randcol;
     bool m_verbose;
@@ -71,7 +71,7 @@ public:
 
 //DEBUG FUNCTONS
     void print() const{
-        for(QPoint point; point.y() < m_size; point.ry()++){
+        for(Point point; point.y() < m_size; point.ry()++){
             for(point.rx() = 0; point.x() < m_size; point.rx()++){
 
                 //stampa il diamante
@@ -104,7 +104,7 @@ public:
     }
 
     void printMask() const{
-        for(QPoint point; point.y() < m_size; point.ry()++){
+        for(Point point; point.y() < m_size; point.ry()++){
             for(point.rx() = 0; point.x() < m_size; point.rx()++){
                 cout << int(mask(point)) << " ";
             }
@@ -112,10 +112,10 @@ public:
         }
     }
 
-    void printSelection(const QVector<QPoint>& points) const{
-        for(QPoint point; point.y() < m_size; point.ry()++){
+    void printSelection(const vector<Point>& points) const{
+        for(Point point; point.y() < m_size; point.ry()++){
             for(point.rx() = 0; point.x() < m_size; point.rx()++){
-                if(hasDiamond(point) && points.contains(point)){
+                if(hasDiamond(point) && contains(points, point)){
                     diamond(point)->print();
                 } else {
                     cout << "-   ";

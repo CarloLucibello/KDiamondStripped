@@ -1,14 +1,18 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include <QPoint>
-#include <QList>
+
+#include <vector>
+#include <utility>
+#include <deque>
+
+using namespace std;
 #include "board.h"
 #include "gamestate.h"
 #include "gameparams.h"
-#include <utility>
 #include "figure.h"
-using namespace std;
+#include "point.h"
+
 
 //jobs to be done during the board update
 enum class Job {
@@ -27,15 +31,15 @@ class Move{
 public:
     Move(){}
 
-    Move(const QPoint& from, const QPoint& to)
+    Move(const Point& from, const Point& to)
         : m_from(from)
         , m_to(to){}
 
-    QPoint from() const{
+    Point from() const{
         return m_from;
     }
 
-    QPoint to() const {
+    Point to() const {
         return m_to;
     }
 
@@ -52,8 +56,8 @@ public:
     }
 
 private:
-    QPoint m_from;
-    QPoint m_to;
+    Point m_from;
+    Point m_to;
     int m_points;
     int m_liquirizie;
     int m_gelatine;
@@ -67,37 +71,37 @@ public:
     void setMode(const Mode mode);
     void setLevel(const int level);
     void setParamsPath(string paramsPath);
-    void clickDiamond(const QPoint& point);
-    void dragDiamond(const QPoint& point, const QPoint& direction);
+    void clickDiamond(const Point& point);
+    void dragDiamond(const Point& point, const Point& direction);
     void executeJobs();
     bool executeFirstJob();
     int points() const;
     bool isFinished() const;
     bool isWon() const;
-    void removeDiamond(const QPoint& point);
-    void removeJolly(const QPoint& point);
-    void removeFigures(const QVector<Figure>& figuresToRemove);
+    void removeDiamond(const Point& point);
+    void removeJolly(const Point& point);
+    void removeFigures(const vector<Figure>& figuresToRemove);
 
-    void getJollies(const Figure& fig, QVector<JollyType>& jtypes,
-                   QVector<QPoint> excludedPoints = QVector<QPoint>()) const;
+    void getJollies(const Figure& fig, vector<JollyType>& jtypes,
+                   vector<Point> excludedPoints = vector<Point>()) const;
 
 
 //  private:
-//    QList<QPoint> findCompletedRows();
-    QVector<Figure> findFigures();
-    Figure findFigure(QPoint point);
-    QVector<QPoint> findRowH(const QPoint& point);
-    QVector<QPoint> findRowV(const QPoint& point);
-    QVector<QPoint> findDiamonds(Color color);
-    Figure findFigureCookie(QPoint p1, QPoint p2);
+//    vector<Point> findCompletedRows();
+    vector<Figure> findFigures();
+    Figure findFigure(Point point);
+    vector<Point> findRowH(const Point& point);
+    vector<Point> findRowV(const Point& point);
+    vector<Point> findDiamonds(Color color);
+    Figure findFigureCookie(Point p1, Point p2);
 
     void getMoves();
 
-    const QVector<Move>& availMoves() const;
+    const vector<Move>& availMoves() const;
 
-    QList<Job> m_jobQueue;
-    QVector<Move> m_availableMoves;
-    QList<QPoint> m_swappingDiamonds;
+    deque<Job> m_jobQueue;
+    vector<Move> m_availableMoves;
+    vector<Point> m_swappingDiamonds;
 
     Board * m_board;
 
@@ -116,7 +120,7 @@ public:
         cout << endl;
     }
 
-    void printSelection(const QVector<QPoint>& points){
+    void printSelection(const vector<Point>& points){
         m_board->printSelection(points);
         cout << endl;
     }

@@ -2,11 +2,11 @@
 
 Figure::Figure() {}
 
-Figure::Figure(QVector<QPoint> points, FigureType type)
+Figure::Figure(vector<Point> points, FigureType type)
     : m_points(points)
     , m_type(type) {}
 
-QVector<QPoint> Figure::points() const{
+vector<Point> Figure::points() const{
     return m_points;
 }
 
@@ -18,6 +18,6 @@ int Figure::size() const {
     return m_points.size();
 }
 
-bool Figure::isEmpty() const {
-    return m_points.isEmpty();
+bool Figure::empty() const {
+    return m_points.empty();
 }

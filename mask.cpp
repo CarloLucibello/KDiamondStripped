@@ -17,12 +17,12 @@ void Mask::set(int nmask){
     fmask.close();
 }
 
-CellMask& Mask::rCell(const QPoint& point){
+CellMask& Mask::rCell(const Point& point){
     return m_cells[point.x() + point.y() * m_size];
 }
 
 
-CellMask Mask::cell(const QPoint& point) const {
+CellMask Mask::cell(const Point& point) const {
     return m_cells[point.x() + point.y() * m_size];
 }
 

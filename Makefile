@@ -327,6 +327,54 @@ mask.cpp.s:
 	$(MAKE) -f CMakeFiles/kdiamond-stripped.dir/build.make CMakeFiles/kdiamond-stripped.dir/mask.cpp.s
 .PHONY : mask.cpp.s
 
+player.o: player.cpp.o
+.PHONY : player.o
+
+# target to build an object file
+player.cpp.o:
+	$(MAKE) -f CMakeFiles/kdiamond-stripped.dir/build.make CMakeFiles/kdiamond-stripped.dir/player.cpp.o
+.PHONY : player.cpp.o
+
+player.i: player.cpp.i
+.PHONY : player.i
+
+# target to preprocess a source file
+player.cpp.i:
+	$(MAKE) -f CMakeFiles/kdiamond-stripped.dir/build.make CMakeFiles/kdiamond-stripped.dir/player.cpp.i
+.PHONY : player.cpp.i
+
+player.s: player.cpp.s
+.PHONY : player.s
+
+# target to generate assembly for a file
+player.cpp.s:
+	$(MAKE) -f CMakeFiles/kdiamond-stripped.dir/build.make CMakeFiles/kdiamond-stripped.dir/player.cpp.s
+.PHONY : player.cpp.s
+
+point.o: point.cpp.o
+.PHONY : point.o
+
+# target to build an object file
+point.cpp.o:
+	$(MAKE) -f CMakeFiles/kdiamond-stripped.dir/build.make CMakeFiles/kdiamond-stripped.dir/point.cpp.o
+.PHONY : point.cpp.o
+
+point.i: point.cpp.i
+.PHONY : point.i
+
+# target to preprocess a source file
+point.cpp.i:
+	$(MAKE) -f CMakeFiles/kdiamond-stripped.dir/build.make CMakeFiles/kdiamond-stripped.dir/point.cpp.i
+.PHONY : point.cpp.i
+
+point.s: point.cpp.s
+.PHONY : point.s
+
+# target to generate assembly for a file
+point.cpp.s:
+	$(MAKE) -f CMakeFiles/kdiamond-stripped.dir/build.make CMakeFiles/kdiamond-stripped.dir/point.cpp.s
+.PHONY : point.cpp.s
+
 randomcolor.o: randomcolor.cpp.o
 .PHONY : randomcolor.o
 
@@ -387,6 +435,12 @@ help:
 	@echo "... mask.o"
 	@echo "... mask.i"
 	@echo "... mask.s"
+	@echo "... player.o"
+	@echo "... player.i"
+	@echo "... player.s"
+	@echo "... point.o"
+	@echo "... point.i"
+	@echo "... point.s"
 	@echo "... randomcolor.o"
 	@echo "... randomcolor.i"
 	@echo "... randomcolor.s"

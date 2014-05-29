@@ -6,18 +6,21 @@ Board::Board(int seed)
         m_randcol->setSeed(seed);
     }
 
-CellMask& Board::rMask(const QPoint& point){
+CellMask& Board::rMask(const Point& point){
     return m_mask.rCell(point);
 }
 
-CellMask Board::mask(const QPoint& point) const{
+CellMask Board::mask(const Point& point) const{
     return m_mask.cell(point);
 }
 
 void Board::startNewGame(const GameParams * gameParams){
     m_size = gameParams->boardSize();
     m_numColors = gameParams->colorCount();
-    m_diamonds.fill(0, m_size * m_size);
+    m_diamonds.resize( m_size * m_size);
+    for(auto& d : m_diamonds){
+        d = 0;  //da ora in poi se il diamante è assente il puntatore sarà 0
+    }
     m_mask.set(gameParams->mask());
     m_isDiamGenBiased = gameParams->isDiamGenBiased();
     m_biasDiamGen = gameParams->biasDiamGen();
@@ -29,7 +32,7 @@ void Board::startNewGame(const GameParams * gameParams){
 void Board::spawnDiamonds(){
     clearSelection();
     clearDiamonds();
-    for (QPoint point; point.x() < m_size; ++point.rx()){
+    for (Point point; point.x() < m_size; ++point.rx()){
         for (point.ry() = 0; point.y() < m_size; ++point.ry()){
             //displacement vectors needed for the following alsynagorithm
             //roll the dice to get a color, but ensure that there are not three of a color in a row from the start
@@ -38,8 +41,8 @@ void Board::spawnDiamonds(){
                 while (true){ //genera un colore finchè non si formano triplette
                     color = m_randcol->unif(); // genero un colore uniformemente a caso
 
-                    const QPoint dispY1(0, -1), dispY2(0, -2);
-                    const QPoint dispX1(-1, 0), dispX2(-2, 0);
+                    const Point dispY1(0, -1), dispY2(0, -2);
+                    const Point dispX1(-1, 0), dispX2(-2, 0);
                     //condition: no triplet in y axis (attention: only the diamonds above us are defined already)
                     if (hasDiamond(point + dispY1) && hasDiamond(point + dispY2)){ //controlla che non ci siano muri o che non si sia al bordo
                         const Color otherColor1 = diamond(point + dispY1)->color();
@@ -67,78 +70,80 @@ Diamond* Board::spawnDiamond(Color color, JollyType jtype){
 	return diamond;
 }
 
-QPoint Board::findDiamond(Diamond* diamond) const{
-	int index = m_diamonds.indexOf(diamond);
-	if (index == -1)
-		return QPoint(-1, -1);
-	else
-		return QPoint(index % m_size, index / m_size);
-}
+//Point Board::findDiamond(Diamond* diamond) const{
+//	int index = m_diamonds.indexOf(diamond);
+//	if (index == -1)
+//        return Point(-1, -1);
+//	else
+//        return Point(index % m_size, index / m_size);
+//}
 
-Diamond*& Board::rDiamond(const QPoint& point){
+Diamond*& Board::rDiamond(const Point& point){
 	return m_diamonds[point.x() + point.y() * m_size];
 }
 
-Diamond* Board::diamond(const QPoint& point) const{
-	return m_diamonds.value(point.x() + point.y() * m_size);
+Diamond* Board::diamond(const Point& point) const{
+    return m_diamonds[point.x() + point.y() * m_size];
 }
 
 int Board::gridSize() const{
 	return m_size;
 }
 
-bool Board::isOccupable(const QPoint& point) const{
+bool Board::isOccupable(const Point& point) const{
     bool isInBoard = 0 <= point.x() && point.x() < m_size && 0 <= point.y() && point.y() < m_size;
     return isInBoard && (mask(point) != CellMask::WALL) ;
 }
 
 
-bool Board::hasDiamond(const QPoint& point) const{
+bool Board::hasDiamond(const Point& point) const{
 	return isOccupable(point) && diamond(point) != 0;
     //In teoria se tutto è stato fatto bene si potrebbe sostituire con il semplce
     // return  diamond(point) != 0;
 }
 
-QList<QPoint> Board::selections() const{
+vector<Point> Board::selections() const{
 	return m_selections;
 }
 
-bool Board::hasSelection(const QPoint& point) const{
-	return m_selections.contains(point);
+bool Board::hasSelection(const Point& point) const{
+    return contains(m_selections, point);
 }
 
-void Board::setSelection(const QPoint& point, bool selected){
-	const int index = m_selections.indexOf(point);
+void Board::setSelection(const Point& point, bool selected){
+    const int index = indexOf(m_selections, point);
 	if ((index >= 0) == selected)
 		//nothing to do
 		return;
 	if (selected){
 		//add selection, possibly by reusing an old item instance
 		Diamond* selector;
-		if (!m_inactiveSelectors.isEmpty())
-			selector = m_inactiveSelectors.takeLast();
-		else
-			selector = new Diamond(Color::Selection);
-		m_activeSelectors << selector;
-		m_selections << point;
+        if (!m_inactiveSelectors.empty()){
+            selector = m_inactiveSelectors.back();
+            m_inactiveSelectors.pop_back();
+        } else{
+            selector = new Diamond(Color::Selection);
+        }
+        m_activeSelectors.push_back(selector);
+        m_selections.push_back(point);
 	}
 	else{
 		//remove selection, but try to reuse item instance later
-		m_selections.removeAt(index);
-		Diamond* selector = m_activeSelectors.takeAt(index);
-		m_inactiveSelectors << selector;
+        removeAt(m_selections, index);
+        Diamond* selector = takeAt(m_activeSelectors, index);
+        m_inactiveSelectors.push_back(selector);
 	}
 }
 
 void Board::clearSelection(){
-	foreach (Diamond* selector, m_activeSelectors){
-		m_inactiveSelectors << selector;
+    for(Diamond* selector : m_activeSelectors){
+        m_inactiveSelectors.push_back(selector);
 	}
 	m_selections.clear();
 	m_activeSelectors.clear();
 }
 
-void Board::removeDiamond(const QPoint& point){
+void Board::removeDiamond(const Point& point){
 	Diamond* diamond = this->diamond(point);
 	//può capitare che la funzione possa essere chiamate più volte nello stesso punto
 	// se il diamante appartiene a più figure da scoppiare
@@ -155,16 +160,16 @@ void Board::removeDiamond(const QPoint& point){
 
 
 //il controllo se c´e´ una gelatina viene effettuato a monte
-void Board::breakGelatina(const QPoint& point){
+void Board::breakGelatina(const Point& point){
     rMask(point) = CellMask::BLANK;
 }
 
 //il controllo se c´e´ una gelatina viene effettuato a monte
-void Board::breakLiquirizia(const QPoint& point){
+void Board::breakLiquirizia(const Point& point){
     rMask(point) = CellMask::BLANK;
 }
 
-void Board::swapDiamonds(const QPoint& point1, const QPoint& point2){
+void Board::swapDiamonds(const Point& point1, const Point& point2){
     //Non posso swappare se c'è una liquirizia sotto
     if(mask(point1) == CellMask::LIQUIRIZIA || mask(point2) == CellMask::LIQUIRIZIA ) return;
 	//swap diamonds in internal representation
@@ -183,8 +188,8 @@ void Board::generateFromAbove(){
     //fill top rows with new elements
     for (int x = 0; x < m_size; ++x){
         for (int y = m_size - 1; y >= 0; --y){
-            Diamond*& diamond = this->rDiamond(QPoint(x, y));
-            if (diamond || mask(QPoint(x, y)) == CellMask::WALL)
+            Diamond*& diamond = this->rDiamond(Point(x, y));
+            if (diamond || mask(Point(x, y)) == CellMask::WALL)
                 continue; //inside of diamond stack - no gaps to fill
             auto color = m_isDiamGenBiased ? m_randcol->biased(x, m_biasDiamGen) : m_randcol->unif();
             diamond = spawnDiamond(color);
@@ -197,38 +202,38 @@ void Board::dropDiamonds(){
     for (int x = 0; x < m_size; ++x){
 //		We have to search from the bottom of the column. Exclude the lowest element (x = m_size - 1) because it cannot move down.
         for (int y = m_size - 2; y >= 0; --y){
-            if (!diamond(QPoint(x, y))) //c'è un gap o un WALL
+            if (!diamond(Point(x, y))) //c'è un gap o un WALL
 //				no need to move gaps -> these are moved later
                 continue;
             // I muri devono essere attraversati dai diamanti
             int ys = y + 1; //conterrà la posizione di dove finisce il muro
-            while(ys <  m_size && mask(QPoint(x, ys)) == CellMask::WALL){
+            while(ys <  m_size && mask(Point(x, ys)) == CellMask::WALL){
                 ++ys;
             }
             if(ys == m_size) //il muro arriva fino al fondo e blocca il diamante
                 continue;
-            if (diamond(QPoint(x, ys)))
+            if (diamond(Point(x, ys)))
 //				there is something right below this diamond -> Do not move.
                 continue;
 //			search for the lowest possible position
             int yt = ys; //counters - (x, yt) is the target position of diamond (x,y)
             while(yt < m_size - 1){
                 ys = yt + 1;
-                while(ys <  m_size && mask(QPoint(x, ys)) == CellMask::WALL){
+                while(ys <  m_size && mask(Point(x, ys)) == CellMask::WALL){
                     ++ys;
                 }
                 if (ys == m_size) //sono arrivato al muro di fondo
                     break; //yt now holds the lowest possible position
-                if (diamond(QPoint(x, ys)))
+                if (diamond(Point(x, ys)))
                     break; //yt now holds the lowest possible position
                 yt = ys;
             }
-            rDiamond(QPoint(x, yt)) = diamond(QPoint(x, y));
-            rDiamond(QPoint(x, y)) = 0;
+            rDiamond(Point(x, yt)) = diamond(Point(x, y));
+            rDiamond(Point(x, y)) = 0;
 //			if this element is selected, move the selection, too
-            const int index = m_selections.indexOf(QPoint(x, y));
+            const int index = indexOf(m_selections, Point(x, y));
             if (index != -1){
-                m_selections.replace(index, QPoint(x, yt));
+                m_selections[index] =  Point(x, yt);
             }
         }
     }
@@ -236,7 +241,7 @@ void Board::dropDiamonds(){
 
 
 void Board::clearDiamonds(){
-    for (QPoint point; point.x() < m_size; point.rx()++)
+    for (Point point; point.x() < m_size; point.rx()++)
 		for (point.ry() = 0; point.y() < m_size; point.ry()++)
             if(hasDiamond(point)){
                 removeDiamond(point);
@@ -245,7 +250,7 @@ void Board::clearDiamonds(){
 
 int Board::count(CellMask cell) const{
     int sum = 0;
-    for (QPoint point; point.x() < m_size; point.rx()++)
+    for (Point point; point.x() < m_size; point.rx()++)
         for (point.ry() = 0; point.y() < m_size; point.ry()++)
             if(mask(point) == cell)
                    sum++;
@@ -261,7 +266,7 @@ Board& Board::operator=(const Board& b){
     m_biasDiamGen = b.m_biasDiamGen;
 
     //ATTENZIONE, assumo che i diamanti esistano gia´ e siano nelle stesse posizioni
-    for (QPoint point; point.x() < m_size; ++point.rx()){
+    for (Point point; point.x() < m_size; ++point.rx()){
         for (point.ry() = 0; point.y() < m_size; ++point.ry()){
             if(b.hasDiamond(point)){
                 if(!this->hasDiamond(point)){
@@ -279,9 +284,9 @@ Board& Board::operator=(const Board& b){
 //ATTENZIONE a copiarlo perch´e contiene un puntatore alla Board
 //    *m_randcol = b.m_randcol;
 
-   // QList<QPoint> m_selections;
-//    QList<Diamond*> m_activeSelectors;
-//    QList<Diamond*>  m_inactiveSelectors;
+   // vector<Point> m_selections;
+//    vector<Diamond*> m_activeSelectors;
+//    vector<Diamond*>  m_inactiveSelectors;
 
 
     return *this;

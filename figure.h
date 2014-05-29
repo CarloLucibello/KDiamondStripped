@@ -1,8 +1,9 @@
 #ifndef FIGURE_H
 #define FIGURE_H
 
-#include <QVector>
-#include <QPoint>
+#include <vector>
+#include "point.h"
+using namespace std;
 
 enum class FigureType {
     None,
@@ -15,15 +16,15 @@ enum class FigureType {
 class Figure{
 public:
     Figure();
-    Figure(QVector<QPoint> points, FigureType type);
-    QVector<QPoint> points() const;
+    Figure(vector<Point> points, FigureType type);
+    vector<Point> points() const;
     FigureType type() const;
     int size() const;
-    bool isEmpty() const;
+    bool empty() const;
 
 
     FigureType m_type;
-    QVector<QPoint> m_points;
+    vector<Point> m_points;
 };
 
 #endif // FIGURE_H

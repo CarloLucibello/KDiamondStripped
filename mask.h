@@ -4,8 +4,8 @@
 #include <string>
 #include <iostream>
 #include <fstream>
-#include <QVector>
-#include <QPoint>
+#include <vector>
+#include "point.h"
 using namespace  std;
 
 
@@ -21,11 +21,11 @@ public:
     Mask();
 
     void set(int nmask);
-    CellMask& rCell(const QPoint& point);
-    CellMask cell(const QPoint& point) const;
+    CellMask& rCell(const Point& point);
+    CellMask cell(const Point& point) const;
     Mask& operator=(const Mask& mask);
 
-    QVector<CellMask> m_cells;
+    vector<CellMask> m_cells;
     const int m_size = 9; //ATTENZIONE in futuro andrà estratto dal file
 };
 
