@@ -33,7 +33,7 @@ Color RandomColor::biased(int x, double bias){
     // ATTENZIONE deve essere  0 <= bias < 1 / #col
 
     //conta i colori nella tre colonne centrate in x
-    vector<int> count(m_numColors + 1, 0); // dato che i colori partono da 0
+    QVector<int> count(m_numColors + 1, 0); // dato che i colori partono da 0
     int tot = 0;
     for(int x2 = x - 1; x2 <= x + 1; ++x2){
         for(int y = 0; y < m_board->gridSize(); ++y){
@@ -49,10 +49,14 @@ Color RandomColor::biased(int x, double bias){
 
     //Calcolo la cumulata secondo il bias e confronto con un numero random;
     double c = 0;
+    double z = 0;
     int i = 1;
     double r = m_rng.unifReal();
     for(; i <= m_numColors; ++i){
-        c +=  1. / m_numColors + bias * ( m_numColors * double(count[i]) / tot - 1.);
+        z +=  exp(bias * ( m_numColors * double(count[i]) / tot));
+    }
+    for(i = 1; i <= m_numColors; ++i){
+        c +=  exp(bias * ( m_numColors * double(count[i]) / tot))/z;
         if(r < c) break;
     }
     return Color(i);
