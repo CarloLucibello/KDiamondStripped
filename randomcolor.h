@@ -2,6 +2,7 @@
 #define RANDOMCOLOR_H
 
 #include "rand.h"
+#include <math.h>
 
 enum class Color;
 
