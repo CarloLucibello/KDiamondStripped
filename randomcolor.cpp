@@ -33,7 +33,7 @@ Color RandomColor::biased(int x, double bias){
     // ATTENZIONE deve essere  0 <= bias < 1 / #col
 
     //conta i colori nella tre colonne centrate in x
-    QVector<int> count(m_numColors + 1, 0); // dato che i colori partono da 0
+    vector<int> count(m_numColors + 1, 0); // dato che i colori partono da 0
     int tot = 0;
     for(int x2 = x - 1; x2 <= x + 1; ++x2){
         for(int y = 0; y < m_board->gridSize(); ++y){
