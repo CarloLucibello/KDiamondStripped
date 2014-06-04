@@ -116,6 +116,17 @@ void BenchmarkSuite::testParam( string paramName, string levelPath, string expPa
         }
         fout.close();
     }
+    
+    if (paramName== "bias") {
+        
+        fout << "### $1=Mask $2=NumColors $3=NumMoves $4=PointsToReach  $5=IsBiased  $6=Bias  $7=TargetLiquirizia" << endl;
+        for (double k=m_biasMin; k<= m_biasMax; k += m_biasStep) {
+            
+            fout << mask  << "\t" << colors << "\t" << moves  << "\t" << points << "\t" \
+            << isDiamGenBiased << "\t" << k << "\t"<< targetLiquirizia << endl;
+        }
+        fout.close();
+    }
 }
 
 void BenchmarkSuite::fullTestLevel( double qi, int niter, int seed, bool verbose, string paramsPath, string outPath){
