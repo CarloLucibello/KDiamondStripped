@@ -51,8 +51,10 @@ void Game::setLevel(const int level){
 }
 
 
-//Checks amount of possible moves remaining. Questo e` fatto testando l´ effetto di ogni mossa su testBoard.
-// Non ha effetti sulla bpard vera, ovvero quella visualizzata. Praticamente simula la mossa.
+// Checks amount of possible moves remaining.
+// Questo e` fatto testando l´ effetto di ogni mossa su testBoard.
+// Non ha effetti sulla board vera, ovvero quella visualizzata.
+// Praticamente simula la mossa.
 void Game::getMoves(){
     
     m_availableMoves.clear();
@@ -99,7 +101,7 @@ void Game::getMoves(){
                         //vedo tutto quello che succede senza generare nuovi diamanti
                         while(!figuresToRemove.empty()){
                             removeFigures(figuresToRemove);
-                            m_board->dropDiamonds(); //uso questa al posto di fillGaps() per non gen nuovi diamanti
+                            m_board->dropDiamonds(); //uso questa al posto di fillGaps() per non generare nuovi diamanti
                             figuresToRemove = findFigures();
                         }
 
@@ -114,8 +116,8 @@ void Game::getMoves(){
                         m_availableMoves.push_back(m);
                     }
 
-
-                    m_board->swapDiamonds(point, dest); //riswappo indietro. devo farlo prima di swappare le board
+                    //riswappo indietro. devo farlo prima di swappare le board
+                    m_board->swapDiamonds(point, dest);
                     swap(m_testState, m_gameState);
                     swap(m_testBoard, m_board);
                     swap(verbose, m_verbose);
@@ -124,11 +126,11 @@ void Game::getMoves(){
         }
     }
     
-    //cout << "size" << endl;
-    
     if (m_availableMoves.empty()){
-        cout << "NON CI SONO MOSSE DISPONIBILI :(" << endl;
-        cout << "CREO UN QUADRO DA CAPO, CONTINUA A GIOCARE :)" << endl;
+        if (m_verbose){
+            cout << "NON CI SONO MOSSE DISPONIBILI :(" << endl;
+            cout << "CREO UN QUADRO DA CAPO, CONTINUA A GIOCARE :)" << endl;
+        }
         m_jobQueue.push_front(Job::NoMoves);
     }   
 }
@@ -137,8 +139,8 @@ void Game::getMoves(){
 vector<Point> Game::findRowV(const Point& point){
     vector<Point> row;
     #define C(X, Y) (m_board->hasDiamond(Point(X, Y)) ? m_board->diamond(Point(X, Y))->color() : Color::Selection)
-    Color currColor = m_board->diamond(point)->color();  //ATTENZIONE Non controllo che il colore sia valido (!=Selection)
-    //Non faccio terzine etc.. di buste e cookie
+    Color currColor = m_board->diamond(point)->color();
+    // Non faccio terzine etc.. di buste e cookie
     if(currColor == Color::Selection
         || currColor == Color::NoColor){
         return row;
@@ -163,8 +165,7 @@ vector<Point> Game::findRowV(const Point& point){
 vector<Point> Game::findRowH(const Point& point){
     vector<Point> row;
     #define C(X, Y) (m_board->hasDiamond(Point(X, Y)) ? m_board->diamond(Point(X, Y))->color() : Color::Selection)
-    Color currColor = m_board->diamond(point)->color();  //ATTENZIONE Non controllo che il colore sia valido (!=Selection)
-
+    Color currColor = m_board->diamond(point)->color();
     //Non faccio terzine etc.. di buste e cookie
     if(currColor == Color::Selection
         || currColor == Color::NoColor){
@@ -236,9 +237,9 @@ bool Game::executeFirstJob(){
 
             assert(m_board->selections().size() == 2);
             const vector<Point> points = m_board->selections();
+            //m_swappingDiamonds contiene i diamanti che stiamo scambiando
 			m_swappingDiamonds = points;
             if(m_verbose){
-                //printSelection({m_swappingDiamonds[0], m_swappingDiamonds[1]});
                 vector<Point> m_swappingDiamonds_vec;
                 m_swappingDiamonds_vec.push_back(m_swappingDiamonds[0]);
                 m_swappingDiamonds_vec.push_back(m_swappingDiamonds[1]);
@@ -291,7 +292,7 @@ bool Game::executeFirstJob(){
                 if (!m_availableMoves.empty()){
 					m_availableMoves.clear();
 				}
-				//Controllo se sto swappando e dato che lo swap ha avuto successo
+				// Controllo se sto swappando e dato che lo swap ha avuto successo
                 // incremento il numero di mosse ed elimino la selezione
                 if(!m_swappingDiamonds.empty()){
                     m_gameState->updateMovesLeft();
@@ -377,6 +378,7 @@ void Game::removeJolly(const Point& point){
     auto jtype = m_board->diamond(point)->jollyType();
     removeDiamond(point);
 
+    //Inserisco lo scoppiaggio di un jolly H
     if(jtype == JollyType::H){
         int y = point.y();
         for(int x = 0; x < m_board->gridSize(); ++x) {
@@ -391,7 +393,8 @@ void Game::removeJolly(const Point& point){
 
         }
     }
-
+    
+    //Inserisco lo scoppiaggio di un jolly V
     if(jtype == JollyType::V){
         int x = point.x();
         for(int y = 0; y < m_board->gridSize(); ++y) {
@@ -409,7 +412,7 @@ void Game::removeJolly(const Point& point){
 
     //Inserisco lo scoppiaggio di una busta
     if(jtype == JollyType::Bag || jtype == JollyType::Bag2){
-        //RIMUOVE I DIAMANTI in unquadrato intorno alla busta
+        //RIMUOVE I DIAMANTI in un quadrato intorno alla busta
         int px = point.x();
         int py = point.y();
         for(int y = py - 1; y <= py + 1; ++y) {
@@ -424,16 +427,17 @@ void Game::removeJolly(const Point& point){
             }
         }
 
-        //Creo il secondo stadio della bag.
+        // Creo il secondo stadio della bag.
         // Sara´ scoppiata automaticamente al prossimo removeFigures
         if(jtype == JollyType::Bag){
             m_board->rDiamond(point) = m_board->spawnDiamond(Color::NoColor, JollyType::Bag2);
         }
     }
 
-    //Questa parte viene chiamata solo quando il jolly viene
-    //scoppiata dallo scoppiaggio di una riga intera o di un quadrato,
-    //quindi viene sprecato
+    // Questa parte viene chiamata solo quando il jolly viene
+    // scoppiata dallo scoppiaggio di una riga intera o di un quadrato,
+    // quindi viene sprecato.
+    // (lo scoppiaggio del cookie viene fatto a parte in findFigureCookie)
     if(jtype == JollyType::Cookie){
         if(m_verbose) cout <<"****** sprecato cookie "<< endl;
         removeDiamond(point);
@@ -442,14 +446,14 @@ void Game::removeJolly(const Point& point){
 
 
 void Game::removeFigures(const vector<Figure>& figuresToRemove){
-    //				/** Annoto i jolly che devo inserire
+    // Annoto i jolly che devo inserire
     vector<Point> jPoint;
     vector<JollyType> jType;
     vector<Color> jColor;
     for(const auto& fig : figuresToRemove){
-        if(fig.size() > 3 && fig.type() != FigureType::None){//la figura None non produce Jolly (è il caso del Cookie)
-            //cout << "-------------------------------------SIZE DELLA FIGURA CHE SCOPPIO: " << fig.size() << endl;
-
+        if(fig.size() > 3 && fig.type() != FigureType::None){
+            // la figura None non produce Jolly (è il caso del Cookie)
+            
             // creo il jolly nel punto in cui sposto il diamante
             // se creo un jolly durante una valanga lo
             // creo nell'ultimo punto di points
@@ -493,7 +497,8 @@ void Game::removeFigures(const vector<Figure>& figuresToRemove){
         }
         //invoke remove animation, then fill gaps immediately after the animation
         for(const Point& diamondPos: fig.points()){
-            if(m_board->hasDiamond(diamondPos)){ //potrebbe essere (casi rari) che era già stato scoppiato
+            if(m_board->hasDiamond(diamondPos)){
+                //potrebbe essere (casi rari) che era già stato scoppiato
                 if(m_board->diamond(diamondPos)->isJolly()){
                     removeJolly(diamondPos);
                 }
@@ -546,7 +551,7 @@ Figure Game::findFigure(Point point){
     FigureType type;
     vector<Point> points;
 
-    //Considero il secondo stadio della busta come una figura perch´e va scoppiato
+    //Considero il secondo stadio della busta come una figura perche' va scoppiato
     if(m_board->diamond(point)->jollyType() == JollyType::Bag2){
         type = FigureType::Bag2;
         points.push_back(point);
@@ -571,7 +576,7 @@ Figure Game::findFigure(Point point){
                 type = FigureType::LT;
                 //ATTENZIONE si possono avere più file verticali o posso
                 //mettere un break?
-                //direi che non si possono avere più righe verticali: al simo
+                //direi che non si possono avere più righe verticali: al massimo
                 //se ne forma una
                 break;
             }
@@ -641,13 +646,15 @@ Figure Game::findFigureCookie(Point p1, Point p2){
     if(d1->jollyType() == JollyType::Cookie && !(d2->jollyType() == JollyType::Cookie)){
         auto pointsToRem = findDiamonds(d2->color());
         pointsToRem.push_back(p1); //aggiungo il cookie
-        fig = Figure(pointsToRem, FigureType::None); //La figura deve essere di typo None altrimente poi si crea un jolly
+        fig = Figure(pointsToRem, FigureType::None);
+        //La figura deve essere di typo None altrimente poi si crea un jolly
 
     }
     else if(d2->jollyType() == JollyType::Cookie && !(d1->jollyType() == JollyType::Cookie)){
         auto pointsToRem = findDiamonds(d1->color());
         pointsToRem.push_back(p2); //aggiungo il cookie
-        fig = Figure(pointsToRem, FigureType::None); //La figura deve essere di typo None altrimente poi si crea un jolly
+        fig = Figure(pointsToRem, FigureType::None);
+        //La figura deve essere di typo None altrimente poi si crea un jolly
     }
 
     return fig;
@@ -663,6 +670,3 @@ void Game::getJollies(const Figure& fig, vector<JollyType>& jtypes, vector<Point
         }
     }
 }
-
-
-

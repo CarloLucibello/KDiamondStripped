@@ -2,7 +2,7 @@
 
 Board::Board(int seed)
     {
-        m_randcol = new RandomColor(this); //tanto non verrà mai usato
+        m_randcol = new RandomColor(this);
         m_randcol->setSeed(seed);
     }
 
@@ -24,10 +24,12 @@ void Board::startNewGame(const GameParams * gameParams){
     m_mask.set(gameParams->mask());
     m_isDiamGenBiased = gameParams->isDiamGenBiased();
     m_biasDiamGen = gameParams->biasDiamGen();
-    //Scelgo il generatore di colori appropriato ai parametri
+    //scelgo il generatore di colori appropriato ai parametri
     m_randcol->init();
     spawnDiamonds();
 }
+
+
 
 void Board::spawnDiamonds(){
     clearSelection();
@@ -70,14 +72,6 @@ Diamond* Board::spawnDiamond(Color color, JollyType jtype){
 	return diamond;
 }
 
-//Point Board::findDiamond(Diamond* diamond) const{
-//	int index = m_diamonds.indexOf(diamond);
-//	if (index == -1)
-//        return Point(-1, -1);
-//	else
-//        return Point(index % m_size, index / m_size);
-//}
-
 Diamond*& Board::rDiamond(const Point& point){
 	return m_diamonds[point.x() + point.y() * m_size];
 }
@@ -95,11 +89,10 @@ bool Board::isOccupable(const Point& point) const{
     return isInBoard && (mask(point) != CellMask::WALL) ;
 }
 
-
 bool Board::hasDiamond(const Point& point) const{
 	return isOccupable(point) && diamond(point) != 0;
     //In teoria se tutto è stato fatto bene si potrebbe sostituire con il semplce
-    // return  diamond(point) != 0;
+    //return  diamond(point) != 0;
 }
 
 vector<Point> Board::selections() const{
@@ -146,7 +139,7 @@ void Board::clearSelection(){
 void Board::removeDiamond(const Point& point){
 	Diamond* diamond = this->diamond(point);
 	//può capitare che la funzione possa essere chiamate più volte nello stesso punto
-	// se il diamante appartiene a più figure da scoppiare
+	//se il diamante appartiene a più figure da scoppiare
     if(diamond != 0) {
         delete diamond;
         rDiamond(point) = 0;
@@ -200,22 +193,23 @@ void Board::generateFromAbove(){
 //fa cadere i diamanti esistenti
 void Board::dropDiamonds(){
     for (int x = 0; x < m_size; ++x){
-//		We have to search from the bottom of the column. Exclude the lowest element (x = m_size - 1) because it cannot move down.
+        // We have to search from the bottom of the column.
+        // Exclude the lowest element (x = m_size - 1) because it cannot move down.
         for (int y = m_size - 2; y >= 0; --y){
             if (!diamond(Point(x, y))) //c'è un gap o un WALL
-//				no need to move gaps -> these are moved later
+                // no need to move gaps -> these are moved later
                 continue;
             // I muri devono essere attraversati dai diamanti
-            int ys = y + 1; //conterrà la posizione di dove finisce il muro
+            int ys = y + 1; // conterrà la posizione di dove finisce il muro
             while(ys <  m_size && mask(Point(x, ys)) == CellMask::WALL){
                 ++ys;
             }
-            if(ys == m_size) //il muro arriva fino al fondo e blocca il diamante
+            if(ys == m_size) // il muro arriva fino al fondo e blocca il diamante
                 continue;
             if (diamond(Point(x, ys)))
-//				there is something right below this diamond -> Do not move.
+                // there is something right below this diamond -> Do not move.
                 continue;
-//			search for the lowest possible position
+            // search for the lowest possible position
             int yt = ys; //counters - (x, yt) is the target position of diamond (x,y)
             while(yt < m_size - 1){
                 ys = yt + 1;
@@ -223,14 +217,14 @@ void Board::dropDiamonds(){
                     ++ys;
                 }
                 if (ys == m_size) //sono arrivato al muro di fondo
-                    break; //yt now holds the lowest possible position
+                    break; // yt now holds the lowest possible position
                 if (diamond(Point(x, ys)))
-                    break; //yt now holds the lowest possible position
+                    break; // yt now holds the lowest possible position
                 yt = ys;
             }
             rDiamond(Point(x, yt)) = diamond(Point(x, y));
             rDiamond(Point(x, y)) = 0;
-//			if this element is selected, move the selection, too
+            // if this element is selected, move the selection, too
             const int index = indexOf(m_selections, Point(x, y));
             if (index != -1){
                 m_selections[index] =  Point(x, yt);
@@ -280,14 +274,6 @@ Board& Board::operator=(const Board& b){
 
         }
     }
-
-//ATTENZIONE a copiarlo perch´e contiene un puntatore alla Board
-//    *m_randcol = b.m_randcol;
-
-   // vector<Point> m_selections;
-//    vector<Diamond*> m_activeSelectors;
-//    vector<Diamond*>  m_inactiveSelectors;
-
 
     return *this;
 }

@@ -1,6 +1,9 @@
 #ifndef OPTIONS_H_INCLUDED
 #define OPTIONS_H_INCLUDED
 
+// questo file serve a dare gli argomenti del gioco dalla linea di comando.
+// gli argomenti sono commentati qui di seguito.
+
 #include "options_parser.h"
 
 namespace options{
@@ -51,11 +54,14 @@ public:
 		argc -= mand + 1; argv += mand + 1;
 //		argc-= mc; argv += mv; // skip program name argv[0] if present
 	  option::Stats stats(usage, argc, argv);
-//	  option::Option options[stats.options_max], buffer[stats.buffer_max];
-//    questi numeri, 100 e 10 sono un po' a cazzo. se ci sono dei problemi,
-//    è meglio riusare l'opzione di sopra su linux
-        option::Option options[100], buffer[10];
-	  option::Parser parse(usage, argc, argv, options, buffer);
+      option::Option options[100], buffer[10];
+        //    i numeri 100 e 10 che abbiamo messo qui sono a cazzo.
+        //    questo file contenva originariamente la linea:
+        //	  option::Option options[stats.options_max], buffer[stats.buffer_max];
+        //    ma sul mac questa linea da problemi.
+        //    usando 100 e 10 invece è tutto a posto.
+        
+      option::Parser parse(usage, argc, argv, options, buffer);
 
 	  if (parse.error())
 	    exit(1);

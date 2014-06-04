@@ -48,7 +48,6 @@ public:
     void slotClicked();
     void slotDragged(const Point& direction);
 //private:
-//    Point findDiamond(Diamond* diamond) const;
     Diamond*& rDiamond(const Point& point);
     Diamond* spawnDiamond(Color color = Color::NoColor, JollyType jtype = JollyType::None);
     void spawnDiamonds();

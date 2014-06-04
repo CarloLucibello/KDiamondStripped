@@ -14,7 +14,8 @@ public:
     void playRandomMove(bool verbose = false);
     void playSmartestMove( bool verbose = false); // va adattata di volta in volta alle regole del gioco
 
-    //estraggo un numero random tra 0 e 1 e scelgo se fare la mossa più intelligente in base al qi del giocatore
+    //estraggo un numero random tra 0 e 1 e scelgo se fare la
+    //mossa più intelligente in base al qi del giocatore
     void playFuzzyMove(double qi, bool verbose = false);
 
 private:

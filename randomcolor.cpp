@@ -17,10 +17,6 @@ void RandomColor::setSeed(int seed){
     m_rng.setSeed(seed);
 }
 
-//void RandomColor::copyStateRNG(const RandomColor * randcol){
-//    m_rng = randcol->m_rng;
-//}
-
 Color RandomColor::unif(){
         return Color(1 + m_rng.unifInt(m_numColors));
 }
@@ -28,10 +24,8 @@ Color RandomColor::unif(){
 
 Color RandomColor::biased(int x, double bias){
     // Generazione di colori biased con la formula
-    //  p_i = 1 / #col + bias * ( #col * rho_i  - 1)
-
-    // ATTENZIONE deve essere  0 <= bias < 1 / #col
-
+    // p_i = exp(bias * ( #col * #col_i) / sum_i exp(bias * ( #col * #col_i)
+    
     //conta i colori nella tre colonne centrate in x
     vector<int> count(m_numColors + 1, 0); // dato che i colori partono da 0
     int tot = 0;
@@ -47,7 +41,7 @@ Color RandomColor::biased(int x, double bias){
         }
     }
 
-    //Calcolo la cumulata secondo il bias e confronto con un numero random;
+    // Estraggo il colore del diamante creato in modo biased
     double c = 0;
     double z = 0;
     int i = 1;

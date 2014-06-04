@@ -87,7 +87,7 @@ public:
 
 
 //  private:
-//    vector<Point> findCompletedRows();
+//  vector<Point> findCompletedRows();
     vector<Figure> findFigures();
     Figure findFigure(Point point);
     vector<Point> findRowH(const Point& point);

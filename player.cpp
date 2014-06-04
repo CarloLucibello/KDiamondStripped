@@ -30,13 +30,15 @@ void Player::playSmartestMove( bool verbose){
     for(int i = 0; i < moves.size(); ++i){
         const auto& m = moves[i];
 
-        if(m.gelatine() + m.liquirizie() > numGelAndLiq){ //massimizzo sempre sulle gelatine e liquirizie scoppiate
+        if(m.gelatine() + m.liquirizie() > numGelAndLiq){
+            //massimizzo sempre sulle gelatine e liquirizie scoppiate
             numGelAndLiq = m.gelatine() + m.liquirizie();
             points = m.points();
             chosen = i;
         }
         else if(m.gelatine() + m.liquirizie() == numGelAndLiq
-                && m.points() > points){ // e a parita´ di condizioni guardo i jolly
+                && m.points() > points){
+            // e a parita´ di condizioni guardo i jolly
             points = m.points();
             chosen = i;
         }
@@ -45,7 +47,8 @@ void Player::playSmartestMove( bool verbose){
     playMove(chosen, verbose);
 }
 
-//estraggo un numero random tra 0 e 1 e scelgo se fare la mossa più intelligente in base al qi del giocatore
+// estraggo un numero random tra 0 e 1 e scelgo se fare
+// la mossa più intelligente in base al qi del giocatore
 void Player::playFuzzyMove(double qi, bool verbose){
     double r = m_rng.unifReal();
     if(r < qi)

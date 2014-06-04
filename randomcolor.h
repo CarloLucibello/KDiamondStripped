@@ -12,11 +12,9 @@ class RandomColor{
 public:
     RandomColor(Board * board);
     void setSeed(int seed);
-//    void copyStateRNG(const RandomColor * randcol);
     Color biased(int x, double bias);
     Color unif();
     void init();
-    RandomColor& operator=(const RandomColor rcol);
 
 private:
     LinCongRNG m_rng;
