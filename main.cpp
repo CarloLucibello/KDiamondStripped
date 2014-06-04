@@ -52,5 +52,17 @@ int main(int argc, char *argv[]){
         bench.testParam( "mask", "levels/params.txt", paramsPath, 1);
         bench.fullTestLevel( qi, niter, seedPlayer, verbose, paramsPath, resPath);
     }
+    
+        if(work == "bias"){
+        string paramsPath = "Params.txt";
+        string resPath;
+        
+        paramsPath= "bias" + paramsPath;
+        resPath= "bias" + outPath;
+        
+        bench.testParam( "bias", "levels/params.txt", paramsPath, 1);
+        bench.fullTestLevel( qi, niter, seedPlayer, verbose, paramsPath, resPath);
+    }
+    
     return 0;
 }
