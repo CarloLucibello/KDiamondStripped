@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+   <FileVersion major="1" minor="6" />
+   <Project>
+      <Option title="Project" />
+      <Option makefile_is_custom="1" />
+      <Option compiler="gcc" />
+      <Option virtualFolders="CMake Files\;" />
+      <Build>
+      <Target title="all">
+         <Option working_dir="/home/carlo/Dropbox/workspace/KDiamondStripped" />
+         <Option type="4" />
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/home/carlo/Dropbox/workspace/KDiamondStripped/Makefile&quot;  VERBOSE=1 all" />
+            <CompileFile command="/usr/bin/make -f &quot;/home/carlo/Dropbox/workspace/KDiamondStripped/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/home/carlo/Dropbox/workspace/KDiamondStripped/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/home/carlo/Dropbox/workspace/KDiamondStripped/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="kdiamond-stripped">
+         <Option output="/home/carlo/Dropbox/workspace/KDiamondStripped/kdiamond-stripped" prefix_auto="0" extension_auto="0" />
+         <Option working_dir="/home/carlo/Dropbox/workspace/KDiamondStripped" />
+         <Option object_output="./" />
+         <Option type="1" />
+         <Option compiler="gcc" />
+         <Compiler>
+         </Compiler>
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/home/carlo/Dropbox/workspace/KDiamondStripped/Makefile&quot;  VERBOSE=1 kdiamond-stripped" />
+            <CompileFile command="/usr/bin/make -f &quot;/home/carlo/Dropbox/workspace/KDiamondStripped/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/home/carlo/Dropbox/workspace/KDiamondStripped/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/home/carlo/Dropbox/workspace/KDiamondStripped/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="kdiamond-stripped/fast">
+         <Option output="/home/carlo/Dropbox/workspace/KDiamondStripped/kdiamond-stripped" prefix_auto="0" extension_auto="0" />
+         <Option working_dir="/home/carlo/Dropbox/workspace/KDiamondStripped" />
+         <Option object_output="./" />
+         <Option type="1" />
+         <Option compiler="gcc" />
+         <Compiler>
+         </Compiler>
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/home/carlo/Dropbox/workspace/KDiamondStripped/Makefile&quot;  VERBOSE=1 kdiamond-stripped/fast" />
+            <CompileFile command="/usr/bin/make -f &quot;/home/carlo/Dropbox/workspace/KDiamondStripped/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/home/carlo/Dropbox/workspace/KDiamondStripped/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/home/carlo/Dropbox/workspace/KDiamondStripped/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="rebuild_cache">
+         <Option working_dir="/home/carlo/Dropbox/workspace/KDiamondStripped" />
+         <Option type="4" />
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/home/carlo/Dropbox/workspace/KDiamondStripped/Makefile&quot;  VERBOSE=1 rebuild_cache" />
+            <CompileFile command="/usr/bin/make -f &quot;/home/carlo/Dropbox/workspace/KDiamondStripped/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/home/carlo/Dropbox/workspace/KDiamondStripped/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/home/carlo/Dropbox/workspace/KDiamondStripped/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      </Build>
+      <Unit filename="/home/carlo/Dropbox/workspace/KDiamondStripped/benchmarksuite.cpp">
+      </Unit>
+      <Unit filename="/home/carlo/Dropbox/workspace/KDiamondStripped/board.cpp">
+      </Unit>
+      <Unit filename="/home/carlo/Dropbox/workspace/KDiamondStripped/diamond.cpp">
+      </Unit>
+      <Unit filename="/home/carlo/Dropbox/workspace/KDiamondStripped/figure.cpp">
+      </Unit>
+      <Unit filename="/home/carlo/Dropbox/workspace/KDiamondStripped/game.cpp">
+      </Unit>
+      <Unit filename="/home/carlo/Dropbox/workspace/KDiamondStripped/gameparams.cpp">
+      </Unit>
+      <Unit filename="/home/carlo/Dropbox/workspace/KDiamondStripped/gamestate.cpp">
+      </Unit>
+      <Unit filename="/home/carlo/Dropbox/workspace/KDiamondStripped/main.cpp">
+      </Unit>
+      <Unit filename="/home/carlo/Dropbox/workspace/KDiamondStripped/mask.cpp">
+      </Unit>
+      <Unit filename="/home/carlo/Dropbox/workspace/KDiamondStripped/player.cpp">
+      </Unit>
+      <Unit filename="/home/carlo/Dropbox/workspace/KDiamondStripped/point.cpp">
+      </Unit>
+      <Unit filename="/home/carlo/Dropbox/workspace/KDiamondStripped/randomcolor.cpp">
+      </Unit>
+      <Unit filename="/home/carlo/Dropbox/workspace/KDiamondStripped/benchmarksuite.h">
+      </Unit>
+      <Unit filename="/home/carlo/Dropbox/workspace/KDiamondStripped/board.h">
+      </Unit>
+      <Unit filename="/home/carlo/Dropbox/workspace/KDiamondStripped/diamond.h">
+      </Unit>
+      <Unit filename="/home/carlo/Dropbox/workspace/KDiamondStripped/figure.h">
+      </Unit>
+      <Unit filename="/home/carlo/Dropbox/workspace/KDiamondStripped/game.h">
+      </Unit>
+      <Unit filename="/home/carlo/Dropbox/workspace/KDiamondStripped/gameparams.h">
+      </Unit>
+      <Unit filename="/home/carlo/Dropbox/workspace/KDiamondStripped/gamestate.h">
+      </Unit>
+      <Unit filename="/home/carlo/Dropbox/workspace/KDiamondStripped/mask.h">
+      </Unit>
+      <Unit filename="/home/carlo/Dropbox/workspace/KDiamondStripped/player.h">
+      </Unit>
+      <Unit filename="/home/carlo/Dropbox/workspace/KDiamondStripped/point.h">
+      </Unit>
+      <Unit filename="/home/carlo/Dropbox/workspace/KDiamondStripped/randomcolor.h">
+      </Unit>
+      <Unit filename="/home/carlo/Dropbox/workspace/KDiamondStripped/CMakeLists.txt">
+          <Option virtualFolder="CMake Files\" />
+      </Unit>
+   </Project>
+</CodeBlocks_project_file>

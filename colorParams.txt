@@ -1,0 +1,4 @@
+### $1=Mask $2=NumColors $3=NumMoves $4=PointsToReach  $5=IsBiased  $6=Bias  $7=TargetLiquirizia
+1	4	10	70	0	0.1	1
+1	4	10	70	0	0.1	1
+1	5	10	70	0	0.1	1
