@@ -159,10 +159,9 @@ void BenchmarkResults::print(ostream& fout){
    
     fout    << level  << " \t"
             << niter  << " \t"
-            << isWon.mean()  << " \t"
-            <<  fixed << setprecision(3) << showpoint
-            << moves.mean()  << " \t"
-            << points.mean() << endl;
+            << points.mean() << " \t"
+//            << moves.mean()  << " \t"
+            << isWon.mean()  << endl;
 }
 
 BenchmarkResults BenchmarkSuite::testLevel(int level, double qi, int niter, int seed, bool verbose, string paramsPath, ostream& fout){
