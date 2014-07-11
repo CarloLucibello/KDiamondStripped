@@ -13,9 +13,9 @@ public:
     int niter;
 
     //OSSERVABILI
-    Observable probWin;  //probabilità di superare il livello
-    Observable aveMoves;  //numero medio di passi che ci voglio a raggiungere l'obiettivo punteggio
-    Observable avePoints;  //puteggio medio ottenuto nel numero di mosse concesso
+    Observable isWon;  //probabilità di superare il livello
+    Observable moves;  //numero medio di passi che ci voglio a raggiungere l'obiettivo punteggio
+    Observable points;  //puteggio medio ottenuto nel numero di mosse concesso
 
 
     void print(ostream& fout);
@@ -41,12 +41,12 @@ public:
     int m_pointsMax = 80;
     int m_pointsStep = 5;
     
-        double m_biasMin = 0;
-    double m_biasMax = 1;
+     double m_biasMin = -1.;
+    double m_biasMax = 1.;
     double m_biasStep = .1;
     
     BenchmarkSuite(Game* game);
-    BenchmarkResults testLevel(int level, double qi, int niter = 1000, int seed = -1, bool verbose = false, string paramsPath = "levels/params.txt");
+    BenchmarkResults testLevel(int level, double qi, int niter = 1000, int seed = -1, bool verbose = false, string paramsPath = "levels/params.txt", ostream& fout = cerr);
     void singleGame(int level, double qi, int seedPlayer = -1, bool verbose = false);  //verbose si potrebbe eliminare da qua
     void singleMove(int level, double qi, int seedPlayer = -1, bool verbose = false);  //verbose si potrebbe eliminare da qua
     
