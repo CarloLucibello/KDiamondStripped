@@ -288,6 +288,7 @@ bool Game::executeFirstJob(){
 			}
 			else{ //C'è qualcosa da rimuovere
 
+
 				//all moves may now be out-dated - flush the moves list
                 if (!m_availableMoves.empty()){
 					m_availableMoves.clear();
@@ -302,7 +303,12 @@ bool Game::executeFirstJob(){
                 //questa fa tutto il lavoro
                 removeFigures(figuresToRemove);
 
-                m_jobQueue.push_front(Job::FillGaps);
+                if(isWon()){
+                    m_jobQueue.push_front(Job::EndGame);
+                } else {
+                    m_jobQueue.push_front(Job::FillGaps);
+                }
+
                 if(m_verbose) printBoard();
 
                 
