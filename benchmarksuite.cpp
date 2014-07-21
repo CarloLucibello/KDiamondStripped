@@ -147,8 +147,7 @@ void BenchmarkSuite::fullTestLevel( double qi, int niter, int seed, bool verbose
 
     for (int level=1; level< numLines; ++level) {
         cout << "line " << level << endl ;
-        auto res = testLevel(level, qi, niter, seed, verbose, paramsPath);
-        res.print(fout);
+        auto res = testLevel(level, qi, niter, seed, verbose, paramsPath, fout);
 
     }
    fout.close();
@@ -156,16 +155,19 @@ void BenchmarkSuite::fullTestLevel( double qi, int niter, int seed, bool verbose
 
 void BenchmarkResults::print(ostream& fout){
 
-    fout <<  fixed << setprecision(3) << showpoint
-            << probWin.mean()  << "  " << probWin.stdDev() << " \t"
-            << aveMoves.mean() <<  "  " << aveMoves.stdDev()  << " \t"
-            << avePoints.mean() <<  "  " << avePoints.stdDev() << endl;
+    
+   
+    fout    << level  << " \t"
+            << niter  << " \t"
+            << points.mean() << " \t"
+//            << moves.mean()  << " \t"
+            << isWon.mean()  << endl;
 }
 
-BenchmarkResults BenchmarkSuite::testLevel(int level, double qi, int niter, int seed, bool verbose, string paramsPath){
+BenchmarkResults BenchmarkSuite::testLevel(int level, double qi, int niter, int seed, bool verbose, string paramsPath, ostream& fout){
     Player player(m_game, seed);
     BenchmarkResults res;
-    res.niter = niter;
+    
     res.level = level;
 
     m_game->setParamsPath(paramsPath);
@@ -186,9 +188,11 @@ BenchmarkResults BenchmarkSuite::testLevel(int level, double qi, int niter, int 
                 step++;
             }
         }
-        res.probWin += m_game->isWon() ? 1 : 0;
-        res.aveMoves += step;
-        res.avePoints += m_game->points();
+        res.isWon = m_game->isWon() ? 1 : 0;
+        res.moves = step;
+        res.points = m_game->points();
+        res.niter = i+1;
+        res.print(fout);
     }
 
     return res;
